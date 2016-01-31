@@ -1,163 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Grayscale - Start Bootstrap Theme</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="css/grayscale.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+  <title>Drop TV</title>
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  <style media="screen" type="text/css">
+    
+    body{
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+    }
+    h1 {
+      color: #359173;
+      font-family: 'Montserrat', sans-serif;
+    }
+    h2 {
+      font-weight: normal;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .message {
+      margin: 50px auto 10px;
+      padding: 20px;
+      width: 50%;
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 
-<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+<body>
+  <div class="message">
+    <img src="hello.png">
+    <h1>Seja bem vindo!</h1>
+    <h2>Somos um canal que inspira as pessoas exibindo muita arte, surf, cultura, skate, musica e natureza.</h2>
+    <h2></h2>
+  </div>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand page-scroll" href="#page-top">
-                    <i class="fa fa-play-circle"></i>  <span class="light">Start</span> Bootstrap
-                </a>
-            </div>
+  <div class="container">
+  <div class="row">    
+    <h1 class="text-center"><a href="#myModal" role="button" class="btn btn-primary btn-lg" data-toggle="modal">Quer saber mais?</a></h1>
+  </div>
+</div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-                <ul class="nav navbar-nav">
-                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#about">About</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#download">Download</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+        <h3 id="myModalLabel">Contato:</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal col-sm-12" action="http://formspree.io/droptv@moods.com.br" method="POST">
+          <div class="form-group">
+            <input class="form-control required" placeholder="Nome" data-placement="top" data-trigger="manual" data-content="Nome completo" type="text" name="name">
+          </div>
+          
+          <div class="form-group">
+            <input class="form-control email" placeholder="email" data-placement="top" data-trigger="manual" data-content="email" type="email" name="_replyto">
+          </div>
+          
+          <div class="form-group">
+            <textarea class="form-control" placeholder="Diga Oi..." data-placement="top" data-trigger="manual" style="height: 120px;" name="message"></textarea>
+          </div>
 
-    <!-- Intro Header -->
-    <header class="intro">
-        <div class="intro-body">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8 col-md-offset-2">
-                        <h1 class="brand-heading">Grayscale</h1>
-                        <p class="intro-text">A free, responsive, one page Bootstrap theme.<br>Created by Start Bootstrap.</p>
-                        <a href="#about" class="btn btn-circle page-scroll">
-                            <i class="fa fa-angle-double-down animated"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+          <input type="hidden" name="_next" value="file:///Users/fred/droptv/formspree-demo/thanks.html" />
+          
+          <div class="form-group">
+            <input type="submit" value="Enviar"class="btn btn-success btn-lg pull-left"></input>
+            <p class="help-block pull-left text-danger hide" id="form-error">&nbsp; The form is not valid. </p>
+            <button class="btn btn-lg pull-right" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+/* form validation plugin */
+$.fn.goValidate = function() {
+    var $form = this,
+        $inputs = $form.find('input:text');
+  
+    var validators = {
+        name: {
+            regex: /^[A-Za-z]{3,}$/
+        },
+        pass: {
+            regex: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/
+        },
+        email: {
+            regex: /^[\w\-\.\+]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/
+        },
+        phone: {
+            regex: /^[2-9]\d{2}-\d{3}-\d{4}$/,
+        }
+    };
+    var validate = function(klass, value) {
+        var isValid = true,
+            error = '';
+            
+        if (!value && /required/.test(klass)) {
+            error = 'This field is required';
+            isValid = false;
+        } else {
+            klass = klass.split(/\s/);
+            $.each(klass, function(i, k){
+                if (validators[k]) {
+                    if (value && !validators[k].regex.test(value)) {
+                        isValid = false;
+                        error = validators[k].error;
+                    }
+                }
+            });
+        }
+        return {
+            isValid: isValid,
+            error: error
+        }
+    };
+    var showError = function($input) {
+        var klass = $input.attr('class'),
+            value = $input.val(),
+            test = validate(klass, value);
+      
+        $input.removeClass('invalid');
+        $('#form-error').addClass('hide');
+        
+        if (!test.isValid) {
+            $input.addClass('invalid');
+            
+            if(typeof $input.data("shown") == "undefined" || $input.data("shown") == false){
+               $input.popover('show');
+            }
+            
+        }
+      else {
+        $input.popover('hide');
+      }
+    };
+   
+    $inputs.keyup(function() {
+        showError($(this));
+    });
+  
+    $inputs.on('shown.bs.popover', function () {
+      $(this).data("shown",true);
+  });
+  
+    $inputs.on('hidden.bs.popover', function () {
+      $(this).data("shown",false);
+  });
+  
+    $form.submit(function(e) {
+      
+        $inputs.each(function() { /* test each input */
+          if ($(this).is('.required') || $(this).hasClass('invalid')) {
+              showError($(this));
+          }
+      });
+        if ($form.find('input.invalid').length) { /* form is not valid */
+          e.preventDefault();
+            $('#form-error').toggleClass('hide');
+        }
+    });
+    return this;
+};
+$('form').goValidate();
 
-    <!-- About Section -->
-    <section id="about" class="container content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h2>About Grayscale</h2>
-                <p>Grayscale is a free Bootstrap 3 theme created by Start Bootstrap. It can be yours right now, simply download the template on <a href="http://startbootstrap.com/template-overviews/grayscale/">the preview page</a>. The theme is open source, and you can use it for any purpose, personal or commercial.</p>
-                <p>This theme features stock photos by <a href="http://gratisography.com/">Gratisography</a> along with a custom Google Maps skin courtesy of <a href="http://snazzymaps.com/">Snazzy Maps</a>.</p>
-                <p>Grayscale includes full HTML, CSS, and custom JavaScript files along with LESS files for easy customization.</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- Download Section -->
-    <section id="download" class="content-section text-center">
-        <div class="download-section">
-            <div class="container">
-                <div class="col-lg-8 col-lg-offset-2">
-                    <h2>Download Grayscale</h2>
-                    <p>You can download Grayscale for free on the preview page at Start Bootstrap.</p>
-                    <a href="http://startbootstrap.com/template-overviews/grayscale/" class="btn btn-default btn-lg">Visit Download Page</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="container content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h2>Contact Start Bootstrap</h2>
-                <p>Feel free to email us to provide some feedback on our templates, give us suggestions for new templates and themes, or to just say hello!</p>
-                <p><a href="mailto:feedback@startbootstrap.com">feedback@startbootstrap.com</a>
-                </p>
-                <ul class="list-inline banner-social-buttons">
-                    <li>
-                        <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
-                    </li>
-                    <li>
-                        <a href="https://plus.google.com/+Startbootstrap/posts" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Map Section -->
-    <div id="map"></div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container text-center">
-            <p>Copyright &copy; Your Website 2014</p>
-        </div>
-    </footer>
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="js/jquery.easing.min.js"></script>
-
-    <!-- Google Maps API Key - Use your own API key to enable the map feature. More information on the Google Maps API can be found at https://developers.google.com/maps/ -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRngKslUGJTlibkQ3FkfTxj3Xss1UlZDA&sensor=false"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="js/grayscale.js"></script>
-
+</script>
+<script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 </body>
-
 </html>

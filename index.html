@@ -7,6 +7,7 @@
   <style media="screen" type="text/css">
     
     body{
+    background-image: url("bg.jpg");
       text-align: center;
       font-family: 'Montserrat', sans-serif;
     }
@@ -15,6 +16,7 @@
       font-family: 'Montserrat', sans-serif;
     }
     h2 {
+    color: #359173;
       font-weight: normal;
       font-family: 'Montserrat', sans-serif;
     }
@@ -31,14 +33,14 @@
 <body>
   <div class="message">
     <img src="hello.png">
-    <h1>Seja bem vindo!</h1>
-    <h2>Somos um canal que inspira as pessoas exibindo muita arte, surf, cultura, skate, musica e natureza.</h2>
+    <h1></h1>
+    <h2>Um canal que inspira as pessoas, com muita de arte, surf, cultura, skate, musica e natureza.</h2>
     <h2></h2>
   </div>
 
   <div class="container">
   <div class="row">    
-    <h1 class="text-center"><a href="#myModal" role="button" class="btn btn-primary btn-lg" data-toggle="modal">Quer saber mais?</a></h1>
+    <h1 class="text-center"><a href="#myModal" role="button" class="btn btn-primary btn-lg" data-toggle="modal">Contato</a></h1>
   </div>
 </div>
 
@@ -47,7 +49,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-        <h3 id="myModalLabel">Contato:</h3>
+        <h3 id="myModalLabel">Contato</h3>
       </div>
       <div class="modal-body">
         <form class="form-horizontal col-sm-12" action="http://formspree.io/droptv@moods.com.br" method="POST">
@@ -56,18 +58,18 @@
           </div>
           
           <div class="form-group">
-            <input class="form-control email" placeholder="email" data-placement="top" data-trigger="manual" data-content="email" type="email" name="_replyto">
+            <input class="form-control email" placeholder="Email" data-placement="top" data-trigger="manual" data-content="email" type="email" name="_replyto">
           </div>
           
           <div class="form-group">
-            <textarea class="form-control" placeholder="Diga Oi..." data-placement="top" data-trigger="manual" style="height: 120px;" name="message"></textarea>
+            <textarea class="form-control" placeholder="Menssagem" data-placement="top" data-trigger="manual" style="height: 120px;" name="message"></textarea>
           </div>
 
           <input type="hidden" name="_next" value="file:///Users/fred/droptv/formspree-demo/thanks.html" />
           
           <div class="form-group">
             <input type="submit" value="Enviar"class="btn btn-success btn-lg pull-left"></input>
-            <p class="help-block pull-left text-danger hide" id="form-error">&nbsp; The form is not valid. </p>
+            <p class="help-block pull-left text-danger hide" id="form-error">&nbsp; Erro</p>
             <button class="btn btn-lg pull-right" data-dismiss="modal" aria-hidden="true">Cancelar</button>
           </div>
         </form>

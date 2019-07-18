@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
-<link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
 <style media="screen" type="text/css">
     body{
         position: fixed; 
@@ -11,7 +11,6 @@
   left: -50%; 
   width: 200%; 
   height: 200%;
-  
     }
     .mySlides img {
         position: absolute; 
@@ -22,63 +21,27 @@
   margin: auto; 
   min-width: 50%;
   min-height: 50%;
-  
 }
 
-
-h3 {
+h1 {
       color: #359173;
-      font-family: 'Josefin Sans', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
-
+    h2 {
+    color: #359173;
+      font-weight: normal;
+      font-family: 'Montserrat', sans-serif;
+    }
 
     .footer {
    position:fixed;
-   left:0px;
-   top:0px;
-   width:100%;
-   height:100%;
-   text-align: center;
-   background-color: rgba(0,0,0,.5);
-   
-}
-
-.box img {
-    width:70%;
-}
-
-.box {
-   position:relative;
    left:25%;
-   top:5%;
+   top:25%;
    width:50%;
-   height:100%;
-  
-   
 }
 
-.typewriter {
-  font-family: 'Josefin Sans', sans-serif;
-  display: inline-block;
-  
-}
-
-.typewriter-text {
-    display: inline-block;
-  	overflow: hidden;
-  	letter-spacing: 2px;
- 	animation: typing 5s steps(30, end);
-   
-  
-}
-
-@keyframes typing {
-    from { 
-        width: 0% 
-    }
-    to { 
-        width: 100% 
-    }
+.footer img {
+    width:100%;
 }
 
 
@@ -87,7 +50,7 @@ h3 {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 <body>
-<div class="layer">
+
 
 
  <div class="mySlides">
@@ -192,57 +155,15 @@ h3 {
  </div>
 
  <div class="footer">
-    <div class="box">
-        <img src="droptv.svg">
-        <div class="typewriter">
-            <div class="typewriter-text">
-        <h3>Um Canal de Inspiração</h3>
-      </div>
+        <img src="droptv.png">
+        <h1></h1>
+        <h2>Um Canal de Inspiração</h2>
+        <h2></h2>
     </div>
-       <br>
-     
-
-           
-              <a href="#myModal" role="button" class="btn btn-primary btn-lg" data-toggle="modal">Contato</a>
-           
- </div>
-</div>
 </body>
 
 
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-          <h3 id="myModalLabel">Eu quero a Drop!</h3>
-        </div>
-        <div class="modal-body">
-          <form class="form-horizontal col-sm-12" action="http://formspree.io/droptv@moods.com.br" method="POST">
-            <div class="form-group">
-              <input class="form-control required" placeholder="Nome" data-placement="top" data-trigger="manual" data-content="Nome completo" type="text" name="name">
-            </div>
-            
-            <div class="form-group">
-              <input class="form-control email" placeholder="Email" data-placement="top" data-trigger="manual" data-content="email" type="email" name="_replyto">
-            </div>
-            
-            <div class="form-group">
-              <textarea class="form-control" placeholder="Menssagem" data-placement="top" data-trigger="manual" style="height: 120px;" name="message"></textarea>
-            </div>
-  
-            <input type="hidden" name="_next" value="http://droptv.github.io/thanks.html" />
-            
-            <div class="form-group">
-              <input type="submit" value="Enviar"class="btn btn-success btn-lg pull-left"></input>
-              <p class="help-block pull-left text-danger hide" id="form-error">&nbsp; Erro</p>
-              <button class="btn btn-lg pull-right" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+ 
 
 
 

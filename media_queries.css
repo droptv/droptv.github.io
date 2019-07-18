@@ -1,0 +1,16 @@
+@media only screen and (max-width: 767px) {
+	body {
+		max-height: auto;
+		background-color: gray;
+		background-image: url("dropbg.gif");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+	}
+    .background_video{
+        display:none;
+    }
+
+
+}
+

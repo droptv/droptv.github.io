@@ -6,6 +6,8 @@
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
 <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/icons.css">
+	<script defer src="svgxuse.js"></script>
 <style media="screen" type="text/css">
     body{
         position: fixed; 
@@ -30,6 +32,11 @@ h2 {
       color: green;
       font-family: 'Josefin Sans', sans-serif;
     }
+    
+    p {
+    font-size: 16px;
+      font-family: 'Josefin Sans', sans-serif;
+    }
 
 h3 {
       color: white;
@@ -44,49 +51,35 @@ h3 {
    top:0px;
    width:100%;
    height:100%;
+   min-height:490px;
    text-align: center;
-   background-color: rgba(0,0,0,.05);
+   background-color: rgba(0,0,0,.1);
    
 }
 
 .box img {
-    width:70%;
+    width:40%;
+    min-width:200px;
 }
 
 .box {
-   position:relative;
+   position:absolute;
+   border-radius: 25px;
    left:25%;
-   top:5%;
+   top:10%;
    width:50%;
-   height:100%;
-  
+   height:70%;
+    min-height:300px;
+    max-height:400px;
+  background:rgba(34,34,34,0.85);
+  padding: 20px; 
    
 }
 
-.typewriter {
-  font-family: 'Josefin Sans', sans-serif;
-  display: inline-block;
-  
-}
 
-.typewriter-text {
-    display: inline-block;
-  	overflow: hidden;
-  	letter-spacing: 2px;
- 	animation: typing 5s steps(30, end);
-   
-  
+.caixa {
+position: relative;
 }
-
-@keyframes typing {
-    from { 
-        width: 0% 
-    }
-    to { 
-        width: 100% 
-    }
-}
-
 
 
 </style>
@@ -199,17 +192,20 @@ h3 {
 
  <div class="footer">
     <div class="box">
-      <a href="#myModal" data-toggle="modal">   <img src="droptv.svg"></a>
-        <a href="https://player.twitch.tv/?channel=droptvlive"><h2>▷▷▷</h2></a>
-        <div class="typewriter">
-            <div class="typewriter-text">
-        <h3>O Seu Canal de Inspiração.</h3>
-                
-                
-      </div>
-    </div>
+       <img src="droptv.svg">
+        <br>
+<div class="caixa">
+        <h1>
+            <a href="#myModal2" data-toggle="modal"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a>
+            <a href="#myModal" data-toggle="modal"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
+            <a href="https://player.twitch.tv/?channel=droptvlive" target="_blank" rel="noopener"><svg class="icon icon-play2"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>
+			<a href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
+        </h1>
+   
+</div>
+
             
-       <br>
+
     </div>
 </div>
 </body>
@@ -244,6 +240,23 @@ h3 {
               <button class="btn btn-lg pull-right" data-dismiss="modal" aria-hidden="true">Cancelar</button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+          <h2 id="myModalLabel">O Seu Canal De Inspiração.</h2>
+        </div>
+        <div class="modal-body">
+<p>DropTV é uma forma de arte. Uma curadoria de imagens e músicas initerrupta, que proporciona uma experiência imersiva. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
+<p>A DropTV é transmitida  via serviço da <a href="https://moods.com.br" target="_blank">Moods</a> em som de alta qualidade e imagem em Full HD, sem comerciais e interrupções, exclusivamente locais alternativos e cheios de estilo.
+Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> onde encontrar. Aproveite e poste uma foto com a hastag #droptv e faça parte da programação.</p>
+<p>Para quem gosta assistir de casa, realizamos com frequência streaming ao vivo do canal em nossa conta no <a href="https://player.twitch.tv/?channel=droptvlive" target="_blank">Twitch</a>, geralmente em horário noturno e finais de semana. Fique ligado.</p>
         </div>
       </div>
     </div>

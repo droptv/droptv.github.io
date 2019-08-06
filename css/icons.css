@@ -1,0 +1,92 @@
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+  color: white;
+}
+
+.icon.anime {
+
+    padding: 50px;
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+
+    -webkit-transition-property: -webkit-transform;
+    -moz-transition-property: -moz-transform;
+    transition-property: transform;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease-in-out;
+    -moz-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+}
+
+.icon.anime:hover {
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  transform: rotateY(180deg); }
+
+.icon:hover {
+    color: grey; }
+
+/* ==========================================
+Single-colored icons can be modified like so:
+.icon-name {
+  font-size: 32px;
+  color: red;
+}
+========================================== */
+
+.icon-lightbulb {
+  width: 0.6875em;
+}
+
+.icon-comments {
+  width: 1.07421875em;
+}
+
+.icon-coffee {
+  width: 1.0361328125em;
+}
+
+.icon-close {
+  width: 0.7861328125em;
+}
+
+.icon-bars {
+  width: 0.857421875em;
+}
+
+.icon-pinterest-square {
+  width: 0.857421875em;
+}
+
+.icon-facebook-square {
+  width: 0.857421875em;
+}
+
+.icon-twitter-square {
+  width: 0.857421875em;
+}
+
+.icon-gittip {
+  width: 0.857421875em;
+}
+
+.icon-volume-high {
+  width: 1.0625em;
+}
+
+.glyph {
+  font-size: 16px;
+  margin-right: 1.5em;
+  float: left;
+  width: 8em;
+}

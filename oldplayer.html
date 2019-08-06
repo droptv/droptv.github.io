@@ -82,6 +82,12 @@ top:10%;
 position: relative;
 }
 
+.aiframe {
+   display:block;
+    width:90%;
+    margin: auto;
+    }
+
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -193,76 +199,21 @@ position: relative;
 
  <div class="footer">
     <div class="box">
-       <img src="droptv.svg">
-        <br>
-<div class="caixa">
-        <h1>
-            <a href="#myModal2" data-toggle="modal"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a>
-            <a href="#myModal" data-toggle="modal"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
-            <a href="live"><svg class="icon icon-play2"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>
-			<a href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
-        </h1>
-   
-</div>
 
+<iframe class="aiframe"
+    src="https://player.twitch.tv/?channel=droptvlive"
+    height="90%"
+    width="90%"
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen="true">
+</iframe>
             
 
     </div>
 </div>
 </body>
 
-
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-          <h2 id="myModalLabel">Eu quero a Drop!</h2>
-        </div>
-        <div class="modal-body">
-          <form class="form-horizontal col-sm-12" action="http://formspree.io/droptv@moods.com.br" method="POST">
-            <div class="form-group">
-              <input class="form-control required" placeholder="Nome" data-placement="top" data-trigger="manual" data-content="Nome completo" type="text" name="name">
-            </div>
-            
-            <div class="form-group">
-              <input class="form-control email" placeholder="Email" data-placement="top" data-trigger="manual" data-content="email" type="email" name="_replyto">
-            </div>
-            
-            <div class="form-group">
-              <textarea class="form-control" placeholder="Menssagem" data-placement="top" data-trigger="manual" style="height: 120px;" name="message"></textarea>
-            </div>
-  
-            <input type="hidden" name="_next" value="http://droptv.github.io/thanks.html" />
-            
-            <div class="form-group">
-              <input type="submit" value="Enviar"class="btn btn-success btn-lg pull-left"></input>
-              <p class="help-block pull-left text-danger hide" id="form-error">&nbsp; Erro</p>
-              <button class="btn btn-lg pull-right" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-          <h2 id="myModalLabel">O Seu Canal De Inspiração.</h2>
-        </div>
-        <div class="modal-body">
-<p>DropTV é uma forma de arte. Uma curadoria de imagens e músicas initerrupta, que proporciona uma experiência imersiva. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
-<p>A DropTV é transmitida  via serviço da <a href="https://moods.com.br" target="_blank">Moods</a> em som de alta qualidade e imagem em Full HD, sem comerciais e interrupções, exclusivamente locais alternativos e cheios de estilo.
-Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> onde encontrar. Aproveite e poste uma foto com a hastag #droptv e faça parte da programação.</p>
-<p>Para quem gosta assistir de casa, realizamos com frequência streaming ao vivo do canal em nossa conta no <a href="https://player.twitch.tv/?channel=droptvlive" target="_blank">Twitch</a>, geralmente em horário noturno e finais de semana. Fique ligado.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-    
 
 
 

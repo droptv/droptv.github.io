@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/icons.css">
 	<script defer src="svgxuse.js"></script>
+	
 <style media="screen" type="text/css">
     body{
         position: fixed; 
@@ -66,7 +67,7 @@ animation: AnimationName 20s ease infinite;
 
 .box img {
     width:60%;
-    min-width:200px;
+    min-width:300px;
     opacity: 0.6;
 }
 
@@ -107,12 +108,12 @@ background:rgba(34,34,34,0.85);
 
 
 .animate-two {
-    -webkit-animation: fadeIn 4s ease-in;
+    -webkit-animation: fadeIn 2s ease-in;
     animation: fadeIn 4s ease-in;
 }
 
 .animate-four {
-    -webkit-animation: fadeIn 8s ease-in;
+    -webkit-animation: fadeIn 4s ease-in;
     animation: fadeIn 8s ease-in;
 }
 
@@ -141,11 +142,12 @@ background:rgba(34,34,34,0.85);
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
 </head>
-<body>
+<body class="animate-one">
 <div class="layer animate-one">
 
-
+<div class="animate-one">
  <div class="mySlides">
   <img src="img/01.jpg">
  </div>
@@ -247,7 +249,7 @@ background:rgba(34,34,34,0.85);
    <span class="dot"></span>
  </div>
  
-
+</div>
 
  <div class="footer">
     <div class="box">
@@ -263,9 +265,7 @@ background:rgba(34,34,34,0.85);
 			<a href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
         </h1>
    
-</div>
-
-            
+</div>      
 
     </div>
 </div>
@@ -314,10 +314,10 @@ background:rgba(34,34,34,0.85);
           <h2 id="myModalLabel">O Seu Canal De Inspiração.</h2>
         </div>
         <div class="modal-body">
-<p>DropTV é uma forma de arte. Uma curadoria de imagens e músicas initerrupta, que proporciona uma experiência imersiva. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
-<p>A DropTV é transmitida  via serviço da <a href="https://moods.com.br" target="_blank">Moods</a> em som de alta qualidade e imagem em Full HD, sem comerciais e interrupções, exclusivamente locais alternativos e cheios de estilo.
-Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> onde encontrar. Aproveite e poste uma foto com a hastag #droptv e faça parte da programação.</p>
-<p>Para quem gosta assistir de casa, realizamos com frequência streaming ao vivo do canal em nossa conta no <a href="https://player.twitch.tv/?channel=droptvlive" target="_blank">Twitch</a>, geralmente em horário noturno e finais de semana. Fique ligado.</p>
+<p>DropTV é um canal de arte. Uma curadoria de imagens e músicas em fluxo contínuo que proporcionam uma experiência imersiva. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
+<p>A DropTV é transmitida via receptores da <a href="https://moods.com.br" target="_blank">Moods</a> em alta definição, sem comerciais ou interrupções. A DropTV pode ser encontrada exclusivamente em locais diferenciados e cheios de estilo.
+Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> quais são esses locais. Você também pode postar uma foto com a hastag #droptv e fazer parte da programação.</p>
+<p>Também realizamos com frequência um streaming ao vivo do canal, via <a href="https://player.twitch.tv/?channel=droptvlive" target="_blank">Twitch</a>, geralmente em horário noturno e finais de semana. Para o público acompanhar de casa. <i>Turn In And Drop Out.</i></p>
         </div>
       </div>
     </div>
@@ -325,6 +325,10 @@ Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_b
     
 
 
+</body>
+<script>
+$('.controls').fadeOut(); 
+</script>
 
 <script>
 var slideIndex = 0;
@@ -352,6 +356,7 @@ window.addEventListener("beforeunload", function () {
   document.body.classList.add("animate-out");
 });
 </script>
+
 <script>
 var timer;
 var timeVisible = 5000;
@@ -374,6 +379,5 @@ $('html').click(function() {
     }
 });
 </script>
-</body>
 <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 </html> 

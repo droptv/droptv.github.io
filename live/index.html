@@ -32,13 +32,7 @@ h3 {
 
 
     .footer {
-background: linear-gradient(48deg, #1e9d7c, #1e6f9d);
-background-size: 400% 400%;
-
--webkit-animation: AnimationName 20s ease infinite;
--moz-animation: AnimationName 20s ease infinite;
-animation: AnimationName 20s ease infinite;
-
+    background: white;
    position:absolute;
    left:0px;
    top:0px;
@@ -48,6 +42,27 @@ animation: AnimationName 20s ease infinite;
    text-align: center;
    background-color: rgba(0,0,0,.1);
    
+}
+
+.bgzera {
+   position:fixed;
+   left:0px;
+   top:0px;
+   width:100%;
+   height:100%;
+background: linear-gradient(48deg, #1e9d7c, #1e6f9d);
+background-size: 400% 400%;
+
+-webkit-animation: AnimationName 20s ease infinite;
+-moz-animation: AnimationName 20s ease infinite;
+animation: AnimationName 20s ease infinite;
+opacity:0.8;
+}
+
+.animate-out {
+    -webkit-transition: opacity .5s;
+    transition: opacity .5s;
+    opacity: 0;
 }
 
 
@@ -103,14 +118,47 @@ top: 10%;
    height:80%;
 }
 
+.animate-fast {
+    -webkit-animation: fadeIn 0.5s ease-in;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.animate-one {
+    -webkit-animation: fadeIn 1s ease-in;
+    animation: fadeIn 1s ease-in;
+}
+
+.animate-two {
+    -webkit-animation: fadeIn 2s ease-in;
+    animation: fadeIn 2s ease-in;
+}
+
+.animate-four {
+    -webkit-animation: fadeIn 4s ease-in;
+    animation: fadeIn 4s ease-in;
+}
+
+
+
+@-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 <body>
-<div class="layer">
+<div class="layer animate-one">
 
 
-
+<div class="bgzera">
+</div>
 
  <div class="footer">
     <div class="box">
@@ -122,13 +170,13 @@ top: 10%;
     scrolling="no"
     allowfullscreen="true">
 </iframe>
-<div class="caixa">
-        <h1>
+<div class="caixa controls animate-two">
+        <h2>
             <a href="#myModal2" data-toggle="modal"><svg class="icon icon-bars"><use xlink:href="/symbol-defs.svg#icon-bars"></use></svg></a>
             <a href="#myModal" data-toggle="modal"><svg class="icon icon-comments"><use xlink:href="/symbol-defs.svg#icon-comments"></use></svg></a>
             <a href="/"><svg class="icon icon-close"><use xlink:href="/symbol-defs.svg#icon-close"></use></svg></a>
 			<a href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener"><svg class="icon icon-instagram"><use xlink:href="/symbol-defs.svg#icon-instagram"></use></svg></a>
-        </h1>
+        </h2>
    
 </div>
 
@@ -214,7 +262,33 @@ function showSlides() {
   setTimeout(showSlides, 150); // Change image every 2 seconds
 }
 </script>
+<script>
+window.addEventListener("beforeunload", function () {
+  document.body.classList.add("animate-out");
+});
+</script>
+<script>
+var timer;
+var timeVisible = 5000;
+timeFadeout();
 
+function timeFadeout() {
+    timer = setTimeout(function() {
+        $('.controls').fadeOut();          
+    }, timeVisible );
+}
+
+$('html').click(function() {
+    clearTimeout(timer);
+    if ($('.controls:visible').length) {
+        $('.controls').fadeOut();
+    }
+    else {
+        $('.controls').fadeIn();
+        timeFadeout();
+    }
+});
+</script>
 </body>
 <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 </html> 

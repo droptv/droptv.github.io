@@ -26,7 +26,7 @@
   margin: auto; 
   min-width: 50%;
   min-height: 50%;
-  
+  opacity: 0.8;
 }
 h2 {
       color: green;
@@ -42,6 +42,13 @@ h3 {
       color: white;
       font-family: 'Josefin Sans', sans-serif;
     }
+    
+h1 {
+    color: linear-gradient(48deg, #1e9d7c, #1e6f9d);
+-webkit-animation: AnimationName 20s ease infinite;
+-moz-animation: AnimationName 20s ease infinite;
+animation: AnimationName 20s ease infinite;
+}
 
 
 
@@ -58,13 +65,14 @@ h3 {
 }
 
 .box img {
-    width:40%;
+    width:60%;
     min-width:200px;
+    opacity: 0.6;
 }
 
 .box {
    position:relative;
-   border-radius: 25px;
+   
 margin: auto;
 top:10%;
    width:50%;
@@ -72,7 +80,7 @@ top:10%;
    height:50%;
     
     max-height:400px;
-  background:rgba(34,34,34,0.85);
+  
  
    
 }
@@ -80,6 +88,54 @@ top:10%;
 
 .caixa {
 position: relative;
+margin: auto;
+width:50%;
+padding:5px;
+border-radius: 25px;
+background:rgba(34,34,34,0.85);
+}
+
+.animate-fast {
+    -webkit-animation: fadeIn 0.5s ease-in;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.animate-one {
+    -webkit-animation: fadeIn 1s ease-in;
+    animation: fadeIn 1s ease-in;
+}
+
+
+.animate-two {
+    -webkit-animation: fadeIn 4s ease-in;
+    animation: fadeIn 4s ease-in;
+}
+
+.animate-four {
+    -webkit-animation: fadeIn 8s ease-in;
+    animation: fadeIn 8s ease-in;
+}
+
+.animate-out {
+    -webkit-transition: opacity 1s;
+    transition: opacity 1s;
+    opacity: 0;
+}
+
+
+@-webkit-keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-two {
+    -webkit-animation: fadeIn 3s ease-in;
+    animation: fadeIn 3s ease-in;
 }
 
 
@@ -87,7 +143,7 @@ position: relative;
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 <body>
-<div class="layer">
+<div class="layer animate-one">
 
 
  <div class="mySlides">
@@ -190,12 +246,16 @@ position: relative;
    <span class="dot"></span>
    <span class="dot"></span>
  </div>
+ 
+
 
  <div class="footer">
     <div class="box">
+    <div class="animate-two">
        <img src="droptv.svg">
+       </div>
         <br>
-<div class="caixa">
+<div class="caixa controls">
         <h1>
             <a href="#myModal2" data-toggle="modal"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a>
             <a href="#myModal" data-toggle="modal"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
@@ -287,7 +347,33 @@ function showSlides() {
   setTimeout(showSlides, 150); // Change image every 2 seconds
 }
 </script>
+<script>
+window.addEventListener("beforeunload", function () {
+  document.body.classList.add("animate-out");
+});
+</script>
+<script>
+var timer;
+var timeVisible = 5000;
+timeFadeout();
 
+function timeFadeout() {
+    timer = setTimeout(function() {
+        $('.controls').fadeOut();          
+    }, timeVisible );
+}
+
+$('html').click(function() {
+    clearTimeout(timer);
+    if ($('.controls:visible').length) {
+        $('.controls').fadeOut();
+    }
+    else {
+        $('.controls').fadeIn();
+        timeFadeout();
+    }
+});
+</script>
 </body>
 <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 </html> 

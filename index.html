@@ -11,6 +11,7 @@
 	
 <style media="screen" type="text/css">
     body{
+    background-color: white;
         position: fixed; 
   top: -50%; 
   left: -50%; 
@@ -27,7 +28,7 @@
   margin: auto; 
   min-width: 50%;
   min-height: 50%;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 h2 {
       color: green;
@@ -67,8 +68,8 @@ animation: AnimationName 20s ease infinite;
 
 .box img {
     width:60%;
-    min-width:300px;
-    opacity: 0.6;
+    min-width:200px;
+    opacity: 0.8;
 }
 
 .box {
@@ -91,6 +92,7 @@ top:10%;
 position: relative;
 margin: auto;
 width:50%;
+min-width:200px;
 padding:5px;
 border-radius: 25px;
 background:rgba(34,34,34,0.85);
@@ -359,7 +361,7 @@ window.addEventListener("beforeunload", function () {
 
 <script>
 var timer;
-var timeVisible = 5000;
+var timeVisible = 3000;
 timeFadeout();
 
 function timeFadeout() {
@@ -367,7 +369,6 @@ function timeFadeout() {
         $('.controls').fadeOut();          
     }, timeVisible );
 }
-
 $('html').click(function() {
     clearTimeout(timer);
     if ($('.controls:visible').length) {
@@ -377,7 +378,15 @@ $('html').click(function() {
         $('.controls').fadeIn();
         timeFadeout();
     }
-});
+  });
+  
+$('html').mousemove(function() {
+        clearTimeout(timer);
+        $('.controls').fadeIn();
+        timeFadeout();
+  });
+  
+
 </script>
 <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 </html> 

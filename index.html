@@ -11,7 +11,7 @@
 	
 <style media="screen" type="text/css">
     body{
-    background-color: white;
+    background-color: black;
         position: fixed; 
   top: -50%; 
   left: -50%; 
@@ -19,6 +19,23 @@
   height: 200%;
   
     }
+    
+    
+.bgzera {
+   position:fixed;
+   left:0px;
+   top:0px;
+   width:100%;
+   height:100%;
+background: linear-gradient(48deg, #1e9d7c, #1e6f9d);
+background-size: 400% 400%;
+
+-webkit-animation: AnimationName 20s ease infinite;
+-moz-animation: AnimationName 20s ease infinite;
+animation: AnimationName 20s ease infinite;
+opacity:0.8;
+}
+    
     .mySlides img {
         position: absolute; 
   top: 0; 
@@ -46,10 +63,7 @@ h3 {
     }
     
 h1 {
-    color: linear-gradient(48deg, #1e9d7c, #1e6f9d);
--webkit-animation: AnimationName 20s ease infinite;
--moz-animation: AnimationName 20s ease infinite;
-animation: AnimationName 20s ease infinite;
+    color: black;
 }
 
 
@@ -60,7 +74,7 @@ animation: AnimationName 20s ease infinite;
    top:0px;
    width:100%;
    height:100%;
-   min-height:490px;
+   
    text-align: center;
    background-color: rgba(0,0,0,.1);
    
@@ -89,13 +103,14 @@ top:10%;
 
 
 .caixa {
-position: relative;
+position: fixed;
 margin: auto;
+bottom:10%;
 width:50%;
 min-width:200px;
 padding:5px;
 border-radius: 25px;
-background:rgba(34,34,34,0.85);
+background:rgba(34,34,34,0.75);
 }
 
 .animate-fast {
@@ -141,14 +156,24 @@ background:rgba(34,34,34,0.85);
     animation: fadeIn 3s ease-in;
 }
 
+.showme {
+display:none;
+position:absolute;
+margin: auto;
+   width:100%;
+   height:100%;
+   padding:50px;
+   display: none;
+}
+
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 </head>
-<body class="animate-one">
-<div class="layer animate-one">
+<body>
 
+<div class="playpau animate-one">
 <div class="animate-one">
  <div class="mySlides">
   <img src="img/01.jpg">
@@ -252,18 +277,32 @@ background:rgba(34,34,34,0.85);
  </div>
  
 </div>
+</div>
 
  <div class="footer">
+        <div class="showme playpau">
+<iframe
+    src="https://player.twitch.tv/?channel=droptvlive"
+    height="100%"
+    width="100%"
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen="true">
+</iframe>
+</div>
     <div class="box">
     <div class="animate-two">
-       <img src="droptv.svg">
+       <img src="droptv.svg" class="playpau">
+
        </div>
+
         <br>
-<div class="caixa controls">
+<div class="caixa controls promouse">
         <h1>
             <a href="#myModal2" data-toggle="modal"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a>
             <a href="#myModal" data-toggle="modal"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
-            <a href="live"><svg class="icon icon-play2"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>
+            <a href="#" class="live ligades"><svg class="icon icon-play2 playpau"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>
+            <a href="#" class="ligades"><svg class="icon icon-close playpau" style="display: none;"><use xlink:href="/symbol-defs.svg#icon-close"></use></svg></a>
 			<a href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
         </h1>
    
@@ -379,14 +418,19 @@ $('html').click(function() {
         timeFadeout();
     }
   });
-  
-$('html').mousemove(function() {
+  $('html').mousemove(function() {
         clearTimeout(timer);
-        $('.controls').fadeIn();
+        $('.promouse').fadeIn();
         timeFadeout();
   });
-  
+  </script>
 
+<script>
+$(document).ready(function(){
+    $('.ligades').click(function() {
+      $('.playpau').toggle("slide");
+    });
+});
 </script>
 <script type='text/javascript' src="http://netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js"></script>
 </html> 

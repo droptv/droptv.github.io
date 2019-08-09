@@ -18,16 +18,6 @@ position: fixed;
   font-family: 'Josefin Sans', sans-serif;
 }
 
-h2 {
-      color: green;
-          }
-h3 {
-      color: white;
-      }
-    
-h1 {
-    color: black;
-}
 
 p {
 color: white;
@@ -50,6 +40,16 @@ text-decoration: none;
   margin: auto; 
   min-width: 55%;
   min-height: 55%;
+     -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
 }
 
 .footer {
@@ -79,6 +79,16 @@ top:10%;
     width:60%;
     min-width:200px;
     opacity: 0.8;
+       -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
 }
 
 .centro {
@@ -106,6 +116,16 @@ min-width:200px;
 padding:5px;
 border-radius: 25px;
 background:rgba(34,34,34,0.75);
+   -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
 }
 
 .leitura {
@@ -118,6 +138,7 @@ padding:15px;
 border-radius: 25px;
 background:rgba(34,34,34,0.9);
 display: none;
+text-align: justify;
 }
 
 .videobox {
@@ -160,6 +181,22 @@ animation: AnimationName 18s ease infinite;
     100%{background-position:0% 76%}
 }
 
+.close {
+    top: 0px;
+    float: right;
+    background-color: white;
+  color: black;
+  text-decoration: none;
+  opacity:0.1;
+}
+
+.close:hover {
+opacity:0.4;
+}
+
+.close:after {
+  content: '✖'; 
+}
 
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -282,9 +319,10 @@ animation: AnimationName 18s ease infinite;
 
 <div class="topo">
    <div class="videobox">
+   <button class="close bt-play"></button>
 <iframe
     src="https://player.twitch.tv/?channel=droptvlive"
-    height="100%"
+    height="95%"
     width="100%"
     frameborder="0"
     scrolling="no"
@@ -295,12 +333,23 @@ animation: AnimationName 18s ease infinite;
 
 
        
-<div class="dv-info leitura bt-info">  
+<div class="dv-info leitura">
+<button class="close bt-info"></button>
 <p>DropTV é um canal de arte. Uma curadoria de imagens e músicas em fluxo contínuo que proporcionam uma experiência imersiva. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
 <p>A DropTV é transmitida via receptores da <a href="https://moods.com.br" target="_blank">Moods</a> em alta definição, sem comerciais ou interrupções. A DropTV pode ser encontrada exclusivamente em locais diferenciados e cheios de estilo.
 Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> quais são esses locais.
 Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <a href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">contato.</a> 
 <p>Você também pode assitir a DropTV nos eventos de streaming ao vivo que realizamos com frequência via <a href="https://player.twitch.tv/?channel=droptvlive" target="_blank">Twitch</a>, geralmente em horário noturno e finais de semana.<i>Turn In And Drop Out.</i></p>
+</div>
+
+<div class="dv-mail leitura">
+<button class="close bt-mail"></button>
+<h1><a style="color: orange;" href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">Formulário de Contato.</a></h1>
+</div>
+
+<div class="dv-insta leitura">
+<button class="close bt-insta"></button>
+<h1><a style="color: #23CDEF;" href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener">https://www.instagram.com/droptv.oficial/</a></h1>
 </div>
 
 
@@ -309,10 +358,10 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 <div class="caixa controls">
 <h1>
             <a href="#" class="bt-info"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
+            <a href="#" class="bt-mail"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
             <a href="#" class="bt-play"><svg class="icon icon-play2 ic-play"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>
             <a href="#" class="bt-play"><svg class="icon icon-close ic-stop" style="display: none;"><use xlink:href="/symbol-defs.svg#icon-close"></use></svg></a>
-			<a href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
+			<a href="#" class="bt-insta"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
 </h1>
 </div>  
 </div>  
@@ -387,6 +436,8 @@ $('.dv-info').toggle();
 if ($('.dv-info:visible').length) {
         $('.videobox').hide();
         $('.loggo').hide();
+        $('.dv-mail').hide();
+        $('.dv-insta').hide();
     }
     else {
         $('.loggo').fadeIn();
@@ -394,13 +445,43 @@ if ($('.dv-info:visible').length) {
     playPausebt();
     });
     
+$('.bt-mail').click(function() {
+$('.dv-mail').toggle();
+if ($('.dv-mail:visible').length) {
+        $('.videobox').hide();
+        $('.loggo').hide();
+        $('.dv-info').hide();
+        $('.dv-insta').hide();
+    }
+    else {
+        $('.loggo').fadeIn();
+    }
+    playPausebt();
+    });
+    
+$('.bt-insta').click(function() {
+$('.dv-insta').toggle();
+if ($('.dv-insta:visible').length) {
+        $('.videobox').hide();
+        $('.loggo').hide();
+        $('.dv-info').hide();
+        $('.dv-mail').hide();
+    }
+    else {
+        $('.loggo').fadeIn();
+    }
+    playPausebt();
+    });    
+    
 $('.bt-play').click(function() {
 $('.videobox').toggle();
 $('.playpau').toggle();
 if ($('.videobox:visible').length) {
         $('.dv-info').hide();
+        $('.dv-mail').hide();
         $('.loggo').hide();
         $('.fotoz').hide();
+        $('.dv-insta').hide();
     }
     else {
         $('.fotoz').fadeIn();

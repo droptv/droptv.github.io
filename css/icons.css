@@ -9,12 +9,6 @@
 }
 
 .icon.anime {
-
-    padding: 50px;
-    display: inline-block;
-    width: 150px;
-    height: 150px;
-
     -webkit-transition-property: -webkit-transform;
     -moz-transition-property: -moz-transform;
     transition-property: transform;

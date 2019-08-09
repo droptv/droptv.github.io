@@ -182,9 +182,8 @@ height:300px;
 position: relative;
 margin: auto;
 bottom:10%;
-width:50%;
-min-width:200px;
-padding:5px;
+width:150px;
+padding:1px;
 border-radius: 25px;
 background:rgba(34,34,34,0.75);
    -moz-user-select: none;
@@ -203,7 +202,7 @@ background:rgba(34,34,34,0.75);
 position: relative;
 margin: auto;
 width:80%;
-height:80%;
+height:75%;
 overflow:auto;
 padding:15px;
 border-radius: 25px;
@@ -382,7 +381,7 @@ opacity:0.8;
 </div>
 
 
- <div class="footer ligbotoes bt-fundo">
+ <div class="footer">
 
 
     <div class="box">
@@ -405,7 +404,6 @@ opacity:0.8;
 
        
 <div class="dv-info leitura">
-<button class="close bt-info"></button>
 <p>DropTV é uma nova experiência. Uma curadoria de imagens e músicas em fluxo contínuo que proporcionam uma imersão em novas sensações. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
 <p>A DropTV é transmitida via receptores da <a href="https://moods.com.br" target="_blank">Moods</a> em alta definição de imagem, sem comerciais ou interrupções. A DropTV pode ser encontrada exclusivamente em locais diferenciados e cheios de estilo.
 Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> quais são esses locais.
@@ -414,26 +412,23 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 </div>
 
 <div class="dv-mail leitura">
-<button class="close bt-mail"></button>
-<h1><a style="color: orange;" href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">Formulário de Contato.</a></h1>
+<h2><a style="color: orange;" href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">Formulário de Contato.</a></h2>
 </div>
 
 <div class="dv-insta leitura">
-<button class="close bt-insta"></button>
-<h1><a style="color: #23CDEF;" href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener">https://www.instagram.com/droptv.oficial/</a></h1>
+<h2><a style="color: #23CDEF;" href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener">Instagram:<br>@droptv.oficial</a></h2>
 </div>
 
 
 
 <div class="centro">
 <div class="caixa controls">
-<h1>
+<h2>
             <a href="#" class="bt-info"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a>
             <a href="#" class="bt-mail"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
             <a href="#" class="bt-play"><svg class="icon icon-play2 ic-play"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>
-            <a href="#" class="bt-play"><svg class="icon icon-close ic-stop" style="display: none;"><use xlink:href="/symbol-defs.svg#icon-close"></use></svg></a>
 			<a href="#" class="bt-insta"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
-</h1>
+</h2>
 </div>  
 </div>  
 
@@ -475,6 +470,7 @@ function timeFadeout() {
         $('.controls').fadeOut();          
     }, timeVisible );
 }
+
 function playPausebt() {
     if ($('.videobox:visible').length) {
         $('.ic-play').hide();
@@ -513,7 +509,6 @@ if ($('.dv-info:visible').length) {
     else {
         $('.loggo').fadeIn();
     }
-    playPausebt();
     });
     
 $('.bt-mail').click(function() {
@@ -527,7 +522,6 @@ if ($('.dv-mail:visible').length) {
     else {
         $('.loggo').fadeIn();
     }
-    playPausebt();
     });
     
 $('.bt-insta').click(function() {
@@ -541,7 +535,6 @@ if ($('.dv-insta:visible').length) {
     else {
         $('.loggo').fadeIn();
     }
-    playPausebt();
     });    
     
 $('.bt-play').click(function() {
@@ -558,7 +551,6 @@ if ($('.videobox:visible').length) {
         $('.fotoz').fadeIn();
         $('.loggo').fadeIn();
     }
-    playPausebt();
     });
 
 

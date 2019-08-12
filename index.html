@@ -13,13 +13,22 @@
 	
 <style media="screen" type="text/css">
 body{
+position: fixed; 
+  top: -50%; 
+  left: -50%; 
+  width: 200%; 
+  height: 200%;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.bgzera {
 background: linear-gradient(54deg, #5bc5aa, #b272e1, #72b6e1, #ffffff);
 background-size: 800% 800%;;
-
+   width:100%;
+   height:100%;
 -webkit-animation: AnimationName 18s ease infinite;
 -moz-animation: AnimationName 18s ease infinite;
 animation: AnimationName 18s ease infinite;
-  font-family: 'Josefin Sans', sans-serif;
 }
 
 @-webkit-keyframes AnimationName {
@@ -161,33 +170,23 @@ background:rgba(34,34,34,0.75);
    -moz-user-select: none;
    -khtml-user-select: none;
    -webkit-user-select: none;
-
-   /*
-     Introduced in IE 10.
-     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-   */
    -ms-user-select: none;
    user-select: none;
 }
 
 .loggo {
-position: static;
-		margin-top:0;
-		margin-right:auto;
-		margin-bottom:0;
-		margin-left:auto;
-	
-width:50%;
-height:50%;
+position: absolute;
+		margin-top:10%;
+		margin-left:30%;
+   width: 40%;
+   height: 50%;
+      -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
 
    }
-   
-   .loggo img {
-   width: 100%;
-   height: 100%;
-   }
-   
-
    
 
 
@@ -244,15 +243,22 @@ opacity:0.8;
 .musiq {
 color: white;
 padding: 5px;
+font-size:3vw;
+display: table;
 }
 
 .musiq img{
-width: 20%;
-max-width: 150px;
-height: auto;
-position:relative;
-padding: 15px;
-float:left;
+
+height: 20%;
+max-height: 100px;
+
+
+
+}
+
+.trackname {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 </style>
@@ -261,7 +267,8 @@ float:left;
 </head>
 
 <body>
-<div class="loggo"><img src="droptv.svg"><!-- fallback here (<img> referencing a PNG version of the graphic, for example) --></img></div>
+<div class="bgzera"><img src="droptv.svg" class="loggo"></img></div>
+
 <div class="footer">
 <div class="videobox">
 <iframe
@@ -281,7 +288,7 @@ float:left;
 <p><b>DropTV</b> é uma nova experiência. Uma curadoria de imagens e músicas em fluxo contínuo que proporcionam uma imersão em novas sensações. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
 <p>A DropTV é transmitida via receptores da <a href="https://moods.com.br" target="_blank">Moods</a> em alta definição de imagem, sem intervalos comerciais. A DropTV pode ser encontrada exclusivamente em locais diferenciados e cheios de estilo.
 Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> quais são esses locais.
-Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <a href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">contato.</a> 
+Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <a href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?embedded=true" target="_blank" rel="noopener">contato.</a> 
 <p>E claro, você também pode assitir a DropTV aqui em nosso site.</p><p><i>"Turn In And Drop Out."</i></p>
 </div>
 </div>
@@ -289,7 +296,7 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 <div class="dv-mail leitura bt-mail">
 <div class="paragrafo">
 <p>Para encomendar um receptor digital para exibir a <b>DropTV</b> em seu espaço, nos enviar um vídeo para ser exibido na programação, dúvidas ou sugestões, acesse o nosso:</p>
-<h3><a style="color: orange;" href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">Formulário de Contato.</a></h3>
+<h3><a style="color: orange;" href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?embedded=true" target="_blank" rel="noopener">Formulário de Contato.</a></h3>
 </div>
 </div>
 
@@ -305,8 +312,9 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
      <div id="nowplay"></div>
      <div class="musiq">
      <img src="#" id="cover" />
-     <p id="title">Musica</p>
-     <p id="artist">Artista</p>
+     <div class="trackname">
+     <p style="font-size:3vw;"><span id="artist">Artista</span> - <span id="title">Musica</span></p>
+     </div>
      </div>
 </div>
 

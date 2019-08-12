@@ -13,13 +13,31 @@
 	
 <style media="screen" type="text/css">
 body{
-position: fixed; 
-  top: -50%; 
-  left: -50%; 
-  width: 200%; 
-  height: 200%;
+background: linear-gradient(54deg, #5bc5aa, #b272e1, #72b6e1, #ffffff);
+background-size: 800% 800%;;
+
+-webkit-animation: AnimationName 18s ease infinite;
+-moz-animation: AnimationName 18s ease infinite;
+animation: AnimationName 18s ease infinite;
   font-family: 'Josefin Sans', sans-serif;
 }
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 76%}
+    50%{background-position:100% 25%}
+    100%{background-position:0% 76%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 76%}
+    50%{background-position:100% 25%}
+    100%{background-position:0% 76%}
+}
+@keyframes AnimationName { 
+    0%{background-position:0% 76%}
+    50%{background-position:100% 25%}
+    100%{background-position:0% 76%}
+}
+
 
 .icon {
   display: inline-block;
@@ -102,26 +120,7 @@ text-decoration: none;
 }
     
 
-.mySlides img {
-        position: absolute; 
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0; 
-  margin: auto; 
-  min-width: 55%;
-  min-height: 55%;
-     -moz-user-select: none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
 
-   /*
-     Introduced in IE 10.
-     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-   */
-   -ms-user-select: none;
-   user-select: none;
-}
 
 .footer {
    position:fixed;
@@ -130,37 +129,9 @@ text-decoration: none;
    width:100%;
    height:100%;   
    text-align: center;
-   background-color: rgba(0,0,0,.1);
    }
 
 
-
-.box {
-   position:relative;   
-margin: auto;
-top:10%;
-   width:80%;
-   min-width:250px;
-   height:80%;
-    max-height:400px;
-}
-
-
-.box img {
-    width:60%;
-    min-width:200px;
-    opacity: 0.8;
-       -moz-user-select: none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
-
-   /*
-     Introduced in IE 10.
-     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-   */
-   -ms-user-select: none;
-   user-select: none;
-}
 
 .centro {
    position:fixed;
@@ -182,9 +153,10 @@ height:300px;
 position: relative;
 margin: auto;
 bottom:10%;
-width:150px;
+width:220px;
 padding:1px;
-border-radius: 25px;
+letter-spacing: 10px;
+border-radius: 16px;
 background:rgba(34,34,34,0.75);
    -moz-user-select: none;
    -khtml-user-select: none;
@@ -198,58 +170,57 @@ background:rgba(34,34,34,0.75);
    user-select: none;
 }
 
+.loggo {
+position: static;
+		margin-top:0;
+		margin-right:auto;
+		margin-bottom:0;
+		margin-left:auto;
+	
+width:50%;
+height:50%;
+
+   }
+   
+   .loggo img {
+   width: 100%;
+   height: 100%;
+   }
+   
+
+   
+
+
+.box {
+padding: 10px;
+}
+
+
 .leitura {
-position: relative;
-margin: auto;
-width:80%;
-height:75%;
 overflow:auto;
-padding:15px;
-border-radius: 25px;
+position: absolute;
+margin: auto;
+left: 15%;
+width:70%;
+max-height:75%;
+border-radius: 16px;
 background:rgba(34,34,34,0.9);
 display: none;
 text-align: left;
 }
 
+.paragrafo {
+padding:15px;
+}
+
 .videobox {
-position:relative;
-margin: auto;
-   width:80%;
-   max-width:720px;
+position: absolute;
+   width:100%;
    height:100%;
-   padding:15px;
-   border-radius: 25px;
 background:black;
    display: none;
 }
 
-
-
-.bgzera {
-background: linear-gradient(54deg, #5bc5aa, #b272e1, #72b6e1, #ffffff);
-background-size: 800% 800%;;
-   width:100%;
-   height:100%;
--webkit-animation: AnimationName 18s ease infinite;
--moz-animation: AnimationName 18s ease infinite;
-animation: AnimationName 18s ease infinite;
-}
-
-@-webkit-keyframes AnimationName {
-    0%{background-position:0% 76%}
-    50%{background-position:100% 25%}
-    100%{background-position:0% 76%}
-}
-@-moz-keyframes AnimationName {
-    0%{background-position:0% 76%}
-    50%{background-position:100% 25%}
-    100%{background-position:0% 76%}
-}
-@keyframes AnimationName { 
-    0%{background-position:0% 76%}
-    50%{background-position:100% 25%}
-    100%{background-position:0% 76%}
-}
 
 .close {
     top: 0px;
@@ -268,127 +239,31 @@ opacity:0.8;
   content: '✖'; 
 }
 
+
+
+.musiq {
+color: white;
+padding: 5px;
+}
+
+.musiq img{
+width: 20%;
+max-width: 150px;
+height: auto;
+position:relative;
+padding: 15px;
+float:left;
+}
+
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 </head>
 
 <body>
-<div class="bgzera"></div>
-
-<div class="fotoz">
- <div class="mySlides">
-  <img src="img/01.jpg">
- </div>
-
- <div class="mySlides">
-  <img src="img/02.jpg">
- </div>
-
-  <div class="mySlides">
-  <img src="img/03.jpg">
-  </div>
-
-      <div class="mySlides">
-        <img src="img/04.jpg">
-      </div>
-
-      <div class="mySlides">
-            <img src="img/05.jpg">
-          </div>
-
-          <div class="mySlides">
-                <img src="img/06.jpg">
-              </div>
-
-              <div class="mySlides">
-                    <img src="img/07.jpg">
-                  </div>
-
-                  <div class="mySlides">
-                        <img src="img/08.jpg">
-                      </div>
-
-                      <div class="mySlides">
-                            <img src="img/09.jpg">
-                          </div>
-
-                          <div class="mySlides">
-                                <img src="img/10.jpg">
-                              </div>
-
-                              <div class="mySlides">
-                                    <img src="img/11.jpg">
-                                  </div>
-
-                                  <div class="mySlides">
-                                        <img src="img/12.jpg">
-                                      </div>
-
-                                      <div class="mySlides">
-                                            <img src="img/13.jpg">
-                                          </div>
-                                          <div class="mySlides">
-                                                <img src="img/14.jpg">
-                                              </div>
-                                              <div class="mySlides">
-                                                    <img src="img/15.jpg">
-                                                  </div>
-                                                  <div class="mySlides">
-                                                        <img src="img/16.jpg">
-                                                      </div>
-                                                      <div class="mySlides">
-                                                            <img src="img/17.jpg">
-                                                          </div>
-                                                          <div class="mySlides">
-                                                                <img src="img/18.jpg">
-                                                              </div>
-                                                              <div class="mySlides">
-                                                                    <img src="img/19.jpg">
-                                                                  </div>
-                                                                  <div class="mySlides">
-                                                                        <img src="img/20.jpg">
-                                                                      </div>
-
-
-
-
-                                                                  
-
- <div style="text-align:center">
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span> 
-   <span class="dot"></span>
-   <span class="dot"></span>
- </div>
- 
-</div>
-
-
- <div class="footer">
-
-
-    <div class="box">
-<img src="droptv.svg" class="loggo">
-
-<div class="topo">
-   <div class="videobox">
+<div class="loggo"><img src="droptv.svg"><!-- fallback here (<img> referencing a PNG version of the graphic, for example) --></img></div>
+<div class="footer">
+<div class="videobox">
 <iframe
     src="https://player.twitch.tv/?channel=droptvlive"
     height="100%"
@@ -398,28 +273,44 @@ opacity:0.8;
     allowfullscreen="true">
 </iframe>
 </div>
-</div> 
 
-
-       
-<div class="dv-info leitura">
+    <div class="box">
+ 
+<div class="dv-info leitura bt-info">
+<div class="paragrafo">
 <p><b>DropTV</b> é uma nova experiência. Uma curadoria de imagens e músicas em fluxo contínuo que proporcionam uma imersão em novas sensações. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
 <p>A DropTV é transmitida via receptores da <a href="https://moods.com.br" target="_blank">Moods</a> em alta definição de imagem, sem intervalos comerciais. A DropTV pode ser encontrada exclusivamente em locais diferenciados e cheios de estilo.
 Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> quais são esses locais.
 Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <a href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">contato.</a> 
-<p>Você também pode assitir a DropTV aqui em nosso site, via <a href="https://player.twitch.tv/?channel=droptvlive" target="_blank">streaming</a>.</p><p><i>"Turn In And Drop Out."</i></p>
+<p>E claro, você também pode assitir a DropTV aqui em nosso site.</p><p><i>"Turn In And Drop Out."</i></p>
+</div>
 </div>
 
-<div class="dv-mail leitura">
+<div class="dv-mail leitura bt-mail">
+<div class="paragrafo">
 <p>Para encomendar um receptor digital para exibir a <b>DropTV</b> em seu espaço, nos enviar um vídeo para ser exibido na programação, dúvidas ou sugestões, acesse o nosso:</p>
 <h3><a style="color: orange;" href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?usp=sf_link" target="_blank" rel="noopener">Formulário de Contato.</a></h3>
 </div>
+</div>
 
-<div class="dv-insta leitura">
+<div class="dv-insta leitura bt-insta">
+<div class="paragrafo">
 <p>Nosso perfil no instagram:</p>
 <h3><a style="color: #23CDEF;" href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener">@droptv.oficial</a></h3>
 <p>Poste a sua foto com a hashtag <span style="color: #23CDEF;">#droptv</span> e faça parte do conteúdo que vai pro ar.</p>
 </div>
+</div>
+
+<div class="dv-musiq leitura bt-musiq">
+     <div id="nowplay"></div>
+     <div class="musiq">
+     <img src="#" id="cover" />
+     <p id="title">Musica</p>
+     <p id="artist">Artista</p>
+     </div>
+</div>
+
+
 
 
 
@@ -428,7 +319,9 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 <h2>
             <a href="#" class="bt-info"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a>
             <a href="#" class="bt-mail"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
-            <a href="#" class="bt-play"><svg class="icon icon-play2 ic-play"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>
+			<a href="#" class="bt-play"><svg class="icon icon-play2 ic-play"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>            
+            <a href="#" class="bt-play"><svg class="icon icon-close ic-stop" style="display: none;"><use xlink:href="/symbol-defs.svg#icon-close"></use></svg></a>
+			<a href="#" class="bt-musiq"><svg class="icon icon-music"><use xlink:href="symbol-defs.svg#icon-music"></use></svg></a>
 			<a href="#" class="bt-insta"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
 </h2>
 </div>  
@@ -437,29 +330,6 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 </div>
 </div>
 </body>
-
-
-<script>
-var slideIndex = 0;
-showSlides();
-
-function showSlides() {
-  var i;
-  var slides = document.getElementsByClassName("mySlides");
-  var dots = document.getElementsByClassName("dot");
-  for (i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";  
-  }
-  slideIndex++;
-  if (slideIndex > slides.length) {slideIndex = 1}    
-  for (i = 0; i < dots.length; i++) {
-    dots[i].className = dots[i].className.replace(" active", "");
-  }
-  slides[slideIndex-1].style.display = "block";  
-  dots[slideIndex-1].className += " active";
-  setTimeout(showSlides, 150); // Change image every 2 seconds
-}
-</script>
 
 
 <script>
@@ -473,16 +343,6 @@ function timeFadeout() {
     }, timeVisible );
 }
 
-function playPausebt() {
-    if ($('.videobox:visible').length) {
-        $('.ic-play').hide();
-        $('.ic-stop').show();
-    }
-    else {
-        $('.ic-play').show();
-        $('.ic-stop').hide();
-    }
-}
 
 $(document).ready(function(){
 
@@ -503,54 +363,54 @@ $('.ligbotoes').click(function() {
 $('.bt-info').click(function() {
 $('.dv-info').toggle();
 if ($('.dv-info:visible').length) {
-        $('.videobox').hide();
-        $('.loggo').hide();
+
         $('.dv-mail').hide();
         $('.dv-insta').hide();
-    }
-    else {
-        $('.loggo').fadeIn();
+        $('.dv-musiq').hide();
     }
     });
     
 $('.bt-mail').click(function() {
 $('.dv-mail').toggle();
 if ($('.dv-mail:visible').length) {
-        $('.videobox').hide();
-        $('.loggo').hide();
         $('.dv-info').hide();
         $('.dv-insta').hide();
-    }
-    else {
-        $('.loggo').fadeIn();
+        $('.dv-musiq').hide();
     }
     });
     
 $('.bt-insta').click(function() {
 $('.dv-insta').toggle();
 if ($('.dv-insta:visible').length) {
-        $('.videobox').hide();
-        $('.loggo').hide();
         $('.dv-info').hide();
         $('.dv-mail').hide();
-    }
-    else {
-        $('.loggo').fadeIn();
+        $('.dv-musiq').hide();
     }
     });    
     
+$('.bt-musiq').click(function() {
+$('.dv-musiq').toggle();
+if ($('.dv-musiq:visible').length) {
+        $('.dv-info').hide();
+        $('.dv-mail').hide();
+        $('.dv-insta').hide();
+    }
+    }); 
+    
 $('.bt-play').click(function() {
 $('.videobox').toggle();
-$('.playpau').toggle();
 if ($('.videobox:visible').length) {
         $('.dv-info').hide();
         $('.dv-mail').hide();
         $('.loggo').hide();
-        $('.fotoz').hide();
         $('.dv-insta').hide();
+        $('.dv-musiq').hide();
+        $('.ic-play').hide();
+        $('.ic-stop').show();
     }
     else {
-        $('.fotoz').fadeIn();
+        $('.ic-play').show();
+        $('.ic-stop').hide();
         $('.loggo').fadeIn();
     }
     });
@@ -559,4 +419,50 @@ if ($('.videobox:visible').length) {
 
 })
 </script>
+     <script>
+     var lastFmKey = "479cad5910b6a746a7b14e162fccc9a1";
+     var username = "droptv";
+     
+     GetLastFMSong();
+     setInterval(GetLastFMSong, 15000)
+     
+     function GetLastFMSong(){
+
+          var title, album, artist, cover, url; 
+          var xmlhttp = new XMLHttpRequest();
+          xmlhttp.onreadystatechange = function() {
+               if (this.readyState == 4 && this.status == 200) {
+                    var myObj = JSON.parse(this.responseText);
+                    //document.getElementById("background").innerHTML = myObj.recenttracks.track[0].url;
+                    
+                    console.log(myObj.recenttracks.track[0]["@attr"]);
+                    
+                    if (myObj.recenttracks.track[0]["@attr"]){
+                    
+                         title = myObj.recenttracks.track[0].name;
+                         artist = myObj.recenttracks.track[0].artist["#text"];
+                         cover = myObj.recenttracks.track[0].image[3]["#text"];
+                         if (cover.localeCompare("") == 0 || cover.localeCompare(null) == 0){cover = "musique.png";}
+                         url = myObj.recenttracks.track[0].url;
+                    }else{
+                         album = "";
+                         title = "Secret Track...";
+                         cover = "";
+                         artist = "";
+                    }
+                    document.getElementById("nowplay").style.backgroundImage = "url('"+cover+"')";
+                    document.getElementById("title").innerHTML = title;
+                    document.getElementById("artist").innerHTML = artist;
+                    document.getElementById("cover").src = cover;
+                    
+                    console.log(myObj);
+               }
+          };
+          xmlhttp.open("GET", "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&api_key="+lastFmKey+"&limit=1&format=json", true);
+          xmlhttp.send();
+     
+     }
+     
+     </script>
+     
 </html> 

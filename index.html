@@ -466,7 +466,7 @@ if ($('.videobox:visible').length) {
                     console.log(myObj);
                }
           };
-          xmlhttp.open("GET", "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&api_key="+lastFmKey+"&limit=1&format=json", true);
+          xmlhttp.open("GET", "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&api_key="+lastFmKey+"&limit=1&format=json", true);
           xmlhttp.send();
      
      }

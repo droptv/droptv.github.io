@@ -204,14 +204,14 @@ padding: 10px;
 overflow:auto;
 position: absolute;
 margin: auto;
-left: 30%;
-right: 30%;
-/* width:70%; */
+left:25%;
+right:25%;
+width:50%;
 max-height:75%;
 border-radius: 16px;
 background:rgba(34,34,34,0.9);
 display: none;
-text-align: left;
+/*text-align: left; */
 }
 
 .paragrafo {
@@ -318,7 +318,7 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
      <div class="musiq">
      <img src="#" id="cover" />
      <div class="trackname">
-     <p style="font-size:3vw;"><span id="artist">Artist</span> - <span id="title">Music</span></p>
+     <p style="font-size:3vw;"><span id="artist">Artist</span><span id="title">Music</span></p>
      </div>
      </div>
 </div>
@@ -470,13 +470,13 @@ if ($('.videobox:visible').length) {
                     if (myObj.recenttracks.track[0]["@attr"]){
                     
                          title = myObj.recenttracks.track[0].name;
-                         artist = myObj.recenttracks.track[0].artist["#text"];
+                         artist = myObj.recenttracks.track[0].artist["#text"] + ' - ';
                          cover = myObj.recenttracks.track[0].image[3]["#text"];
                          if (cover.localeCompare("") == 0 || cover.localeCompare(null) == 0){cover = "musique.png";}
                          url = myObj.recenttracks.track[0].url;
                     }else{
                          album = "";
-                         title = "Secret Track...";
+                         title = "?";
                          cover = "";
                          artist = "";
                     }

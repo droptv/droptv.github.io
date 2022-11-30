@@ -470,7 +470,7 @@ if ($('.videobox:visible').length) {
                     if (myObj.recenttracks.track[0]["@attr"]){
                     
                          title = myObj.recenttracks.track[0].name;
-                         artist = myObj.recenttracks.track[0].artist["#text"] + ' - ';
+                         artist = myObj.recenttracks.track[0].artist["#text"] + ' / ';
                          cover = myObj.recenttracks.track[0].image[3]["#text"];
                          if (cover.localeCompare("") == 0 || cover.localeCompare(null) == 0){cover = "musique.png";}
                          url = myObj.recenttracks.track[0].url;

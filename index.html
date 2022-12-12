@@ -348,7 +348,7 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 
 
 <script>
-
+function auVol() {
 // Obtem a referência do iframe que contém o player da Twitch
 var iframe = document.getElementById('ifvideo');
 
@@ -358,7 +358,7 @@ var player = iframe.contentWindow.document.getElementById('video');
 // Aumenta o volume do player de vídeo da Twitch
 player.volume = 1;
 
-
+}
 
 var timer;
 var timeVisible = 3000;
@@ -441,6 +441,7 @@ if ($('.videobox:visible').length) {
         $('.ic-play').show();
         $('.ic-stop').hide();
         $('.loggo').fadeIn();
+        auVol();
     }
     });
     

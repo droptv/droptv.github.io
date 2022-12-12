@@ -278,7 +278,7 @@ max-height: 100px;
 <div class="footer">
 
 <div class="videobox">
-<iframe
+<iframe id="ifvideo"
     src="https://player.twitch.tv/?channel=droptvlive&parent=droptv.com.br&muted=false"
     height="100%"
     width="100%"
@@ -348,6 +348,18 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 
 
 <script>
+
+// Obtem a referência do iframe que contém o player da Twitch
+var iframe = document.getElementById('ifvideo');
+
+// Obtém a referência do player de vídeo da Twitch que está dentro do iframe
+var player = iframe.contentWindow.document.getElementById('video');
+
+// Aumenta o volume do player de vídeo da Twitch
+player.volume = 1;
+
+
+
 var timer;
 var timeVisible = 3000;
 

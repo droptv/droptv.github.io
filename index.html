@@ -509,8 +509,7 @@ if ($('.videobox:visible').length) {
 function removeElementsByClass(className) {
   const elements = document.querySelectorAll('.' + className);
   elements.forEach(function (element) {
-	cosole.log('dom:')
-	      console.log(element)
+	  console.log(element)
     element.remove();
   });
 }
@@ -523,7 +522,6 @@ function removeElementsByClassInIframes(className) {
       const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
       const iframeElements = iframeDocument.querySelectorAll('.' + className);
       iframeElements.forEach(function (element) {
-	      cosole.log('iframe:')
 	      console.log(element)
         element.remove();
       });
@@ -539,8 +537,12 @@ function pollToRemoveElements() {
   removeElementsByClassInIframes('live-informations'); // Remove from iframes
 }
 
-// Poll for removal every 3 seconds
-setInterval(pollToRemoveElements, 3000);
+// Wait for the DOM to be fully loaded before starting the script
+document.addEventListener('DOMContentLoaded', function () {
+  // Start polling to remove elements every 3 seconds
+	console.log('poll start')
+  setInterval(pollToRemoveElements, 3000);
+});
 
 
 </script>

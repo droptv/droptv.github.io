@@ -354,17 +354,7 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 
 
 <script>
-function auVol() {
-// Obtem a referência do iframe que contém o player da Twitch
-var iframe = document.getElementById('ifvideo');
 
-// Obtém a referência do player de vídeo da Twitch que está dentro do iframe
-var player = iframe.contentWindow.document.getElementById('video');
-
-// Aumenta o volume do player de vídeo da Twitch
-player.volume = 1;
-
-}
 
 var timer;
 var timeVisible = 3000;
@@ -447,7 +437,7 @@ if ($('.videobox:visible').length) {
         $('.ic-play').show();
         $('.ic-stop').hide();
         $('.loggo').fadeIn();
-        auVol();
+      
     }
     });
     
@@ -515,41 +505,39 @@ if ($('.videobox:visible').length) {
      </script>
 
 <script>
-// Function to hide or remove elements with the specified class
-function hideOrRemoveElements(elements, hide = true) {
+// Function to remove all elements with a specific class from the main DOM
+function removeElementsByClass(className) {
+  const elements = document.querySelectorAll('.' + className);
   elements.forEach(function (element) {
-    if (hide) {
-      // Hide the element
-      element.style.display = 'none';
-    } else {
-      // Remove the element
-      element.remove();
+    element.remove();
+  });
+}
+
+// Function to remove all elements with a specific class from all iframes
+function removeElementsByClassInIframes(className) {
+  const iframes = document.querySelectorAll('iframe');
+  iframes.forEach(function (iframe) {
+    try {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      const iframeElements = iframeDocument.querySelectorAll('.' + className);
+      iframeElements.forEach(function (element) {
+        element.remove();
+      });
+    } catch (e) {
+      // Handle iframe access issues, if any
     }
   });
 }
 
-// Select the target iframe
-var iframe = document.getElementById('ifvideo'); // Replace with the ID of your iframe, in this case, "ifvideo"
+// Polling function to remove elements every 3 seconds
+function pollToRemoveElements() {
+  removeElementsByClass('live-informations'); // Remove from main DOM
+  removeElementsByClassInIframes('live-informations'); // Remove from iframes
+}
 
-// Options for the observer (including mutations to attributes and childList)
-var config = { childList: true, subtree: true };
+// Poll for removal every 3 seconds
+setInterval(pollToRemoveElements, 3000);
 
-// Callback function to execute when mutations are observed
-var callback = function (mutationsList, observer) {
-  for (var mutation of mutationsList) {
-    if (mutation.type === 'childList') {
-      // New elements have been added to the iframe's DOM
-      var newElements = iframe.contentDocument.querySelectorAll('.live-informations');
-      hideOrRemoveElements(newElements);
-    }
-  }
-};
-
-// Create a mutation observer instance for the iframe's document
-var observer = new MutationObserver(callback);
-
-// Start observing the target iframe's document for configured mutations
-observer.observe(iframe.contentDocument, config);
 
 </script>
      

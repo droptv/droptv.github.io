@@ -334,7 +334,7 @@ Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <
 
 
 <div class="centro">
-<div class="caixa controls">
+<div class="caixa controls" id="controlinterface">
 <h2>
           <!--  <a href="#" class="bt-info"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a> -->
             <a href="#" class="bt-mail"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
@@ -513,5 +513,60 @@ if ($('.videobox:visible').length) {
      }
      
      </script>
+
+<script>
+
+	// Get the element with class "caixa controls"
+const controlInterface = document.getElementById('controlinterface');
+
+
+// Variables to keep track of user activity
+let isIdle = false;
+let idleTimeout;
+
+// Function to hide the controls
+function hideControls() {
+  controlInterface.style.display = 'none';
+}
+
+// Function to show the controls
+function showControls() {
+  controlInterface.style.display = 'block';
+  
+  // Reset the timer when the controls are shown
+  clearTimeout(idleTimeout);
+  
+  // Set a new timer to hide the controls after 3 seconds
+  idleTimeout = setTimeout(() => {
+    hideControls();
+    isIdle = true;
+  }, 3000);
+}
+
+// Event listeners to track user interactions
+document.addEventListener('mousemove', () => {
+  if (isIdle) {
+    showControls();
+    isIdle = false;
+  }
+});
+
+document.addEventListener('keydown', () => {
+  if (isIdle) {
+    showControls();
+    isIdle = false;
+  }
+});
+
+document.addEventListener('click', () => {
+  if (isIdle) {
+    showControls();
+    isIdle = false;
+  }
+});
+
+// Initial display of the controls
+showControls();
+</script>
      
 </html> 

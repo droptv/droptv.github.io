@@ -515,65 +515,42 @@ if ($('.videobox:visible').length) {
      </script>
 
 <script>
-
-	// Get the element with class "caixa controls"
-const controlInterface = document.getElementById('controlinterface');
-
-
-
-
-// Variables to keep track of user activity
-let isIdle = false;
-let idleTimeout;
-
-// Function to hide the controls
-function hideControls() {
-  controlInterface.style.display = 'none';
-  document.querySelectorAll('.live-informations').forEach(function(element) {
-  	element.style.display = 'none';
-   	});
+// Function to hide or remove elements with the specified class
+function hideOrRemoveElements(elements, hide = true) {
+  elements.forEach(function (element) {
+    if (hide) {
+      // Hide the element
+      element.style.display = 'none';
+    } else {
+      // Remove the element
+      element.remove();
+    }
+  });
 }
 
-// Function to show the controls
-function showControls() {
-  controlInterface.style.display = 'block';
-  controlInterface.style.zIndex = "9999"; // Set a high z-index value
-  controlInterface.style.position = "relative"; // Set the position property
-  
-  // Reset the timer when the controls are shown
-  clearTimeout(idleTimeout);
-  
-  // Set a new timer to hide the controls after 3 seconds
-  idleTimeout = setTimeout(() => {
-    hideControls();
-    isIdle = true;
-  }, 3000);
-}
+// Select the target node for the mutation observer
+var targetNode = document.documentElement; // You can narrow this down if needed
 
-// Event listeners to track user interactions
-document.addEventListener('mousemove', () => {
-  if (isIdle) {
-    showControls();
-    isIdle = false;
+// Options for the observer (including mutations to attributes and childList)
+var config = { childList: true, subtree: true };
+
+// Callback function to execute when mutations are observed
+var callback = function (mutationsList, observer) {
+  for (var mutation of mutationsList) {
+    if (mutation.type === 'childList') {
+      // New elements have been added to the DOM
+      var newElements = document.querySelectorAll('.live-informations');
+      hideOrRemoveElements(newElements);
+    }
   }
-});
+};
 
-document.addEventListener('keydown', () => {
-  if (isIdle) {
-    showControls();
-    isIdle = false;
-  }
-});
+// Create a mutation observer instance
+var observer = new MutationObserver(callback);
 
-document.addEventListener('click', () => {
-  if (isIdle) {
-    showControls();
-    isIdle = false;
-  }
-});
+// Start observing the target node for configured mutations
+observer.observe(targetNode, config);
 
-// Initial display of the controls
-showControls();
 </script>
      
 </html> 

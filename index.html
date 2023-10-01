@@ -278,8 +278,8 @@ max-height: 100px;
 <div class="footer">
 
 <div class="videobox">
-	<!-- id="ifvideo" -->
-<iframe 
+	
+<iframe id="ifvideo"
     src="https://player.kick.com/droptv-streaming"
     height="100%"
     width="100%"
@@ -528,8 +528,8 @@ function hideOrRemoveElements(elements, hide = true) {
   });
 }
 
-// Select the target node for the mutation observer
-var targetNode = document.documentElement; // You can narrow this down if needed
+// Select the target iframe
+var iframe = document.getElementById('ifvideo'); // Replace with the ID of your iframe, in this case, "ifvideo"
 
 // Options for the observer (including mutations to attributes and childList)
 var config = { childList: true, subtree: true };
@@ -538,18 +538,18 @@ var config = { childList: true, subtree: true };
 var callback = function (mutationsList, observer) {
   for (var mutation of mutationsList) {
     if (mutation.type === 'childList') {
-      // New elements have been added to the DOM
-      var newElements = document.querySelectorAll('.live-informations');
+      // New elements have been added to the iframe's DOM
+      var newElements = iframe.contentDocument.querySelectorAll('.live-informations');
       hideOrRemoveElements(newElements);
     }
   }
 };
 
-// Create a mutation observer instance
+// Create a mutation observer instance for the iframe's document
 var observer = new MutationObserver(callback);
 
-// Start observing the target node for configured mutations
-observer.observe(targetNode, config);
+// Start observing the target iframe's document for configured mutations
+observer.observe(iframe.contentDocument, config);
 
 </script>
      

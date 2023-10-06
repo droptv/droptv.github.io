@@ -22,30 +22,7 @@
          height: 200%;
          font-family: 'Josefin Sans', sans-serif;
          }
-         .bgzera {
-         background: linear-gradient(54deg, #5bc5aa, #b272e1, #72b6e1, #ffffff);
-         background-size: 800% 800%;;
-         width:100%;
-         height:100%;
-         -webkit-animation: AnimationName 18s ease infinite;
-         -moz-animation: AnimationName 18s ease infinite;
-         animation: AnimationName 18s ease infinite;
-         }
-         @-webkit-keyframes AnimationName {
-         0%{background-position:0% 76%}
-         50%{background-position:100% 25%}
-         100%{background-position:0% 76%}
-         }
-         @-moz-keyframes AnimationName {
-         0%{background-position:0% 76%}
-         50%{background-position:100% 25%}
-         100%{background-position:0% 76%}
-         }
-         @keyframes AnimationName { 
-         0%{background-position:0% 76%}
-         50%{background-position:100% 25%}
-         100%{background-position:0% 76%}
-         }
+
          p {
          color: white;
          font-size: 18px;
@@ -92,15 +69,27 @@
          user-select: none;
          }
          .loggo {
-         position: static;
-         margin-bottom:20%;
-         width: 60%;
-         -moz-user-select: none;
-         -khtml-user-select: none;
-         -webkit-user-select: none;
-         -ms-user-select: none;
-         user-select: none;
+            max-width: 100%;
+    max-height: 100%;
          }
+
+         #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  /*  background-color: white;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+#dv-musiqid {
+   opacity: 0;
+   display:none;
+}
+
          .box {
          padding: 10px;
          }
@@ -114,7 +103,7 @@
          max-height:75%;
          border-radius: 16px;
          background:rgba(34,34,34,0.9);
-         display: none;
+   
          /*text-align: left; */
          }
          .paragrafo {
@@ -125,7 +114,6 @@
          width:100%;
          height:100%;
          background:black;
-         display: none;
          }
          .close {
          top: 0px;
@@ -159,9 +147,11 @@
       </style>
    </head>
    <body>
-      <div class="bgzera"></div>
+      <div id="overlay"><img src="droptv.svg" alt="Drop TV" class="loggo"></img></div>
       <div class="footer">
+         
          <div class="videobox" id="videoboxid">
+            
             <iframe src="https://player.twitch.tv/?channel=droptvlive&parent=droptv.com.br" 
                frameborder="0" 
                allowfullscreen="true" 
@@ -170,6 +160,7 @@
                width="100%"
                >
             </iframe>
+            
          </div>
          <div class="box">
             <div class="dv-musiq leitura bt-musiq" id="dv-musiqid">
@@ -181,16 +172,12 @@
                   </div>
                </div>
             </div>
-            <img src="droptv.svg" alt="Drop TV" class="loggo bt-play"></img>
+
          </div>
       </div>
    </body>
    <script>
       document.addEventListener("DOMContentLoaded", function () {
-          setTimeout(function () {
-              document.getElementById("videoboxid").style.display = "block";
-              document.getElementById("dv-musiqid").style.display = "block";
-          }, 3000);
           
           let dvMusic = document.getElementById("dv-musiqid");
           let timeoutId;
@@ -205,7 +192,18 @@
               timeoutId = setTimeout(hideDvMusic, 3000);
           }
       
-          showDvMusic();
+        //  showDvMusic();
+
+    var overlay = document.getElementById("overlay");
+
+    // Hide the overlay after 3 seconds
+    setTimeout(function () {
+        overlay.style.display = "none";
+        document.getElementById("dv-musiqid").style.display = "block";
+
+    }, 5000);
+
+
       
           document.addEventListener("mousemove", showDvMusic);
           document.addEventListener("touchstart", showDvMusic);

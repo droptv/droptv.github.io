@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DropTV</title>
+    <link rel="apple-touch-icon" href="/icon.png">
+    <meta name="apple-mobile-web-app-title" content="DropTV">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> -->
+	<meta name="description" content="Um canal que inspira as pessoas através da arte, esporte, musica e natureza." />
+	<meta name="theme-color" content="#3A72C2"/>
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
+	<script defer src="svgxuse.js"></script>
+	
+<style media="screen" type="text/css">
+body{
+position: fixed; 
+  top: -50%; 
+  left: -50%; 
+  width: 200%; 
+  height: 200%;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.bgzera {
+background: linear-gradient(54deg, #5bc5aa, #b272e1, #72b6e1, #ffffff);
+background-size: 800% 800%;;
+   width:100%;
+   height:100%;
+-webkit-animation: AnimationName 18s ease infinite;
+-moz-animation: AnimationName 18s ease infinite;
+animation: AnimationName 18s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 76%}
+    50%{background-position:100% 25%}
+    100%{background-position:0% 76%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 76%}
+    50%{background-position:100% 25%}
+    100%{background-position:0% 76%}
+}
+@keyframes AnimationName { 
+    0%{background-position:0% 76%}
+    50%{background-position:100% 25%}
+    100%{background-position:0% 76%}
+}
+
+
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+  color: white;
+  padding: 1px;
+}
+
+.icon:hover {
+    color: grey; }
+
+/* ==========================================
+Single-colored icons can be modified like so:
+.icon-name {
+  font-size: 32px;
+  color: red;
+}
+========================================== */
+
+.icon-lightbulb {
+  width: 0.6875em;
+}
+
+.icon-comments {
+  width: 1.07421875em;
+}
+
+.icon-coffee {
+  width: 1.0361328125em;
+}
+
+.icon-close {
+  width: 0.7861328125em;
+}
+
+.icon-bars {
+  width: 0.857421875em;
+}
+
+.icon-pinterest-square {
+  width: 0.857421875em;
+}
+
+.icon-facebook-square {
+  width: 0.857421875em;
+}
+
+.icon-twitter-square {
+  width: 0.857421875em;
+}
+
+.icon-gittip {
+  width: 0.857421875em;
+}
+
+.icon-volume-high {
+  width: 1.0625em;
+}
+
+.glyph {
+  font-size: 16px;
+  margin-right: 1.5em;
+  float: left;
+  width: 8em;
+}
+
+
+p {
+color: white;
+font-size: 18px;
+}
+
+a {
+color: #5DB5A0;
+font-weight: bold;
+text-decoration: none;
+}
+    
+
+
+
+.footer {
+   position:fixed;
+   left:0px;
+   top:0px;
+   width:100%;
+   height:100%;   
+   text-align: center;
+   }
+
+
+
+.centro {
+   position:fixed;
+   left:0px;
+   right:0px;
+   bottom:5%;
+   }
+   
+   .topo {
+   position:fixed;
+   left:0px;
+   right:0px;
+   top:5%;
+height:300px;
+   }
+   
+   
+.caixa {
+position: relative;
+margin: auto;
+bottom:10%;
+width:250px;
+padding:1px;
+letter-spacing: 10px;
+border-radius: 16px;
+background:rgba(34,34,34,0.75);
+   -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+
+.loggo {
+position: static;
+		margin-bottom:20%;
+
+   width: 60%;
+
+      -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+
+   }
+   
+
+
+.box {
+padding: 10px;
+}
+
+
+.leitura {
+overflow:auto;
+position: absolute;
+margin: auto;
+left:25%;
+right:25%;
+width:50%;
+max-height:75%;
+border-radius: 16px;
+background:rgba(34,34,34,0.9);
+display: none;
+/*text-align: left; */
+}
+
+.paragrafo {
+padding:15px;
+}
+
+.videobox {
+position: absolute;
+   width:100%;
+   height:100%;
+background:black;
+   display: none;
+}
+
+
+.close {
+    top: 0px;
+    float: right;
+    background-color: white;
+  color: black;
+  text-decoration: none;
+  opacity:0.3;
+}
+
+.close:hover {
+opacity:0.8;
+}
+
+.close:after {
+  content: '✖'; 
+}
+
+
+
+.musiq {
+color: white;
+padding: 15px;
+font-size:3vw;
+display: table;
+}
+
+.musiq img{
+padding: 15px;
+height: 20%;
+max-height: 100px;
+
+
+
+}
+
+.trackname {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+</head>
+
+<body>
+<div class="bgzera"></div>
+
+<div class="footer">
+
+<div class="videobox">
+
+
+	<iframe src="https://player.twitch.tv/?channel=droptvlive&parent=droptv.com.br" 
+		frameborder="0" 
+		allowfullscreen="true" 
+		scrolling="no" 
+		height="100%" 
+		width="100%"
+		>
+		
+		</iframe>
+	
+</div>
+
+    <div class="box">
+ 
+<div class="dv-info leitura bt-info">
+<div class="paragrafo">
+<p><b>DropTV</b> é uma nova experiência imersiva. Um canal que inspira as pessoas através da arte, esporte, musica e natureza.</p>
+<p>A DropTV é transmitida via receptores da <a href="https://moods.com.br" target="_blank">Moods</a> em alta definição de imagem, sem intervalos comerciais, podendo ser encontrada exclusivamente em locais diferenciados e cheios de estilo.
+Descubra em nosso <a href="https://www.instagram.com/droptv.oficial/" target="_blank">Instagram</a> quais são esses locais.
+Caso você tenha interesse em exibir a DropTV em seu local ou evento, entre em <a href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?embedded=true" target="_blank" rel="noopener">menssage</a> 
+<p>E claro, você também pode assitir a DropTV aqui em nosso site.</p><p>Realizamos também a curadoria das músicas. <i>Aumente o som, por favor.</i></p>
+</div>
+</div>
+
+<div class="dv-mail leitura bt-mail">
+<div class="paragrafo">
+<!-- <p>Para transmitir a <b>DropTV</b> em seu espaço, ou enviar um vídeo para ser exibido na programação, acesse o nosso:</p> -->
+<h3><a style="color: orange;" href="https://docs.google.com/forms/d/e/1FAIpQLScp2czs2d0yXzC9V9cK1LavHTIUCISYOgtks7MmC0kxsed6fw/viewform?embedded=true" target="_blank" rel="noopener">get in touch</a></h3>
+</div>
+</div>
+
+<div class="dv-insta leitura bt-insta">
+<div class="paragrafo">
+<!-- <p>Nosso perfil no instagram:</p> -->
+<h3><a style="color: #23CDEF;" href="https://www.instagram.com/droptv.oficial/" target="_blank" rel="noopener">@droptv.oficial</a></h3>
+<!-- <p>Poste a sua foto com a hashtag <span style="color: #23CDEF;">#droptv</span> e faça parte do conteúdo que vai pro ar.</p> -->
+</div>
+</div>
+
+<div class="dv-musiq leitura bt-musiq">
+     <div id="nowplay"></div>
+     <div class="musiq">
+     <img src="#" id="cover" />
+     <div class="trackname">
+     <p style="font-size:3vw;"><span id="artist">Artist</span><span id="title">Music</span></p>
+     </div>
+     </div>
+</div>
+
+
+<img src="droptv.svg" alt="Drop TV" class="loggo bt-play"></img>
+
+
+<div class="centro">
+<div class="caixa controls" id="controlinterface">
+<h2>
+          <!--  <a href="#" class="bt-info"><svg class="icon icon-bars"><use xlink:href="symbol-defs.svg#icon-bars"></use></svg></a> -->
+            <a href="#" class="bt-mail"><svg class="icon icon-comments"><use xlink:href="symbol-defs.svg#icon-comments"></use></svg></a>
+			<a href="#" class="bt-play"><svg class="icon icon-play2 ic-play"><use xlink:href="symbol-defs.svg#icon-play2"></use></svg></a>            
+            <a href="#" class="bt-play"><svg class="icon icon-close ic-stop" style="display: none;"><use xlink:href="/symbol-defs.svg#icon-close"></use></svg></a>
+			<a href="#" class="bt-musiq"><svg class="icon icon-music"><use xlink:href="symbol-defs.svg#icon-music"></use></svg></a>
+			<a href="#" class="bt-insta"><svg class="icon icon-instagram"><use xlink:href="symbol-defs.svg#icon-instagram"></use></svg></a>
+			<!--  <a href="#" class="bt-full"><svg class="icon icon-display"><use xlink:href="symbol-defs.svg#icon-display"></use></svg></a> -->
+
+</h2>
+</div>  
+</div>  
+
+</div>
+</div>
+</body>
+
+
+<script>
+
+
+var timer;
+var timeVisible = 3000;
+
+
+function timeFadeout() {
+    timer = setTimeout(function() {
+        $('.controls').fadeOut();          
+    }, timeVisible );
+}
+
+
+$(document).ready(function(){
+
+
+
+$('.ligbotoes').click(function() {
+    clearTimeout(timer);
+    if ($('.controls:visible').length) {
+        $('.controls').fadeOut();
+    }
+    else {
+        $('.controls').fadeIn();
+        timeFadeout();
+    }
+  });
+
+
+$('.bt-info').click(function() {
+$('.dv-info').toggle();
+if ($('.dv-info:visible').length) {
+
+        $('.dv-mail').hide();
+        $('.dv-insta').hide();
+        $('.dv-musiq').hide();
+    }
+    });
+    
+$('.bt-mail').click(function() {
+$('.dv-mail').toggle();
+if ($('.dv-mail:visible').length) {
+        $('.dv-info').hide();
+        $('.dv-insta').hide();
+        $('.dv-musiq').hide();
+    }
+    });
+    
+$('.bt-insta').click(function() {
+$('.dv-insta').toggle();
+if ($('.dv-insta:visible').length) {
+        $('.dv-info').hide();
+        $('.dv-mail').hide();
+        $('.dv-musiq').hide();
+    }
+    });    
+    
+$('.bt-musiq').click(function() {
+$('.dv-musiq').toggle();
+if ($('.dv-musiq:visible').length) {
+        $('.dv-info').hide();
+        $('.dv-mail').hide();
+        $('.dv-insta').hide();
+    }
+    }); 
+    
+    
+    
+$('.bt-play').click(function() {
+$('.videobox').toggle();
+if ($('.videobox:visible').length) {
+        $('.dv-info').hide();
+        $('.dv-mail').hide();
+        $('.loggo').hide();
+        $('.dv-insta').hide();
+        $('.dv-musiq').hide();
+        $('.ic-play').hide();
+        $('.ic-stop').show();
+    }
+    else {
+        $('.ic-play').show();
+        $('.ic-stop').hide();
+        $('.loggo').fadeIn();
+      
+    }
+    });
+    
+    
+    $('.bt-full').click(function() {
+        $('.videobox').show();
+        $('.dv-info').hide();
+        $('.dv-mail').hide();
+        $('.loggo').hide();
+        $('.dv-insta').hide();
+        $('.dv-musiq').hide();
+        $('.ic-play').hide();
+        $('.ic-stop').show();
+        embed.requestFullscreen();
+    });
+
+
+
+})
+</script>
+     <script>
+     var lastFmKey = "1423897f73010d0c35257f51be892a1c";
+     var username = "droptv";
+     
+     GetLastFMSong();
+     setInterval(GetLastFMSong, 15000)
+     
+     function GetLastFMSong(){
+
+          var title, album, artist, cover, url; 
+          var xmlhttp = new XMLHttpRequest();
+          xmlhttp.onreadystatechange = function() {
+               if (this.readyState == 4 && this.status == 200) {
+                    var myObj = JSON.parse(this.responseText);
+                    //document.getElementById("background").innerHTML = myObj.recenttracks.track[0].url;
+                    
+                    console.log(myObj.recenttracks.track[0]["@attr"]);
+                    
+                    if (myObj.recenttracks.track[0]["@attr"]){
+                    
+                         title = myObj.recenttracks.track[0].name;
+                         artist = myObj.recenttracks.track[0].artist["#text"] + ' / ';
+                         cover = myObj.recenttracks.track[0].image[3]["#text"];
+                         if (cover.localeCompare("") == 0 || cover.localeCompare(null) == 0){cover = "musique.png";}
+                         url = myObj.recenttracks.track[0].url;
+                    }else{
+                         album = "";
+                         title = "?";
+                         cover = "";
+                         artist = "";
+                    }
+                    document.getElementById("nowplay").style.backgroundImage = "url('"+cover+"')";
+                    document.getElementById("title").innerHTML = title;
+                    document.getElementById("artist").innerHTML = artist;
+                    document.getElementById("cover").src = cover;
+                    
+                    console.log(myObj);
+               }
+          };
+          xmlhttp.open("GET", "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&api_key="+lastFmKey+"&limit=1&format=json", true);
+          xmlhttp.send();
+     
+     }
+     
+     </script>
+
+     
+</html> 

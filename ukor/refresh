@@ -1,0 +1,37 @@
+#!/bin/bash
+
+ACCOUNT_ID="# Seu Account ID
+NAMESPACE_ID="" # Seu Namespace ID 
+API_TOKEN="# Seu API Token
+KEY_NAME="STREAM_URL" # Nome da chave
+
+ARQUIVO_VALOR="./${0}.txt"
+
+# Verificar se o arquivo de valor armazenado existe
+if [[ -f "$ARQUIVO_VALOR" ]]; then
+    VALOR_ANTERIOR=$(cat "$ARQUIVO_VALOR")
+else
+    VALOR_ANTERIOR=""
+fi
+
+# Obter o novo valor do URL
+NOVO_URL=$(python3 -m streamlink https://www.twitch.tv/droptvlive best --stream-url)
+
+if [[ -z "$NOVO_URL" ]]; then echo "url em branco"; exit 1; fi
+
+if [[ "$NOVO_URL" != "$VALOR_ANTERIOR" ]]; then
+
+
+echo "Armazenando o valor no arquivo e no KV: $NOVO_URL"
+
+echo "$NOVO_URL" > "$ARQUIVO_VALOR"
+
+# Chamada API para atualizar o valor no KV Namespace
+curl -X PUT "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/storage/kv/namespaces/$NAMESPACE_ID/values/$KEY_NAME" \
+     -H "Authorization: Bearer $API_TOKEN" \
+     -H "Content-Type: text/plain" \
+     --data "$NOVO_URL"
+
+else
+echo "valores iguais"
+fi

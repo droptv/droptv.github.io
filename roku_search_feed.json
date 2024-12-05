@@ -1,0 +1,56 @@
+{
+  "version": "1",
+  "defaultLanguage": "en",
+  "defaultAvailabilityCountries": ["all"],
+  "assets": [
+    {
+      "id": "droptv-live-stream",
+      "type": "live",
+      "titles": [
+        {
+          "value": "DropTV",
+          "language": "en"
+        }
+      ],
+      "shortDescriptions": [
+        {
+          "value": "DropTV inspires people through art, music, raw nature, surf and skate.",
+          "language": "en"
+        }
+      ],
+      "longDescriptions": [
+        {
+          "value": "DropTV inspires people through art, music, raw nature, surf and skate.",
+          "language": "en"
+        }
+      ],
+      "releaseDate": "2024-12-01",
+      "genres": ["music", "live"],
+      "advisoryRatings": [
+        {
+          "source": "USA_PR",
+          "value": "TVG"
+        }
+      ],
+      "images": [
+        {
+          "type": "main",
+          "url": "https://droptv.com.br/assets/droptv_logo_1920x1080.png",
+          "languages": ["en", "pt", "es"]
+        }
+      ],
+      "content": {
+        "playOptions": [
+          {
+            "license": "free",
+            "quality": "fhd",
+            "playId": "droptv-live-stream",
+            "availabilityInfo": {
+              "country": ["all"]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

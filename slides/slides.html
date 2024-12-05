@@ -1,0 +1,150 @@
+<!--
+<div class="fotoz">
+ <div class="mySlides">
+  <img src="img/01.jpg">
+ </div>
+
+ <div class="mySlides">
+  <img src="img/02.jpg">
+ </div>
+
+  <div class="mySlides">
+  <img src="img/03.jpg">
+  </div>
+
+      <div class="mySlides">
+        <img src="img/04.jpg">
+      </div>
+
+      <div class="mySlides">
+            <img src="img/05.jpg">
+          </div>
+
+          <div class="mySlides">
+                <img src="img/06.jpg">
+              </div>
+
+              <div class="mySlides">
+                    <img src="img/07.jpg">
+                  </div>
+
+                  <div class="mySlides">
+                        <img src="img/08.jpg">
+                      </div>
+
+                      <div class="mySlides">
+                            <img src="img/09.jpg">
+                          </div>
+
+                          <div class="mySlides">
+                                <img src="img/10.jpg">
+                              </div>
+
+                              <div class="mySlides">
+                                    <img src="img/11.jpg">
+                                  </div>
+
+                                  <div class="mySlides">
+                                        <img src="img/12.jpg">
+                                      </div>
+
+                                      <div class="mySlides">
+                                            <img src="img/13.jpg">
+                                          </div>
+                                          <div class="mySlides">
+                                                <img src="img/14.jpg">
+                                              </div>
+                                              <div class="mySlides">
+                                                    <img src="img/15.jpg">
+                                                  </div>
+                                                  <div class="mySlides">
+                                                        <img src="img/16.jpg">
+                                                      </div>
+                                                      <div class="mySlides">
+                                                            <img src="img/17.jpg">
+                                                          </div>
+                                                          <div class="mySlides">
+                                                                <img src="img/18.jpg">
+                                                              </div>
+                                                              <div class="mySlides">
+                                                                    <img src="img/19.jpg">
+                                                                  </div>
+                                                                  <div class="mySlides">
+                                                                        <img src="img/20.jpg">
+                                                                      </div>
+
+
+
+
+                                                                  
+
+ <div style="text-align:center">
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span> 
+   <span class="dot"></span>
+   <span class="dot"></span>
+ </div>
+ 
+</div>
+!-->
+
+.mySlides img {
+        position: absolute; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  margin: auto; 
+  min-width: 55%;
+  min-height: 55%;
+     -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
+}
+
+-----
+
+<script>
+var slideIndex = 0;
+showSlides();
+
+function showSlides() {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  var dots = document.getElementsByClassName("dot");
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";  
+  }
+  slideIndex++;
+  if (slideIndex > slides.length) {slideIndex = 1}    
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";  
+  dots[slideIndex-1].className += " active";
+  setTimeout(showSlides, 150); // Change image every 2 seconds
+}
+</script>

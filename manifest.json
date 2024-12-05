@@ -12,9 +12,7 @@
   "categories": [
     "music",
     "sports"
-  ]
-  
-
+  ],
   "icons": [
     {
       "src": "windows11/SmallTile.scale-100.png",
@@ -466,3 +464,4 @@
     }
   ]
 }
+

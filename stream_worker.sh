@@ -4,17 +4,18 @@ ACCOUNT_ID=""          # Cloudflare Account ID
 NAMESPACE_ID=""        # Cloudflare Namespace ID 
 API_TOKEN=""           # Cloudflare API Token
 KEY_NAME="STREAM_URL"  # Nome da chave
-PLAY_URL=" "           # A URL que fornece o stream
+PLAY_URL=""           # A URL que fornece o stream
 SOURCE_URL=""          # A fonte do streaming HLS
 ARQUIVO_VALOR="./${0}.txt"  # Arquivo para armazenar o valor
 
 while true; do
-    RESULTADO=$(curl -L "$PLAY_URL" 2>/dev/null)
+    RESULTADO=$(curl -s -o /dev/null -w "%{http_code}" -L "$PLAY_URL" 2>&1)
 
-    if echo "$RESULTADO" | grep -q "^Not Found$"; then
+
+if [ "$RESULTADO" -eq 404 ] || [ "$RESULTADO" -eq 302 ] || echo "$RESULTADO" | grep -qE "(47|maximum redirects|not found|error)"; then
         echo "URL retornou 'Not Found', prosseguindo com a lógica de atualização."
 
-        # Verificar se o arquivo de valor armazenado existe
+       
         if [[ -f "$ARQUIVO_VALOR" ]]; then
             VALOR_ANTERIOR=$(cat "$ARQUIVO_VALOR")
         else
@@ -47,6 +48,6 @@ while true; do
         printf "%s" '.'
     fi
 
-    # Esperar 30 segundos antes de testar novamente
-    sleep 30
+   
+    sleep 15
 done

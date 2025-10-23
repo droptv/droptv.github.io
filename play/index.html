@@ -3,60 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Player Droptv TV LG fallback</title>
+  <title>Iframe recarregável</title>
   <style>
-    html, body {
+    html, body, iframe {
       margin: 0; padding: 0;
-      height: 100%;
-      background-color: black;
-      overflow: hidden;
-    }
-    video {
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-      background-color: black;
-      cursor: pointer;
+      width: 100vw; height: 100vh;
+      border: none;
+      background: black;
+      display: block;
     }
   </style>
 </head>
 <body>
-  <video id="player" autoplay muted playsinline controls></video>
+  <iframe id="playerFrame" src="https://play.droptv.com.br" allowfullscreen></iframe>
 
   <script>
-    const video = document.getElementById('player');
-    let userUnmuted = false;
+    const iframe = document.getElementById('playerFrame');
 
-    video.src = 'https://play.droptv.com.br';
+    // Tempo estimado para fim do stream, em milissegundos (ex: 10 min)
+    const reloadInterval = 10 * 60 * 1000;
 
-    video.addEventListener('click', function() {
-      if (video.muted) {
-        video.muted = false;
-        userUnmuted = true;
-        console.log('Usuário desmutou o vídeo');
-      }
-    });
-
-    // Função para recarregar vídeo limpando e resetando src
-    function reloadVideo() {
-      console.log('Recarregando vídeo...');
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
-      video.src = 'https://play.droptv.com.br';
-      video.muted = userUnmuted ? false : true;
-      video.load();
-      // Não usamos await play(), apenas tentamos iniciar, ignorando falha
-      video.play().catch(() => {});
-    }
-
-    // Reload periódico a cada 4 minutos (240000 ms)
-    setInterval(reloadVideo, 240000);
-
-    // Reload em ended e error (pode não funcionar em LG mas tentamos)
-    video.addEventListener('ended', reloadVideo);
-    video.addEventListener('error', reloadVideo);
-
+    setInterval(() => {
+      console.log('Recarregando iframe para novo streaming...');
+      iframe.src = iframe.src; // Força recarregamento do iframe
+    }, reloadInterval);
   </script>
 </body>
 </html>

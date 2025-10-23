@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Player Droptv Auto-retry</title>
+  <title>Player Droptv TV LG fallback</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -21,14 +21,15 @@
   </style>
 </head>
 <body>
-  <video id="player" src="https://play.droptv.com.br" autoplay muted playsinline controls></video>
+  <video id="player" autoplay muted playsinline controls></video>
 
   <script>
     const video = document.getElementById('player');
     let userUnmuted = false;
 
-    // Detecta clique para desmutar
-    video.addEventListener('click', () => {
+    video.src = 'https://play.droptv.com.br';
+
+    video.addEventListener('click', function() {
       if (video.muted) {
         video.muted = false;
         userUnmuted = true;
@@ -36,31 +37,26 @@
       }
     });
 
-    async function reloadVideo() {
-      console.log('Tentando recarregar o stream...');
+    // Função para recarregar vídeo limpando e resetando src
+    function reloadVideo() {
+      console.log('Recarregando vídeo...');
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
       video.src = 'https://play.droptv.com.br';
       video.muted = userUnmuted ? false : true;
       video.load();
-      try {
-        await video.play();
-        console.log('Reprodução iniciada com sucesso.');
-      } catch {
-        console.warn('Falha ao iniciar reprodução, tentando novamente em 3s');
-        setTimeout(reloadVideo, 3000);
-      }
+      // Não usamos await play(), apenas tentamos iniciar, ignorando falha
+      video.play().catch(() => {});
     }
 
-    // Recarrega no fim do stream
-    video.addEventListener('ended', () => {
-      console.log('Stream terminou');
-      reloadVideo();
-    });
+    // Reload periódico a cada 4 minutos (240000 ms)
+    setInterval(reloadVideo, 240000);
 
-    // Recarrega em erro de reprodução
-    video.addEventListener('error', () => {
-      console.log('Erro detectado no stream');
-      reloadVideo();
-    });
+    // Reload em ended e error (pode não funcionar em LG mas tentamos)
+    video.addEventListener('ended', reloadVideo);
+    video.addEventListener('error', reloadVideo);
+
   </script>
 </body>
 </html>

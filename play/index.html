@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Player Droptv - Monitoramento de Redirecionamento</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Player Droptv com Som Respeitado</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -16,6 +16,7 @@
       height: 100vh;
       object-fit: cover;
       background: black;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -25,27 +26,42 @@
   <script>
     const player = document.getElementById('player');
     let lastRedirect = null;
+    let userUnmuted = false;
+
+    // Detecta clique do usuário para tirar mute
+    player.addEventListener('click', () => {
+      if (player.muted) {
+        player.muted = false;
+        userUnmuted = true;
+        console.log('Usuário desmutou o vídeo');
+      }
+    });
 
     async function checkRedirect() {
       try {
-        // Faz HEAD request e segue o redirect; Response.url será a URL final (se permitido)
         const resp = await fetch('https://play.droptv.com.br', { method: 'HEAD', redirect: 'follow' });
         const newRedirect = resp.url;
-
-        // Só recarrega o vídeo se o destino final tiver mudado
         if (newRedirect && newRedirect !== lastRedirect) {
-          console.log('Novo destino detectado:', newRedirect);
           lastRedirect = newRedirect;
-          player.src = 'https://play.droptv.com.br'; // Recarrega o redirect base
+          console.log('Novo destino detectado:', newRedirect);
+
+          // Atualiza src, removendo muted se usuário já desmutou
+          player.src = 'https://play.droptv.com.br';
+
+          if(userUnmuted) {
+            player.muted = false;
+          } else {
+            player.muted = true;
+          }
+
           player.load();
           player.play().catch(() => {});
         }
       } catch (err) {
-        console.error('Erro ao verificar redirecionamento:', err);
+        console.error('Erro ao checar redirecionamento:', err);
       }
     }
 
-    // Primeira verificação imediata, e polling a cada 5s
     checkRedirect();
     setInterval(checkRedirect, 5000);
   </script>

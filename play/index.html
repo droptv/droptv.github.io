@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Player Droptv Simples</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%;
+      background-color: black;
+      overflow: hidden;
+    }
+    video {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <video id="player" autoplay muted playsinline controls></video>
+
+  <script>
+    const video = document.getElementById('player');
+    let currentUrl = null;
+
+    async function updateStream() {
+      try {
+        const response = await fetch('https://play.droptv.com.br', { method: 'HEAD', redirect: 'follow' });
+        const newUrl = response.url;
+        if (newUrl && newUrl !== currentUrl) {
+          currentUrl = newUrl;
+          console.log('Nova URL:', currentUrl);
+          video.src = currentUrl;
+          video.play().catch(() => {});
+        }
+      } catch (err) {
+        console.error('Erro ao atualizar stream:', err);
+      }
+    }
+
+    updateStream();
+    setInterval(updateStream, 5000);
+  </script>
+</body>
+</html>

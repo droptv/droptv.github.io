@@ -3,38 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Player Droptv com HLS.js e Som</title>
+  <title>Player Droptv Auto-retry</title>
   <style>
     html, body {
       margin: 0; padding: 0;
-      width: 100vw;
-      height: 100vh;
-      background: black;
+      height: 100%;
+      background-color: black;
       overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
     video {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain; /* Ajusta para caber na tela, mantendo proporção */
-      background: black;
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      background-color: black;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <video id="player" autoplay muted playsinline controls></video>
+  <video id="player" src="https://play.droptv.com.br" autoplay muted playsinline controls></video>
 
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
     const video = document.getElementById('player');
-    let hls = null;
-    let lastRedirect = null;
     let userUnmuted = false;
 
-    // Detecta clique para remover mute
+    // Detecta clique para desmutar
     video.addEventListener('click', () => {
       if (video.muted) {
         video.muted = false;
@@ -43,49 +36,31 @@
       }
     });
 
-    async function loadStream(url) {
-      if(hls) {
-        hls.destroy();
-        hls = null;
-      }
-
-      if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        // Safari, edge-case, com suporte nativo HLS
-        video.src = url;
-        video.muted = userUnmuted ? false : true;
-        await video.play().catch(() => {});
-      } else if (Hls.isSupported()) {
-        hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.muted = userUnmuted ? false : true;
-          video.play().catch(() => {});
-        });
-      } else {
-        // Fallback: tenta carregar diretamente
-        video.src = url;
-        video.muted = userUnmuted ? false : true;
-        await video.play().catch(() => {});
-      }
-    }
-
-    async function checkRedirect() {
+    async function reloadVideo() {
+      console.log('Tentando recarregar o stream...');
+      video.src = 'https://play.droptv.com.br';
+      video.muted = userUnmuted ? false : true;
+      video.load();
       try {
-        const resp = await fetch('https://play.droptv.com.br', { method: 'HEAD', redirect: 'follow' });
-        const newRedirect = resp.url;
-        if (newRedirect && newRedirect !== lastRedirect) {
-          lastRedirect = newRedirect;
-          console.log('Novo destino detectado:', newRedirect);
-          loadStream('https://play.droptv.com.br');
-        }
-      } catch (err) {
-        console.error('Erro ao checar redirecionamento:', err);
+        await video.play();
+        console.log('Reprodução iniciada com sucesso.');
+      } catch {
+        console.warn('Falha ao iniciar reprodução, tentando novamente em 3s');
+        setTimeout(reloadVideo, 3000);
       }
     }
 
-    checkRedirect();
-    setInterval(checkRedirect, 5000);
+    // Recarrega no fim do stream
+    video.addEventListener('ended', () => {
+      console.log('Stream terminou');
+      reloadVideo();
+    });
+
+    // Recarrega em erro de reprodução
+    video.addEventListener('error', () => {
+      console.log('Erro detectado no stream');
+      reloadVideo();
+    });
   </script>
 </body>
 </html>

@@ -4,10 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DropTV Live – Kick Stream</title>
-  <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
-  <script src="https://player.live-video.net/1.8.0/amazon-ivs-videojs-tech.min.js"></script>
-  <script src="https://player.live-video.net/1.8.0/amazon-ivs-quality-plugin.min.js"></script>
-  <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
   <style>
     body {
       background-color: #0e0e10;
@@ -28,6 +24,7 @@
     video {
       width: 100%;
       height: auto;
+      background: black;
       border-radius: 6px;
     }
     #fullscreen-button {
@@ -51,32 +48,36 @@
 </head>
 <body>
   <div id="video-container">
-    <video id="amazon-ivs-videojs" class="video-js vjs-default-skin" controls preload="auto"></video>
+    <video id="kick-video" controls autoplay playsinline muted></video>
     <img id="fullscreen-button" src="https://i.imgur.com/Zo9GjgJ.png" onclick="toggleFullscreen()" title="Tela cheia" />
   </div>
 
   <script>
     const user = "droptvlive";
+    const player = document.getElementById("kick-video");
 
-    registerIVSTech(videojs);
-    registerIVSQualityPlugin(videojs);
-
-    const player = videojs("amazon-ivs-videojs", {
-      techOrder: ["AmazonIVS"],
-      controls: true,
-      liveui: true,
-      bigPlayButton: true,
-      controlBar: {
-        volumePanel: { inline: false },
-        pictureInPictureToggle: false
-      },
-      amazonIVS: {
-        heartbeat: 500,
-        reconnect: true
+    async function loadStream() {
+      try {
+        const response = await fetch(`https://kick.com/api/v2/channels/${user}`);
+        const data = await response.json();
+        if (data && data.playback_url) {
+          const streamURL = `https://api.codetabs.com/v1/proxy/?quest=${data.playback_url}`;
+          player.src = streamURL;
+          await player.play();
+          console.log("Stream carregado:", streamURL);
+        } else {
+          console.warn("Stream offline, tentando novamente...");
+          retryLater();
+        }
+      } catch (err) {
+        console.error("Erro ao carregar stream:", err);
+        retryLater();
       }
-    });
+    }
 
-    player.enableIVSQualityPlugin();
+    function retryLater() {
+      setTimeout(loadStream, 5000);
+    }
 
     function toggleFullscreen() {
       const container = document.getElementById('video-container');
@@ -87,33 +88,16 @@
         : 'https://i.imgur.com/Zo9GjgJ.png';
     }
 
-    function retryLoad() {
-      fetch(`https://kick.com/api/v2/channels/${user}`)
-        .then(r => r.json())
-        .then(data => {
-          const streamSrc = `https://api.codetabs.com/v1/proxy/?quest=${data.playback_url}`;
-          player.src({ type: 'application/x-mpegURL', src: streamSrc });
-          player.play();
-        })
-        .catch(e => console.error(e));
-    }
-
-    // Inicializar com pequeno atraso
-    setTimeout(retryLoad, 3000);
-
-    let checking = false;
-    function checkPlayerState() {
-      if (!checking && player.readyState() === 0) {
-        console.log(`Stream offline, tentando reconectar ${user}`);
-        checking = true;
-        setTimeout(retryLoad, 5000);
+    // Monitorar estado do player
+    setInterval(() => {
+      if (player.readyState === 0 || player.error) {
+        console.log("Verificando conexão com stream...");
+        loadStream();
       }
-    }
+    }, 8000);
 
-    player.on('pause', () => checking = true);
-    player.on('play', () => checking = false);
-
-    setInterval(checkPlayerState, 5000);
+    // Inicialização
+    loadStream();
   </script>
 </body>
 </html>

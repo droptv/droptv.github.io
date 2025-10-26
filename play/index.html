@@ -1,38 +1,214 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Player via iframe full screen</title>
-  <style>
-    html, body {
-      margin: 0; padding: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: black;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DropTV Live — Player Kick 24h</title>
+
+<link href="https://vjs.zencdn.net/8.20.2/video-js.css" rel="stylesheet" />
+<script src="https://vjs.zencdn.net/8.20.2/video.min.js"></script>
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    height: 100%;
+    overflow: hidden;
+  }
+  #wrapper {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    background: #000;
+  }
+  video#live {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+  }
+  .controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+  .btn {
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    backdrop-filter: blur(5px);
+  }
+  .btn:active { transform: translateY(1px); }
+  #status {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: #fff;
+    background: rgba(0,0,0,0.4);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 100;
+  }
+</style>
 </head>
+
 <body>
-  <iframe id="playerFrame" src="https://play.droptv.com.br" allowfullscreen></iframe>
+  <div id="wrapper">
+    <div id="status">Inicializando...</div>
+    <video id="live" class="video-js vjs-default-skin" playsinline controls muted></video>
+    <div class="controls">
+      <button id="btnPlay" class="btn">▶️</button>
+      <button id="btnFS" class="btn">⤢</button>
+    </div>
+  </div>
 
-  <script>
-    const iframe = document.getElementById('playerFrame');
+<script>
+const CHANNEL = 'droptvlive';
+const PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
+const API_URL = `https://kick.com/api/v2/channels/${CHANNEL}`;
+const statusEl = document.getElementById('status');
+const btnPlay = document.getElementById('btnPlay');
+const btnFS = document.getElementById('btnFS');
+const wrapper = document.getElementById('wrapper');
+const videoEl = document.getElementById('live');
 
-    // Recarrega o iframe a cada 10 minutos para garantir atualização do stream
-    const reloadInterval = 10 * 60 * 1000;
+let player = null;
+let currentUrl = null;
+let reconnecting = false;
+let failureCount = 0;
+let monitorTimer = null;
 
-    setInterval(() => {
-      console.log('Recarregando iframe para novo streaming...');
-      iframe.src = iframe.src; // Força recarregamento do iframe
-    }, reloadInterval);
-  </script>
+// Inicia o player Video.js
+function initPlayer() {
+  if (player) player.dispose();
+  player = videojs(videoEl, {
+    autoplay: true,
+    muted: false,
+    controls: true,
+    preload: 'auto',
+    controlBar: { volumePanel: { inline: false } }
+  });
+  player.on('error', handlePlayerError);
+  player.on('ended', handlePlayerError);
+  player.on('pause', () => btnPlay.textContent = '▶️');
+  player.on('play', () => btnPlay.textContent = '⏸');
+  log('Player inicializado.');
+}
+
+// Busca o playback_url via proxy
+async function getStreamUrl() {
+  try {
+    const res = await fetch(PROXY + encodeURIComponent(API_URL), { cache: 'no-store' });
+    const data = await res.json();
+    if (data && data.playback_url) {
+      return data.playback_url;
+    } else {
+      throw new Error('playback_url ausente');
+    }
+  } catch (err) {
+    log('Falha ao obter stream: ' + err.message);
+    return null;
+  }
+}
+
+// Define a fonte e tenta iniciar
+async function loadStream() {
+  reconnecting = true;
+  const url = await getStreamUrl();
+  if (!url) {
+    scheduleReconnect();
+    return;
+  }
+  currentUrl = PROXY + encodeURIComponent(url);
+  player.src({ src: currentUrl, type: 'application/x-mpegURL' });
+  try {
+    await player.play();
+    log('🔴 Ao vivo');
+    reconnecting = false;
+    failureCount = 0;
+  } catch (err) {
+    log('Play bloqueado: ' + err.message);
+    scheduleReconnect();
+  }
+}
+
+// Função para logar no status e console
+function log(msg) {
+  statusEl.textContent = msg;
+  console.log('[Player]', msg);
+}
+
+// Reconexão com backoff e limite crescente
+function scheduleReconnect() {
+  failureCount++;
+  reconnecting = true;
+  const wait = Math.min(10000, failureCount * 2000);
+  log(`Tentando reconectar em ${wait/1000}s...`);
+  clearTimeout(monitorTimer);
+  setTimeout(() => {
+    loadStream();
+  }, wait);
+}
+
+// Erro do player: tenta reconectar
+function handlePlayerError() {
+  if (!reconnecting) {
+    log('Erro detectado, reconectando...');
+    scheduleReconnect();
+  }
+}
+
+// Monitora continuamente o estado
+function startMonitor() {
+  clearInterval(monitorTimer);
+  monitorTimer = setInterval(() => {
+    const ready = videoEl.readyState;
+    const paused = videoEl.paused;
+    const network = videoEl.networkState;
+    if (ready === 0 || network === 3) {
+      log('Sem dados, tentando retomar...');
+      scheduleReconnect();
+    }
+  }, 7000);
+}
+
+// Botões
+btnPlay.onclick = () => {
+  if (videoEl.paused) player.play();
+  else player.pause();
+};
+
+btnFS.onclick = async () => {
+  if (!document.fullscreenElement) {
+    await wrapper.requestFullscreen();
+    btnFS.textContent = '⤡';
+  } else {
+    await document.exitFullscreen();
+    btnFS.textContent = '⤢';
+  }
+};
+
+// Reinicia se o navegador voltar de suspensão
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    log('Página reativada, verificando stream...');
+    scheduleReconnect();
+  }
+});
+
+// Ciclo principal
+initPlayer();
+loadStream();
+startMonitor();
+</script>
 </body>
 </html>

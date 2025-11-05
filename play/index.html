@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stream</title>
+    <title>DropTV</title>
     
     <style>
         /* Remove margens e preenchimentos padrão do navegador */
@@ -23,8 +23,7 @@
             width: 100%;
             height: 100%;
             /* 'object-fit: contain' garante que o vídeo inteiro seja visível, 
-              adicionando barras pretas (letterboxing) se a proporção for diferente.
-              Use 'cover' se preferir preencher a tela e cortar o vídeo.
+               adicionando barras pretas (letterboxing) se a proporção for diferente.
             */
             object-fit: contain; 
         }
@@ -32,9 +31,10 @@
 </head>
 <body>
 
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+ <!--     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> -->
+ 			<script src="hls.js"></script>
 
-    <video id="video" autoplay muted playsinline></video>
+    <video id="video" autoplay playsinline controls></video>
 
     <script>
         // Espera o DOM estar pronto antes de executar o script
@@ -46,33 +46,13 @@
             // Verifica se o hls.js é suportado pelo navegador
             if (Hls.isSupported()) {
                 
-                // Configurações do HLS.js otimizadas para "pouca memória" e "TVs antigas"
+                // Configurações do HLS.js (mantidas)
                 var hlsConfig = {
-                    
-                    // Desabilitar o 'worker' é crucial para navegadores de TV antigos.
-                    // Muitos deles não têm suporte a 'Web Workers' ou têm implementações
-                    // com bugs. Isso força o hls.js a rodar na thread principal.
                     enableWorker: false,
-                    
-                    // Reduz drasticamente o buffer máximo para economizar memória.
-                    // O padrão (60MB) é muito alto para dispositivos com pouca RAM.
-                    // Definido para 10MB.
                     maxBufferSize: 10 * 1024 * 1024,
-                    
-                    // Duração máxima do buffer em segundos. O padrão é 30s.
-                    // Reduzir para 15s economiza memória.
                     maxBufferLength: 15,
-                    
-                    // Um limite máximo absoluto para o buffer.
                     maxMaxBufferLength: 20,
-
-                    // Quantos segmentos "passados" manter no buffer em modo live.
-                    // O padrão é 3. Reduzir para 2 economiza memória.
                     liveSyncDurationCount: 2,
-                    
-                    // Aumenta o tempo de espera por um fragmento de vídeo.
-                    // Dispositivos antigos/TVs podem ter conexões de rede mais lentas
-                    // ou instáveis. (Padrão: 20000ms)
                     fragLoadingTimeOut: 30000, 
                 };
 
@@ -84,19 +64,18 @@
                 // Anexa o hls.js ao elemento <video>
                 hls.attachMedia(video);
                 
-                // Tenta dar o play (necessário após anexar)
-                // O 'muted' na tag <video> deve garantir que isso funcione.
-                video.play().catch(function() {
-                    console.log('O autoplay foi bloqueado pelo navegador.');
+                // Tenta dar o play. Se for bloqueado (porque não está mais 'muted'),
+                // o navegador exibe o vídeo, mas sem som/em pause, e o usuário pode interagir.
+                video.play().catch(function(error) {
+                    console.log('O autoplay foi bloqueado (navegador exige interação para iniciar o som).');
+                    // Uma vez que o usuário interagir (clicar no play/volume), o vídeo iniciará.
                 });
 
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Se o hls.js não for suportado, mas o navegador
-                // suportar HLS nativamente (ex: Safari no iOS/macOS),
-                // apenas definimos a URL de origem diretamente.
+                // Se o hls.js não for suportado, mas o navegador suportar HLS nativamente.
                 video.src = videoSrc;
-                video.play().catch(function() {
-                    console.log('O autoplay foi bloqueado pelo navegador.');
+                video.play().catch(function(error) {
+                    console.log('O autoplay nativo foi bloqueado.');
                 });
             }
         });

@@ -5,79 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DropTV</title>
     
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+
     <style>
-        /* Remove margens e preenchimentos padrão do navegador */
+        /* Remove margens e preenchimentos padrão */
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
-            /* Esconde barras de rolagem caso o vídeo transborde */
             overflow: hidden;
-            /* Fundo preto para uma aparência limpa */
             background-color: #000;
         }
-        
-        /* Faz o player de vídeo ocupar 100% da tela */
-        #video {
+
+        /* Faz o container do Video.js preencher a tela inteira.
+           Usamos a classe 'vjs-fill' no <video> para que ele
+           obedeça este container.
+        */
+        #my-video-wrapper {
             width: 100%;
             height: 100%;
-            /* 'object-fit: contain' garante que o vídeo inteiro seja visível, 
-               adicionando barras pretas (letterboxing) se a proporção for diferente.
-            */
-            object-fit: contain; 
         }
+
+        /* Garante que o vídeo (o 'vjs-tech') use 'contain' 
+           para não cortar a imagem, similar ao seu 'object-fit'
+           anterior.
+        */
+        .vjs-tech {
+            object-fit: contain !important;
+        }
+
+        /* A MÁGICA: Oculta a barra de progresso 
+           (seek bar) no Video.js.
+        */
+        .video-js .vjs-progress-control {
+            display: none !important;
+        }
+
+        /* Opcional: Também oculta os marcadores de tempo
+           (tempo atual / duração) que não fazem sentido na live.
+        */
+        .video-js .vjs-time-control {
+            display: none !important;
+        }
+
     </style>
 </head>
 <body>
 
- <!--     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> -->
- 			<script src="hls.js"></script>
+    <div id="my-video-wrapper">
+        <video id="my-video"
+               class="video-js vjs-default-skin vjs-fill"
+               controls
+               autoplay
+               muted
+               playsinline>
+            
+            <source src="https://hls.fred1807.workers.dev" type="application/x-mpegURL">
+        </video>
+    </div>
 
-    <video id="video" autoplay playsinline controls></video>
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script>
-        // Espera o DOM estar pronto antes de executar o script
+        // 5. Inicializa o player
         document.addEventListener('DOMContentLoaded', function() {
             
-            var video = document.getElementById('video');
-            var videoSrc = 'https://hls.fred1807.workers.dev'; // URL do stream M3U8 fornecida
+            // Configurações do player
+            var options = {
+                // Não precisamos das configurações de buffer do HLS.js aqui,
+                // pois o video.js gerencia isso de forma robusta por padrão
+                // para streams HLS (ele usará o 'videojs-contrib-hls').
+            };
 
-            // Verifica se o hls.js é suportado pelo navegador
-            if (Hls.isSupported()) {
-                
-                // Configurações do HLS.js (mantidas)
-                var hlsConfig = {
-                    enableWorker: false,
-                    maxBufferSize: 10 * 1024 * 1024,
-                    maxBufferLength: 15,
-                    maxMaxBufferLength: 20,
-                    liveSyncDurationCount: 2,
-                    fragLoadingTimeOut: 30000, 
-                };
+            var player = videojs('my-video', options);
 
-                var hls = new Hls(hlsConfig);
-                
-                // Carrega o stream
-                hls.loadSource(videoSrc);
-                
-                // Anexa o hls.js ao elemento <video>
-                hls.attachMedia(video);
-                
-                // Tenta dar o play. Se for bloqueado (porque não está mais 'muted'),
-                // o navegador exibe o vídeo, mas sem som/em pause, e o usuário pode interagir.
-                video.play().catch(function(error) {
-                    console.log('O autoplay foi bloqueado (navegador exige interação para iniciar o som).');
-                    // Uma vez que o usuário interagir (clicar no play/volume), o vídeo iniciará.
-                });
+            // Tenta dar o play (o 'muted' no HTML ajuda nisso)
+            player.play().catch(function(error) {
+                console.log('O autoplay foi bloqueado pelo navegador.');
+                // O usuário ainda pode clicar no play (já que 'controls' está ativo)
+            });
 
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Se o hls.js não for suportado, mas o navegador suportar HLS nativamente.
-                video.src = videoSrc;
-                video.play().catch(function(error) {
-                    console.log('O autoplay nativo foi bloqueado.');
-                });
-            }
+            // Opcional: Se o usuário tirar do mudo, deixamos
+            // o navegador saber que queremos áudio.
+            player.on('volumechange', function() {
+                if (!player.muted()) {
+                    player.muted(false);
+                }
+            });
         });
     </script>
 

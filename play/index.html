@@ -1,100 +1,136 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DropTV</title>
-    
-    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-
-    <style>
-        /* Remove margens e preenchimentos padrão */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background-color: #000;
-        }
-
-        /* Faz o container do Video.js preencher a tela inteira.
-           Usamos a classe 'vjs-fill' no <video> para que ele
-           obedeça este container.
-        */
-        #my-video-wrapper {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Garante que o vídeo (o 'vjs-tech') use 'contain' 
-           para não cortar a imagem, similar ao seu 'object-fit'
-           anterior.
-        */
-        .vjs-tech {
-            object-fit: contain !important;
-        }
-
-        /* A MÁGICA: Oculta a barra de progresso 
-           (seek bar) no Video.js.
-        */
-        .video-js .vjs-progress-control {
-            display: none !important;
-        }
-
-        /* Opcional: Também oculta os marcadores de tempo
-           (tempo atual / duração) que não fazem sentido na live.
-        */
-        .video-js .vjs-time-control {
-            display: none !important;
-        }
-
-    </style>
+  <meta charset="UTF-8" />
+  <title>DropTV Player - Auto Refresh</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.9"></script>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      background: #000; color: #fff;
+      height: 100%; display: flex;
+      align-items: center; justify-content: center;
+      flex-direction: column;
+      font-family: sans-serif;
+    }
+    video {
+      width: 90%;
+      max-width: 1280px;
+      border-radius: 8px;
+      background: #111;
+    }
+    #status {
+      margin-top: 10px;
+      opacity: 0.7;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
 
-    <div id="my-video-wrapper">
-        <video id="my-video"
-               class="video-js vjs-default-skin vjs-fill"
-               controls
-               autoplay
-               muted
-               playsinline>
-            
-            <source src="https://hls.fred1807.workers.dev" type="application/x-mpegURL">
-        </video>
-    </div>
+  <video id="video" controls autoplay muted playsinline></video>
+  <div id="status">Iniciando player...</div>
 
-    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+  <script>
+    const PLAY_URL = 'https://hls.fred1807.workers.dev'; // endpoint do seu Worker
+    const REFRESH_INTERVAL = 60000; // 60 segundos
+    const video = document.getElementById('video');
+    const status = document.getElementById('status');
 
-    <script>
-        // 5. Inicializa o player
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // Configurações do player
-            var options = {
-                // Não precisamos das configurações de buffer do HLS.js aqui,
-                // pois o video.js gerencia isso de forma robusta por padrão
-                // para streams HLS (ele usará o 'videojs-contrib-hls').
-            };
+    let hls;
+    let currentUrl = '';
+    let refreshTimer;
 
-            var player = videojs('my-video', options);
+    async function fetchStreamUrl() {
+      try {
+        const res = await fetch(PLAY_URL + '?_=' + Date.now()); // cache-buster
+        const text = await res.text();
+        if (!text.includes('.m3u8')) throw new Error('Resposta inválida');
+        return text.trim();
+      } catch (err) {
+        console.error('Falha ao obter URL da stream:', err);
+        return null;
+      }
+    }
 
-            // Tenta dar o play (o 'muted' no HTML ajuda nisso)
-            player.play().catch(function(error) {
-                console.log('O autoplay foi bloqueado pelo navegador.');
-                // O usuário ainda pode clicar no play (já que 'controls' está ativo)
-            });
+    async function initPlayer() {
+      const url = await fetchStreamUrl();
+      if (!url) {
+        status.textContent = 'Falha ao obter URL inicial';
+        return;
+      }
+      currentUrl = url;
+      status.textContent = 'Reproduzindo stream atual...';
 
-            // Opcional: Se o usuário tirar do mudo, deixamos
-            // o navegador saber que queremos áudio.
-            player.on('volumechange', function() {
-                if (!player.muted()) {
-                    player.muted(false);
-                }
-            });
+      if (Hls.isSupported()) {
+        hls = new Hls({
+          liveSyncDuration: 5,
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60,
+          backBufferLength: 10,
         });
-    </script>
 
+        hls.loadSource(currentUrl);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+        hls.on(Hls.Events.ERROR, async (event, data) => {
+          console.warn('HLS error', data);
+          if (data.fatal) {
+            await reloadStream('Erro fatal');
+          }
+        });
+
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Safari nativo
+        video.src = currentUrl;
+        video.addEventListener('error', reloadStream);
+        video.play();
+      }
+
+      // Atualização proativa a cada 60 s
+      startRefreshLoop();
+    }
+
+    async function reloadStream(reason) {
+      console.log('⟳ Recarregando stream:', reason);
+      status.textContent = 'Atualizando stream... (' + reason + ')';
+      const newUrl = await fetchStreamUrl();
+      if (!newUrl) {
+        console.warn('Nova URL não obtida, tentando novamente...');
+        setTimeout(() => reloadStream('retry'), 5000);
+        return;
+      }
+
+      // Troca suave (sem dar stop total)
+      try {
+        if (hls) {
+          hls.swapAudioCodec(); // previne glitches de áudio
+          hls.loadSource(newUrl);
+          currentUrl = newUrl;
+          status.textContent = 'Stream atualizado.';
+          console.log('Nova URL carregada com sucesso.');
+        } else {
+          video.src = newUrl;
+          video.play();
+        }
+      } catch (err) {
+        console.error('Erro no reload suave:', err);
+      }
+    }
+
+    function startRefreshLoop() {
+      if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = setInterval(() => reloadStream('refreshInterval'), REFRESH_INTERVAL);
+    }
+
+    // Monitora fim da reprodução
+    video.addEventListener('ended', () => reloadStream('end'));
+    video.addEventListener('stalled', () => reloadStream('stalled'));
+    video.addEventListener('suspend', () => reloadStream('suspend'));
+    video.addEventListener('error', () => reloadStream('videoError'));
+
+    initPlayer();
+  </script>
 </body>
 </html>

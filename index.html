@@ -227,9 +227,176 @@
    <script>
       var lastFmKey = "1423897f73010d0c35257f51be892a1c";
       var username = "droptv";
+      var spotifyAccessToken = null;
+      var spotifyTokenExpiry = 0;
+      
+      // Credenciais Spotify (substitua pelas suas)
+      var spotifyClientId = "YOUR_SPOTIFY_CLIENT_ID";
+      var spotifyClientSecret = "YOUR_SPOTIFY_CLIENT_SECRET";
       
       GetLastFMSong();
       setInterval(GetLastFMSong, 15000)
+      
+      // Obtém token de acesso do Spotify
+      async function getSpotifyToken() {
+           // Se o token ainda é válido, retorna o existente
+           if (spotifyAccessToken && spotifyTokenExpiry > Date.now()) {
+                return spotifyAccessToken;
+           }
+           
+           try {
+                const response = await fetch("https://accounts.spotify.com/api/token", {
+                     method: "POST",
+                     headers: {
+                          "Content-Type": "application/x-www-form-urlencoded",
+                     },
+                     body: `grant_type=client_credentials&client_id=${spotifyClientId}&client_secret=${spotifyClientSecret}`
+                });
+                
+                if (response.ok) {
+                     const data = await response.json();
+                     spotifyAccessToken = data.access_token;
+                     spotifyTokenExpiry = Date.now() + (data.expires_in * 1000);
+                     return spotifyAccessToken;
+                } else {
+                     console.error("Erro ao obter token Spotify");
+                     return null;
+                }
+           } catch (error) {
+                console.error("Erro na requisição de token Spotify:", error);
+                return null;
+           }
+      }
+      
+      // Obtém capa via Spotify
+      async function getCoverFromSpotify(artist, trackName) {
+           try {
+                const token = await getSpotifyToken();
+                if (!token) return null;
+                
+                const query = encodeURIComponent(`${artist} ${trackName}`);
+                const response = await fetch(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`, {
+                     headers: {
+                          "Authorization": `Bearer ${token}`
+                     }
+                });
+                
+                if (response.ok) {
+                     const data = await response.json();
+                     if (data.tracks && data.tracks.items && data.tracks.items.length > 0) {
+                          const images = data.tracks.items[0].album.images;
+                          if (images && images.length > 0) {
+                               console.log("Capa encontrada via Spotify");
+                               return images[0].url;
+                          }
+                     }
+                }
+           } catch (error) {
+                console.error("Erro ao buscar capa no Spotify:", error);
+           }
+           return null;
+      }
+      
+      // Obtém capa via MusicBrainz CoverArtArchive
+      async function getCoverFromMusicBrainz(artist, trackName) {
+           try {
+                // Primeiro, busca o MBID via MusicBrainz
+                const query = encodeURIComponent(`${artist} AND ${trackName}`);
+                const response = await fetch(`https://musicbrainz.org/ws/2/recording?query=${query}&fmt=json`);
+                
+                if (response.ok) {
+                     const data = await response.json();
+                     if (data.recordings && data.recordings.length > 0) {
+                          const recording = data.recordings[0];
+                          
+                          // Tenta encontrar release com capa
+                          if (recording.releases && recording.releases.length > 0) {
+                               for (let release of recording.releases) {
+                                    if (release.id) {
+                                         const coverUrl = `https://coverartarchive.org/release/${release.id}/front`;
+                                         // Verifica se a capa existe
+                                         const coverCheck = await fetch(coverUrl, { method: 'HEAD' });
+                                         if (coverCheck.ok) {
+                                              console.log("Capa encontrada via MusicBrainz");
+                                              return coverUrl;
+                                         }
+                                    }
+                               }
+                          }
+                     }
+                }
+           } catch (error) {
+                console.error("Erro ao buscar capa no MusicBrainz:", error);
+           }
+           return null;
+      }
+      
+      // Obtém capa via Last.fm (método adicional - track.getInfo)
+      async function getCoverFromLastfmTrackInfo(artist, trackName) {
+           try {
+                const artistParam = encodeURIComponent(artist);
+                const trackParam = encodeURIComponent(trackName);
+                const response = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=${artistParam}&track=${trackParam}&api_key=${lastFmKey}&format=json`);
+                
+                if (response.ok) {
+                     const data = await response.json();
+                     if (data.track && data.track.album && data.track.album.image) {
+                          const images = data.track.album.image;
+                          if (Array.isArray(images)) {
+                               const largeImage = images.find(img => img.size === "large" || img.size === "extralarge");
+                               if (largeImage && largeImage["#text"]) {
+                                    console.log("Capa encontrada via Last.fm track.getinfo");
+                                    return largeImage["#text"];
+                               }
+                          } else if (images["#text"]) {
+                               return images["#text"];
+                          }
+                     }
+                }
+           } catch (error) {
+                console.error("Erro ao buscar capa via Last.fm track.getinfo:", error);
+           }
+           return null;
+      }
+      
+      // Função principal que tenta todos os fallbacks
+      async function getCoverImageWithFallbacks(track) {
+           let cover = null;
+           const artist = track.artist["#text"] || "Unknown";
+           const trackName = track.name || "Unknown";
+           
+           console.log(`Buscando capa para: ${artist} - ${trackName}`);
+           
+           // Tentativa 1: Verificar se Last.fm tem capa
+           if (track.image && Array.isArray(track.image)) {
+                const lastfmImage = track.image.find(img => img["#text"]);
+                if (lastfmImage && lastfmImage["#text"]) {
+                     console.log("Capa encontrada em Last.fm (recenttracks)");
+                     return lastfmImage["#text"];
+                }
+           }
+           
+           // Tentativa 2: Verificar album do track
+           if (track.album && track.album["#text"]) {
+                console.log("Album detectado:", track.album["#text"]);
+           }
+           
+           // Tentativa 3: Last.fm track.getInfo (mais detalhado)
+           cover = await getCoverFromLastfmTrackInfo(artist, trackName);
+           if (cover) return cover;
+           
+           // Tentativa 4: MusicBrainz CoverArtArchive
+           cover = await getCoverFromMusicBrainz(artist, trackName);
+           if (cover) return cover;
+           
+           // Tentativa 5: Spotify
+           cover = await getCoverFromSpotify(artist, trackName);
+           if (cover) return cover;
+           
+           // Fallback final: Usar imagem padrão
+           console.log("Nenhuma capa encontrada, usando imagem padrão");
+           return "musique.png";
+      }
       
       function GetLastFMSong(){
       
@@ -238,31 +405,57 @@
            xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                      var myObj = JSON.parse(this.responseText);
-                     //document.getElementById("background").innerHTML = myObj.recenttracks.track[0].url;
                      
-                     console.log(myObj.recenttracks.track[0]["@attr"]);
+                     console.log("Resposta Last.fm:", myObj);
                      
-                     if (myObj.recenttracks.track[0]["@attr"]){
-                     
-                          title = myObj.recenttracks.track[0].name;
-                          artist = myObj.recenttracks.track[0].artist["#text"] + ' / ';
-                          cover = myObj.recenttracks.track[0].image[3]["#text"];
-                          if (cover.localeCompare("") == 0 || cover.localeCompare(null) == 0){cover = "musique.png";}
-                          url = myObj.recenttracks.track[0].url;
-                     }else{
-                          album = "";
-                          title = "?";
-                          cover = "";
-                          artist = "";
+                     if (myObj.recenttracks && myObj.recenttracks.track) {
+                          var track = Array.isArray(myObj.recenttracks.track) 
+                               ? myObj.recenttracks.track[0] 
+                               : myObj.recenttracks.track;
+                          
+                          if (track["@attr"] && track["@attr"].nowplaying === "true") {
+                               title = track.name || "Unknown Track";
+                               artist = (track.artist["#text"] || track.artist || "Unknown Artist") + " / ";
+                               url = track.url || "#";
+                               
+                               // Usar a função com fallbacks para obter a capa
+                               getCoverImageWithFallbacks(track).then(function(coverUrl) {
+                                    cover = coverUrl;
+                                    
+                                    // Atualizar DOM
+                                    document.getElementById("nowplay").style.backgroundImage = "url('" + cover + "')";
+                                    document.getElementById("title").innerHTML = title;
+                                    document.getElementById("artist").innerHTML = artist;
+                                    document.getElementById("cover").src = cover;
+                                    
+                                    // Fallback se a imagem não carregar
+                                    document.getElementById("cover").onerror = function() {
+                                         this.src = "musique.png";
+                                         document.getElementById("nowplay").style.backgroundImage = "url('musique.png')";
+                                    };
+                                    
+                                    console.log("Capa final:", cover);
+                               });
+                          } else {
+                               // Track não está tocando agora
+                               album = "";
+                               title = "?";
+                               cover = "musique.png";
+                               artist = "";
+                               
+                               document.getElementById("nowplay").style.backgroundImage = "url('musique.png')";
+                               document.getElementById("title").innerHTML = title;
+                               document.getElementById("artist").innerHTML = artist;
+                               document.getElementById("cover").src = cover;
+                          }
                      }
-                     document.getElementById("nowplay").style.backgroundImage = "url('"+cover+"')";
-                     document.getElementById("title").innerHTML = title;
-                     document.getElementById("artist").innerHTML = artist;
-                     document.getElementById("cover").src = cover;
-                     
-                     console.log(myObj);
                 }
            };
+           
+           xmlhttp.onerror = function() {
+                console.error("Erro ao conectar à API Last.fm");
+           };
+           
            xmlhttp.open("GET", "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&api_key="+lastFmKey+"&limit=1&format=json", true);
            xmlhttp.send();
       

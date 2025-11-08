@@ -14,36 +14,36 @@
             padding: 0;
             height: 100%;
             width: 100%;
-            overflow: hidden; /* Esconde barras de rolagem */
-            background-color: #000; /* Fundo preto para preencher */
+            overflow: hidden; 
+            background-color: #000;
         }
 
-        /* 2. Container do vídeo ocupando 100% */
+        /* 2. Container do vídeo */
         #live-player {
             width: 100vw;
             height: 100vh;
         }
-
-        /* 3. Esconder os controles indesejados (barra de progresso, etc.) */
         
-        /* Barra de progresso (seek bar) */
-        .video-js .vjs-progress-control {
-            display: none !important;
-        }
+        /* * 3. NÃO PRECISAMOS MAIS DAQUELE CSS 
+         * As regras que escondiam os botões foram removidas.
+         * A regra que forçava a barra a ficar visível também foi removida.
+         */
 
-        /* Todos os marcadores de tempo */
-        .video-js .vjs-current-time,
-        .video-js .vjs-duration,
-        .video-js .vjs-time-divider,
-        .video-js .vjs-remaining-time {
-            display: none !important;
-        }
-
-        /* Outros botões (Tela cheia, Legendas, PiP) */
-        .video-js .vjs-fullscreen-control,
-        .video-js .vjs-subs-caps-button,
-        .video-js .vjs-picture-in-picture-control {
-            display: none !important;
+        /* 4. Estilo do Fallback (Mantido) */
+        .vjs-no-js {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #ccc;
+            background-color: #222;
+            font-family: Arial, sans-serif;
+            font-size: 1.5em;
+            text-align: center;
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -53,13 +53,15 @@
            class="video-js vjs-default-skin"
            controls
            preload="auto"
-           autoplay  /* 4. Tenta autoplay (será pego pelo script) */
-           playsinline /* Essencial para iOS */
+           autoplay
+           playsinline
            >
         <source src="https://droptv.com.br/play.m3u8" type="application/x-mpegURL">
         
         <p class="vjs-no-js">
-            Para assistir este vídeo, por favor habilite o JavaScript.
+            <strong>Ocorreu um erro</strong>
+            <br><br>
+            Não foi possível carregar o player de vídeo.
         </p>
     </video>
 
@@ -67,30 +69,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
 
     <script>
-        // Inicializa o player
-        var player = videojs('live-player');
+        try {
+            /*
+             * 5. ALTERAÇÃO PRINCIPAL AQUI
+             * Inicializamos o player com opções para desabilitar
+             * os componentes que não queremos na barra de controle.
+             */
+            var player = videojs('live-player', {
+                controlBar: {
+                    // Desabilita os componentes que não queremos
+                    progressControl: false,
+                    currentTimeDisplay: false,
+                    timeDivider: false,
+                    durationDisplay: false,
+                    remainingTimeDisplay: false,
+                    fullscreenToggle: false,
+                    pictureInPictureToggle: false,
+                    subsCapsButton: false
+                    
+                    // Os botões que NÃO listamos (Play/Pause, Volume)
+                    // continuarão aparecendo normalmente.
+                }
+            });
 
-        // 6. Lógica de Autoplay (Com som se possível, senão mudo)
-        player.ready(function() {
-            // Tenta dar play com som
-            var promise = player.play();
-
-            if (promise !== undefined) {
-                // Navegadores modernos retornam uma promessa
-                promise.then(function() {
-                    // Autoplay com som funcionou!
-                    console.log('Autoplay com som iniciado.');
-                }).catch(function(error) {
-                    // Autoplay com som foi bloqueado pelo navegador
-                    console.log('Autoplay com som bloqueado. Tentando com mudo.');
-                    player.muted(true); // Ativa o mudo
-                    player.play();      // Tenta dar play novamente (agora mudo)
-                });
-            }
-            // Navegadores muito antigos podem não retornar uma promessa
-            // e podem ter obedecido o atributo 'autoplay'.
-            // Se não, o usuário terá que clicar em play.
-        });
+            // Lógica de Autoplay (igual a antes)
+            player.ready(function() {
+                var promise = player.play();
+                if (promise !== undefined) {
+                    promise.catch(function(error) {
+                        console.log('Autoplay com som bloqueado. Tentando com mudo.');
+                        player.muted(true);
+                        player.play();
+                    });
+                }
+            });
+        } catch (e) {
+            console.error('Falha ao inicializar o Video.js', e);
+        }
     </script>
 
 </body>

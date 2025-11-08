@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>DropTV</title>
+      <link rel="manifest" href="manifest.json" />
+      <link rel="apple-touch-icon" href="/icon.png">
+      <meta name="apple-mobile-web-app-title" content="DropTV">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <!-- <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> -->
+      <meta name="description" content="Um canal que inspira as pessoas através da arte, esporte, musica e natureza." />
+      <meta name="theme-color" content="#3A72C2"/>
+      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+      <link rel="icon" href="/favicon.ico" type="image/x-icon">
+      <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
+      <style media="screen" type="text/css">
+         body{
+         position: fixed; 
+         top: -50%; 
+         left: -50%; 
+         width: 200%; 
+         height: 200%;
+         font-family: 'Josefin Sans', sans-serif;
+         }
+
+         p {
+         color: white;
+         font-size: 18px;
+         }
+         a {
+         color: #5DB5A0;
+         font-weight: bold;
+         text-decoration: none;
+         }
+         .footer {
+         position:fixed;
+         left:0px;
+         top:0px;
+         width:100%;
+         height:100%;   
+         text-align: center;
+         }
+         .centro {
+         position:fixed;
+         left:0px;
+         right:0px;
+         bottom:5%;
+         }
+         .topo {
+         position:fixed;
+         left:0px;
+         right:0px;
+         top:5%;
+         height:300px;
+         }
+         .caixa {
+         position: relative;
+         margin: auto;
+         bottom:10%;
+         width:250px;
+         padding:1px;
+         letter-spacing: 10px;
+         border-radius: 16px;
+         background:rgba(34,34,34,0.75);
+         -moz-user-select: none;
+         -khtml-user-select: none;
+         -webkit-user-select: none;
+         -ms-user-select: none;
+         user-select: none;
+         }
+         .loggo {
+            max-width: 100%;
+    max-height: 100%;
+         }
+
+         #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  /*  background-color: white;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+#dv-musiqid {
+   opacity: 0;
+   display:none;
+}
+
+         .box {
+         padding: 10px;
+         }
+         .leitura {
+         overflow:auto;
+         position: absolute;
+         margin: auto;
+         left:25%;
+         right:25%;
+         width:50%;
+         max-height:75%;
+         border-radius: 16px;
+         background:rgba(34,34,34,0.9);
+   
+         /*text-align: left; */
+         }
+         .paragrafo {
+         padding:15px;
+         }
+         .videobox {
+         position: absolute;
+         width:100%;
+         height:100%;
+         background:black;
+         }
+         .close {
+         top: 0px;
+         float: right;
+         background-color: white;
+         color: black;
+         text-decoration: none;
+         opacity:0.3;
+         }
+         .close:hover {
+         opacity:0.8;
+         }
+         .close:after {
+         content: '✖'; 
+         }
+         .musiq {
+         color: white;
+         padding: 15px;
+         font-size:3vw;
+         display: table;
+         }
+         .musiq img{
+            padding-right: 15px;
+          max-height: 4em;
+         }
+         .trackname {
+         display: table-cell;
+         vertical-align: middle;
+         }
+      </style>
+   </head>
+   <body>
+<div class="musiq">
+ <div id="nowplay"></div>
+                  <img src="#" id="cover" />
+                  <div class="trackname">
+                     <p style="font-size:3vw;"><span id="artist">Artist</span><span id="title">Music</span></p>
+                  </div>
+   
+</div>
+   </body>
+ 
+   <script>
+      var lastFmKey = "1423897f73010d0c35257f51be892a1c";
+      var username = "droptv";
+      
+      GetLastFMSong();
+      setInterval(GetLastFMSong, 15000)
+      
+      function GetLastFMSong(){
+      
+           var title, album, artist, cover, url; 
+           var xmlhttp = new XMLHttpRequest();
+           xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                     var myObj = JSON.parse(this.responseText);
+                     //document.getElementById("background").innerHTML = myObj.recenttracks.track[0].url;
+                     
+                     console.log(myObj.recenttracks.track[0]["@attr"]);
+                     
+                     if (myObj.recenttracks.track[0]["@attr"]){
+                     
+                          title = myObj.recenttracks.track[0].name;
+                          artist = myObj.recenttracks.track[0].artist["#text"] + ' / ';
+                          cover = myObj.recenttracks.track[0].image[3]["#text"];
+                          if (cover.localeCompare("") == 0 || cover.localeCompare(null) == 0){cover = "musique.png";}
+                          url = myObj.recenttracks.track[0].url;
+                     }else{
+                          album = "";
+                          title = "?";
+                          cover = "";
+                          artist = "";
+                     }
+                     document.getElementById("nowplay").style.backgroundImage = "url('"+cover+"')";
+                     document.getElementById("title").innerHTML = title;
+                     document.getElementById("artist").innerHTML = artist;
+                     document.getElementById("cover").src = cover;
+                     
+                     console.log(myObj);
+                }
+           };
+           xmlhttp.open("GET", "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&api_key="+lastFmKey+"&limit=1&format=json", true);
+           xmlhttp.send();
+      
+      }
+      
+   </script>
+</html>

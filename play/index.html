@@ -1,144 +1,140 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streaming ao Vivo</title>
-
-    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet">
-    
-    <link href="https://unpkg.com/videojs-chromecast/dist/videojs-chromecast.css" rel="stylesheet">
-
+    <title>Live Stream Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <script src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
     <style>
-        /* 1. Layout de tela cheia (Sem alteração) */
-        html, body {
-            margin: 0; padding: 0;
-            height: 100%; width: 100%;
-            overflow: hidden; 
-            background-color: #000;
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            overflow: hidden;
         }
-        #live-player {
+        #video {
             width: 100vw;
             height: 100vh;
+            object-fit: contain;
         }
-
-        /* 2. Estilo do Fallback (Sem alteração) */
-        .vjs-no-js {
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column; color: #ccc; background-color: #222;
-            font-family: Arial, sans-serif; font-size: 1.5em; text-align: center;
-            width: 100vw; height: 100vh;
-            padding: 20px; box-sizing: border-box;
+        #controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            z-index: 10;
         }
-
-        
-        /* * 3. NOVO: Skin "Vimeo"
-         * ----------------------------------------------------
-         * Altera a cor padrão do video.js para o azul do Vimeo.
-         */
-
-        /* Cor do "progresso" da barra de volume */
-        .video-js .vjs-volume-level {
-            background-color: #00ADEF; /* Azul Vimeo */
+        button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            margin: 0 15px;
         }
-
-        /* Cor dos ícones ao passar o mouse */
-        .video-js .vjs-button:hover > .vjs-icon-placeholder,
-        .video-js .vjs-button:focus > .vjs-icon-placeholder {
-            color: #00ADEF;
+        input[type="range"] {
+            flex: 0 0 100px;
+            -webkit-appearance: none;
+            background: transparent;
+            cursor: pointer;
         }
-
-        /* Remove a sombra de texto dos ícones (para um look mais "flat") */
-        .video-js .vjs-control .vjs-icon-placeholder:before {
-            text-shadow: none;
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
         }
-
-        /* Modifica o botão de Play central */
-        .video-js .vjs-big-play-button {
-            font-size: 3.5em; /* Um pouco menor */
-            
-            background-color: rgba(0, 173, 239, 0.8); /* Azul Vimeo semi-transparente */
-            border: none; /* Remove a borda "filme" */
-            border-radius: 50%; /* Deixa 100% redondo */
-
-            /* Ajustes de tamanho e centralização */
-            width: 2em;
-            height: 2em;
-            line-height: 2em;
-            margin-top: -1em;
-            margin-left: -1em;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 15px;
+            width: 15px;
+            background: white;
+            border-radius: 50%;
+            margin-top: -5px;
         }
-
-        /* Cor do "brilho" do botão de Play ao focar (acessibilidade) */
-        .video-js.vjs-using-native-controls .vjs-big-play-button,
-        .video-js .vjs-big-play-button:focus {
-             outline: none;
-             box-shadow: 0 0 1.5em #00ADEF; /* Sombra azul */
+        google-cast-launcher {
+            --disconnected-color: white;
+            --connected-color: white;
         }
-        
-        /* ---------------------------------------------------- */
-
     </style>
 </head>
 <body>
-
-    <video id="live-player"
-           class="video-js vjs-default-skin"
-           controls
-           preload="auto"
-           autoplay
-           playsinline
-           >
-        <source src="https://droptv.com.br/play.m3u8" type="application/x-mpegURL">
-        
-        <p class="vjs-no-js">
-            <strong>Ocorreu um erro</strong>
-            <br><br>
-            Não foi possível carregar o player de vídeo.
-        </p>
-    </video>
-
-    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-
-    <script src="https://vjs.zencdn.net/7.10.2/video.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
-
-    <script src="https://unpkg.com/videojs-chromecast/dist/videojs-chromecast.min.js"></script>
-
+    <video id="video" autoplay playsinline></video>
+    <div id="controls">
+        <button id="playpause">▶️</button>
+        <input type="range" id="volume" min="0" max="100" value="100">
+        <button id="fullscreen">⛶</button>
+        <google-cast-launcher></google-cast-launcher>
+    </div>
     <script>
-        try {
-            var player = videojs('live-player', {
-                
-                chromecast: {}, 
-                
-                controlBar: {
-                    progressControl: false,
-                    currentTimeDisplay: false,
-                    timeDivider: false,
-                    durationDisplay: false,
-                    remainingTimeDisplay: false,
-                    fullscreenToggle: false,
-                    pictureInPictureToggle: false,
-                    subsCapsButton: false,
-                    chromecastButton: true 
-                }
-            });
+        const video = document.getElementById('video');
+        const playpause = document.getElementById('playpause');
+        const volume = document.getElementById('volume');
+        const fullscreen = document.getElementById('fullscreen');
+        const videoSrc = 'https://droptv.com.br/play.m3u8';
 
-            // Lógica de Autoplay (sem alterações)
-            player.ready(function() {
-                var promise = player.play();
-                if (promise !== undefined) {
-                    promise.catch(function(error) {
-                        console.log('Autoplay com som bloqueado. Tentando com mudo.');
-                        player.muted(true);
-                        player.play();
-                    });
-                }
-            });
-        } catch (e) {
-            console.error('Falha ao inicializar o Video.js', e);
+        // Load HLS stream with compatibility fallback
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
         }
-    </script>
 
+        // Custom play/pause control
+        video.addEventListener('play', () => { playpause.textContent = '⏸'; });
+        video.addEventListener('pause', () => { playpause.textContent = '▶️'; });
+        playpause.addEventListener('click', () => {
+            if (video.paused) video.play();
+            else video.pause();
+        });
+
+        // Volume control
+        volume.addEventListener('input', () => {
+            video.volume = volume.value / 100;
+        });
+
+        // Fullscreen control
+        fullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                video.requestFullscreen().catch(err => console.log('Fullscreen error:', err));
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Google Cast integration for Chromecast
+        window['__onGCastApiAvailable'] = function(isAvailable) {
+            if (isAvailable) {
+                cast.framework.CastContext.getInstance().setOptions({
+                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+                });
+            }
+        };
+
+        const context = cast.framework.CastContext.getInstance();
+        context.addEventListener(cast.framework.CastContextEventType.SESSION_STATE_CHANGED, function(event) {
+            if (event.sessionState === cast.framework.SessionState.SESSION_STARTED || event.sessionState === cast.framework.SessionState.SESSION_RESUMED) {
+                const castSession = context.getCurrentSession();
+                if (castSession) {
+                    const mediaInfo = new chrome.cast.media.MediaInfo(videoSrc, 'application/vnd.apple.mpegurl');
+                    mediaInfo.streamType = chrome.cast.media.StreamType.LIVE;
+                    const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                    castSession.loadMedia(request).then(
+                        () => console.log('Cast load succeeded'),
+                        (errorCode) => console.log('Cast error: ' + errorCode)
+                    );
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -6,9 +6,10 @@
     <title>Streaming ao Vivo</title>
 
     <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet">
+    
+    <link href="https://unpkg.com/videojs-chromecast/dist/videojs-chromecast.css" rel="stylesheet">
 
     <style>
-        /* 1. Layout de tela cheia */
         html, body {
             margin: 0;
             padding: 0;
@@ -18,18 +19,12 @@
             background-color: #000;
         }
 
-        /* 2. Container do vídeo */
         #live-player {
             width: 100vw;
             height: 100vh;
         }
-        
-        /* * 3. NÃO PRECISAMOS MAIS DAQUELE CSS 
-         * As regras que escondiam os botões foram removidas.
-         * A regra que forçava a barra a ficar visível também foi removida.
-         */
 
-        /* 4. Estilo do Fallback (Mantido) */
+        /* Estilo do Fallback */
         .vjs-no-js {
             display: flex;
             justify-content: center;
@@ -65,19 +60,23 @@
         </p>
     </video>
 
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+
     <script src="https://vjs.zencdn.net/7.10.2/video.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"></script>
 
+    <script src="https://unpkg.com/videojs-chromecast/dist/videojs-chromecast.min.js"></script>
+
     <script>
         try {
-            /*
-             * 5. ALTERAÇÃO PRINCIPAL AQUI
-             * Inicializamos o player com opções para desabilitar
-             * os componentes que não queremos na barra de controle.
-             */
+            /* 4. MODIFICADO: Inicialização do player */
             var player = videojs('live-player', {
+                
+                // Habilita a configuração do plugin
+                chromecast: {}, 
+                
                 controlBar: {
-                    // Desabilita os componentes que não queremos
+                    // Componentes que desabilitamos
                     progressControl: false,
                     currentTimeDisplay: false,
                     timeDivider: false,
@@ -85,14 +84,14 @@
                     remainingTimeDisplay: false,
                     fullscreenToggle: true,
                     pictureInPictureToggle: false,
-                    subsCapsButton: false
+                    subsCapsButton: false,
                     
-                    // Os botões que NÃO listamos (Play/Pause, Volume)
-                    // continuarão aparecendo normalmente.
+                    // NOVO: Habilita o botão do Chromecast na barra
+                    chromecastButton: true 
                 }
             });
 
-            // Lógica de Autoplay (igual a antes)
+            // Lógica de Autoplay (sem alterações)
             player.ready(function() {
                 var promise = player.play();
                 if (promise !== undefined) {

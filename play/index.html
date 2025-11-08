@@ -10,36 +10,74 @@
     <link href="https://unpkg.com/videojs-chromecast/dist/videojs-chromecast.css" rel="stylesheet">
 
     <style>
+        /* 1. Layout de tela cheia (Sem alteração) */
         html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
             overflow: hidden; 
             background-color: #000;
         }
-
         #live-player {
             width: 100vw;
             height: 100vh;
         }
 
-        /* Estilo do Fallback */
+        /* 2. Estilo do Fallback (Sem alteração) */
         .vjs-no-js {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: #ccc;
-            background-color: #222;
-            font-family: Arial, sans-serif;
-            font-size: 1.5em;
-            text-align: center;
-            width: 100vw;
-            height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; color: #ccc; background-color: #222;
+            font-family: Arial, sans-serif; font-size: 1.5em; text-align: center;
+            width: 100vw; height: 100vh;
+            padding: 20px; box-sizing: border-box;
         }
+
+        
+        /* * 3. NOVO: Skin "Vimeo"
+         * ----------------------------------------------------
+         * Altera a cor padrão do video.js para o azul do Vimeo.
+         */
+
+        /* Cor do "progresso" da barra de volume */
+        .video-js .vjs-volume-level {
+            background-color: #00ADEF; /* Azul Vimeo */
+        }
+
+        /* Cor dos ícones ao passar o mouse */
+        .video-js .vjs-button:hover > .vjs-icon-placeholder,
+        .video-js .vjs-button:focus > .vjs-icon-placeholder {
+            color: #00ADEF;
+        }
+
+        /* Remove a sombra de texto dos ícones (para um look mais "flat") */
+        .video-js .vjs-control .vjs-icon-placeholder:before {
+            text-shadow: none;
+        }
+
+        /* Modifica o botão de Play central */
+        .video-js .vjs-big-play-button {
+            font-size: 3.5em; /* Um pouco menor */
+            
+            background-color: rgba(0, 173, 239, 0.8); /* Azul Vimeo semi-transparente */
+            border: none; /* Remove a borda "filme" */
+            border-radius: 50%; /* Deixa 100% redondo */
+
+            /* Ajustes de tamanho e centralização */
+            width: 2em;
+            height: 2em;
+            line-height: 2em;
+            margin-top: -1em;
+            margin-left: -1em;
+        }
+
+        /* Cor do "brilho" do botão de Play ao focar (acessibilidade) */
+        .video-js.vjs-using-native-controls .vjs-big-play-button,
+        .video-js .vjs-big-play-button:focus {
+             outline: none;
+             box-shadow: 0 0 1.5em #00ADEF; /* Sombra azul */
+        }
+        
+        /* ---------------------------------------------------- */
+
     </style>
 </head>
 <body>
@@ -69,24 +107,19 @@
 
     <script>
         try {
-            /* 4. MODIFICADO: Inicialização do player */
             var player = videojs('live-player', {
                 
-                // Habilita a configuração do plugin
                 chromecast: {}, 
                 
                 controlBar: {
-                    // Componentes que desabilitamos
                     progressControl: false,
                     currentTimeDisplay: false,
                     timeDivider: false,
                     durationDisplay: false,
                     remainingTimeDisplay: false,
-                    fullscreenToggle: true,
+                    fullscreenToggle: false,
                     pictureInPictureToggle: false,
                     subsCapsButton: false,
-                    
-                    // NOVO: Habilita o botão do Chromecast na barra
                     chromecastButton: true 
                 }
             });

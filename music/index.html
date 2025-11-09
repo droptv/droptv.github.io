@@ -1,256 +1,149 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DROPTV Rádio</title>
-  <style>
-    :root {
-      --accent: #00e0ff;
-      --text-light: #f2f6fa;
-      --text-dim: #a9b4c4;
-    }
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at center, #0a0f1a 0%, #060910 100%);
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      color: var(--text-light);
-    }
-    .player {
-      width: 360px;
-      border-radius: 20px;
-      backdrop-filter: blur(20px);
-      background: rgba(255, 255, 255, 0.06);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px 20px 28px;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-    #nowplay {
-      width: 100%;
-      height: 240px;
-      border-radius: 14px;
-      background-size: cover;
-      background-position: center;
-      margin-bottom: 18px;
-      transition: background-image 0.5s ease-in-out;
-    }
-    #title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-light);
-    }
-    #artist {
-      font-size: 14px;
-      color: var(--text-dim);
-      margin-bottom: 22px;
-    }
-    .controls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-    #playToggle {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      border: none;
-      background: var(--accent);
-      color: #000;
-      font-size: 28px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-    #playToggle:hover {
-      background: #4ef1ff;
-      transform: scale(1.05);
-    }
-    input[type="range"] {
-      width: 160px;
-      appearance: none;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.1);
-      outline: none;
-      cursor: pointer;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--accent);
-      cursor: pointer;
-    }
-    audio {
-      display: none;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DROPTV Rádio</title>
+<style>
+:root {
+  --accent: #00e0ff;
+  --text-light: #f2f6fa;
+  --text-dim: #a9b4c4;
+}
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #0a0f1a 0%, #060910 100%);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-light);
+}
+.player {
+  width: 340px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px 28px;
+  text-align: center;
+}
+#cover {
+  width: 100%;
+  height: 220px;
+  border-radius: 14px;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 18px;
+  transition: background-image 0.5s ease-in-out;
+}
+#title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+#artist {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+}
+button {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #000;
+  font-size: 28px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+button:hover { background: #4ef1ff; transform: scale(1.05); }
+input[type=range] {
+  width: 160px;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.1);
+}
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+audio { display: none; }
+</style>
 </head>
 <body>
-  <div class="player">
-    <div id="nowplay" style="background-image:url('musique.png');"></div>
-    <div id="title">Carregando...</div>
-    <div id="artist"></div>
+<div class="player">
+  <div id="cover" style="background-image:url('musique.png');"></div>
+  <div id="title">Pronto</div>
+  <div id="artist"></div>
+  <audio id="audio" src="https://droptv.com.br/play.m3u8" playsinline controlslist="nodownload noplaybackrate"></audio>
+  <button id="toggle">▶</button>
+  <input id="vol" type="range" min="0" max="1" step="0.01" value="1">
+</div>
 
-    <audio id="audio" crossorigin="anonymous"></audio>
+<script>
+const audio = document.getElementById('audio');
+const toggle = document.getElementById('toggle');
+const vol = document.getElementById('vol');
+let playing = false;
 
-    <div class="controls">
-      <button id="playToggle">▶</button>
-      <input id="vol" type="range" min="0" max="1" step="0.01" value="1">
-    </div>
-  </div>
+toggle.addEventListener('click', () => {
+  if (!playing) {
+    audio.play();
+    toggle.textContent = '❚❚';
+    playing = true;
+  } else {
+    audio.pause();
+    toggle.textContent = '▶';
+    playing = false;
+  }
+});
 
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script>
-    // ------------------- PLAYER ÁUDIO -------------------
-    const STREAM_URL = "https://droptv.com.br/play.m3u8";
-    const audio = document.getElementById("audio");
-    const playToggle = document.getElementById("playToggle");
-    const vol = document.getElementById("vol");
-    let hls = null;
-    let isPlaying = false;
+vol.addEventListener('input', () => {
+  audio.volume = vol.value;
+});
 
-    function initHls() {
-      if (audio.canPlayType("application/vnd.apple.mpegURL")) {
-        audio.src = STREAM_URL;
-      } else if (window.Hls) {
-        hls = new Hls();
-        hls.loadSource(STREAM_URL);
-        hls.attachMedia(audio);
-      }
+// ---------- Last.fm Metadata ----------
+const lastFmKey = "1423897f73010d0c35257f51be892a1c";
+const username = "droptv";
+
+async function getNowPlaying() {
+  try {
+    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`);
+    const data = await res.json();
+    const track = Array.isArray(data.recenttracks.track)
+      ? data.recenttracks.track[0]
+      : data.recenttracks.track;
+
+    if (track && track["@attr"]?.nowplaying === "true") {
+      const artist = track.artist["#text"];
+      const title = track.name;
+      document.getElementById('title').textContent = title;
+      document.getElementById('artist').textContent = artist;
+
+      // pega imagem maior disponível
+      const imgs = track.image;
+      const bigImg = imgs?.length ? imgs[imgs.length - 1]["#text"] : "";
+      const coverUrl = bigImg || 'musique.png';
+      document.getElementById('cover').style.backgroundImage = `url('${coverUrl}')`;
     }
-
-    playToggle.addEventListener("click", () => {
-      if (!isPlaying) {
-        initHls();
-        audio.play();
-        playToggle.textContent = "❚❚";
-        isPlaying = true;
-      } else {
-        audio.pause();
-        playToggle.textContent = "▶";
-        isPlaying = false;
-      }
-    });
-
-    vol.addEventListener("input", () => {
-      audio.volume = vol.value;
-    });
-
-    // ------------------- LAST.FM + SPOTIFY METADATA -------------------
-    const lastFmKey = "1423897f73010d0c35257f51be892a1c";
-    const username = "droptv";
-    let spotifyAccessToken = null;
-    let spotifyTokenExpiry = 0;
-
-    const spotifyClientId = "YOUR_SPOTIFY_CLIENT_ID";
-    const spotifyClientSecret = "YOUR_SPOTIFY_CLIENT_SECRET";
-
-    async function getSpotifyToken() {
-      if (spotifyAccessToken && spotifyTokenExpiry > Date.now()) return spotifyAccessToken;
-      try {
-        const response = await fetch("https://accounts.spotify.com/api/token", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `grant_type=client_credentials&client_id=${spotifyClientId}&client_secret=${spotifyClientSecret}`,
-        });
-        const data = await response.json();
-        spotifyAccessToken = data.access_token;
-        spotifyTokenExpiry = Date.now() + data.expires_in * 1000;
-        return spotifyAccessToken;
-      } catch (err) {
-        console.error("Erro ao obter token Spotify:", err);
-        return null;
-      }
-    }
-
-    async function getCoverFromSpotify(artist, track) {
-      try {
-        const token = await getSpotifyToken();
-        if (!token) return null;
-        const query = encodeURIComponent(`${artist} ${track}`);
-        const res = await fetch(
-          `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const data = await res.json();
-        const img = data.tracks?.items?.[0]?.album?.images?.[0]?.url;
-        return img || null;
-      } catch {
-        return null;
-      }
-    }
-
-    async function getCoverFromLastfmTrackInfo(artist, track) {
-      try {
-        const url = `https://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=${encodeURIComponent(
-          artist
-        )}&track=${encodeURIComponent(track)}&api_key=${lastFmKey}&format=json`;
-        const r = await fetch(url);
-        const j = await r.json();
-        const imgs = j.track?.album?.image;
-        if (Array.isArray(imgs)) {
-          const large = imgs.find((i) => i.size === "extralarge" || i.size === "large");
-          return large?.["#text"] || null;
-        }
-      } catch {}
-      return null;
-    }
-
-    async function getCover(track) {
-      const artist = track.artist["#text"] || "";
-      const name = track.name || "";
-      let img = track.image?.find((i) => i["#text"])?.["#text"];
-      if (img) return img;
-      img = await getCoverFromLastfmTrackInfo(artist, name);
-      if (img) return img;
-      img = await getCoverFromSpotify(artist, name);
-      return img || "musique.png";
-    }
-
-    async function GetLastFMSong() {
-      try {
-        const res = await fetch(
-          `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`
-        );
-        const data = await res.json();
-        const track = Array.isArray(data.recenttracks.track)
-          ? data.recenttracks.track[0]
-          : data.recenttracks.track;
-        if (track && track["@attr"] && track["@attr"].nowplaying === "true") {
-          const artist = track.artist["#text"];
-          const title = track.name;
-          document.getElementById("title").textContent = title;
-          document.getElementById("artist").textContent = artist;
-          const cover = await getCover(track);
-          document.getElementById("nowplay").style.backgroundImage = `url('${cover}')`;
-        }
-      } catch (err) {
-        console.error("Erro Last.fm:", err);
-      }
-    }
-
-    GetLastFMSong();
-    setInterval(GetLastFMSong, 15000);
-  </script>
+  } catch (e) {
+    console.log("Erro metadata:", e);
+  }
+}
+getNowPlaying();
+setInterval(getNowPlaying, 15000);
+</script>
 </body>
 </html>
-

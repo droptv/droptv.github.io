@@ -65,20 +65,6 @@ button {
   transition: all .2s ease;
 }
 button:hover { background: #4ef1ff; transform: scale(1.05); }
-input[type=range] {
-  width: 160px;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255,255,255,0.1);
-}
-input[type=range]::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--accent);
-}
 audio { display: none; }
 </style>
 </head>
@@ -89,13 +75,11 @@ audio { display: none; }
   <div id="artist"></div>
   <audio id="audio" src="https://droptv.com.br/play.m3u8" playsinline controlslist="nodownload noplaybackrate"></audio>
   <button id="toggle">▶</button>
-  <input id="vol" type="range" min="0" max="1" step="0.01" value="1">
 </div>
 
 <script>
 const audio = document.getElementById('audio');
 const toggle = document.getElementById('toggle');
-const vol = document.getElementById('vol');
 let playing = false;
 
 toggle.addEventListener('click', () => {
@@ -110,15 +94,124 @@ toggle.addEventListener('click', () => {
   }
 });
 
-vol.addEventListener('input', () => {
-  audio.volume = vol.value;
-});
+// ---------- Last.fm + Spotify + MusicBrainz Album Art ----------
 
-// ---------- Last.fm Metadata ----------
 const lastFmKey = "1423897f73010d0c35257f51be892a1c";
 const username = "droptv";
+let spotifyAccessToken = null;
+let spotifyTokenExpiry = 0;
 
-async function getNowPlaying() {
+// ⚙️ Configure suas credenciais Spotify
+const spotifyClientId = "YOUR_SPOTIFY_CLIENT_ID";
+const spotifyClientSecret = "YOUR_SPOTIFY_CLIENT_SECRET";
+
+// Atualiza a música atual a cada 15s
+GetLastFMSong();
+setInterval(GetLastFMSong, 15000);
+
+// -------- Funções auxiliares --------
+
+async function getSpotifyToken() {
+  if (spotifyAccessToken && spotifyTokenExpiry > Date.now()) return spotifyAccessToken;
+  try {
+    const res = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `grant_type=client_credentials&client_id=${spotifyClientId}&client_secret=${spotifyClientSecret}`
+    });
+    const data = await res.json();
+    spotifyAccessToken = data.access_token;
+    spotifyTokenExpiry = Date.now() + data.expires_in * 1000;
+    return spotifyAccessToken;
+  } catch (e) {
+    console.error("Erro ao obter token Spotify:", e);
+    return null;
+  }
+}
+
+async function getCoverFromSpotify(artist, trackName) {
+  try {
+    const token = await getSpotifyToken();
+    if (!token) return null;
+    const query = encodeURIComponent(`${artist} ${trackName}`);
+    const res = await fetch(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const data = await res.json();
+    const img = data.tracks?.items?.[0]?.album?.images?.[0]?.url;
+    if (img) console.log("🎵 Capa via Spotify");
+    return img || null;
+  } catch (e) {
+    console.error("Erro Spotify:", e);
+    return null;
+  }
+}
+
+async function getCoverFromMusicBrainz(artist, trackName) {
+  try {
+    const query = encodeURIComponent(`${artist} AND ${trackName}`);
+    const res = await fetch(`https://musicbrainz.org/ws/2/recording?query=${query}&fmt=json`);
+    const data = await res.json();
+    const release = data.recordings?.[0]?.releases?.[0];
+    if (release?.id) {
+      const coverUrl = `https://coverartarchive.org/release/${release.id}/front`;
+      const check = await fetch(coverUrl, { method: 'HEAD' });
+      if (check.ok) {
+        console.log("🎨 Capa via MusicBrainz");
+        return coverUrl;
+      }
+    }
+  } catch (e) {
+    console.error("Erro MusicBrainz:", e);
+  }
+  return null;
+}
+
+async function getCoverFromLastfmTrackInfo(artist, trackName) {
+  try {
+    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(trackName)}&api_key=${lastFmKey}&format=json`);
+    const data = await res.json();
+    const imgs = data.track?.album?.image;
+    if (Array.isArray(imgs)) {
+      const img = imgs.find(x => x.size === "extralarge" || x.size === "large")?.["#text"];
+      if (img) {
+        console.log("📀 Capa via Last.fm track.getInfo");
+        return img;
+      }
+    }
+  } catch (e) {
+    console.error("Erro Last.fm track.getInfo:", e);
+  }
+  return null;
+}
+
+async function getCoverImageWithFallbacks(track) {
+  const artist = track.artist?.["#text"] || "Unknown";
+  const trackName = track.name || "Unknown";
+
+  console.log(`Buscando capa: ${artist} - ${trackName}`);
+
+  // 1️⃣ Last.fm (recenttracks)
+  const lastfmImg = track.image?.slice(-1)?.[0]?.["#text"];
+  if (lastfmImg) return lastfmImg;
+
+  // 2️⃣ Last.fm track.getInfo
+  let cover = await getCoverFromLastfmTrackInfo(artist, trackName);
+  if (cover) return cover;
+
+  // 3️⃣ MusicBrainz
+  cover = await getCoverFromMusicBrainz(artist, trackName);
+  if (cover) return cover;
+
+  // 4️⃣ Spotify
+  cover = await getCoverFromSpotify(artist, trackName);
+  if (cover) return cover;
+
+  // 5️⃣ Fallback
+  return "musique.png";
+}
+
+async function GetLastFMSong() {
   try {
     const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`);
     const data = await res.json();
@@ -129,21 +222,16 @@ async function getNowPlaying() {
     if (track && track["@attr"]?.nowplaying === "true") {
       const artist = track.artist["#text"];
       const title = track.name;
+      const cover = await getCoverImageWithFallbacks(track);
+
       document.getElementById('title').textContent = title;
       document.getElementById('artist').textContent = artist;
-
-      // pega imagem maior disponível
-      const imgs = track.image;
-      const bigImg = imgs?.length ? imgs[imgs.length - 1]["#text"] : "";
-      const coverUrl = bigImg || 'musique.png';
-      document.getElementById('cover').style.backgroundImage = `url('${coverUrl}')`;
+      document.getElementById('cover').style.backgroundImage = `url('${cover}')`;
     }
   } catch (e) {
-    console.log("Erro metadata:", e);
+    console.error("Erro metadata:", e);
   }
 }
-getNowPlaying();
-setInterval(getNowPlaying, 15000);
 </script>
 </body>
 </html>

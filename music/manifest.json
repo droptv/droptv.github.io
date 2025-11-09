@@ -1,10 +1,10 @@
 {
-  "name": "DropTV Music",
-  "short_name": "DropTV",
+  "name": "DROPTV Rádio",
+  "short_name": "DROPTV",
   "start_url": "/music/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#0a0f1a",
+  "theme_color": "#00e0ff",
   "icons": [
     {
       "src": "cover.jpg",
@@ -13,4 +13,3 @@
     }
   ]
 }
-

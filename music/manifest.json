@@ -1,0 +1,16 @@
+{
+  "name": "DropTV Music",
+  "short_name": "DropTV",
+  "start_url": "/music/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "cover.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
+

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DropTV</title>
 
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#0a0a0a" />
     <link rel="apple-touch-icon" href="/icon.png" />
@@ -14,7 +15,6 @@
     <!-- Fonte -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap" rel="stylesheet" />
 
-    <!-- Estilos -->
     <style>
       html, body {
         margin: 0;
@@ -53,18 +53,18 @@
       /* Música */
       #dv-musiqid {
         position: fixed;
-        bottom: 6%;
+        top: 5%;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(20, 20, 20, 0.6);
+        background: rgba(20, 20, 20, 0.55);
         backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 0.8rem 1.4rem;
+        border-radius: 14px;
+        padding: 0.8rem 1.2rem;
         display: flex;
         align-items: center;
         gap: 1rem;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.5s ease;
       }
 
       #dv-musiqid.show {
@@ -82,6 +82,7 @@
         color: white;
         font-size: 1rem;
         line-height: 1.3;
+        text-align: left;
       }
 
       .trackname span {
@@ -91,7 +92,7 @@
       /* Chromecast */
       #castButton {
         position: fixed;
-        top: 20px;
+        bottom: 20px;
         right: 20px;
         width: 48px;
         height: 48px;
@@ -105,6 +106,11 @@
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
+        opacity: 0;
+      }
+
+      #castButton.visible {
+        opacity: 1;
       }
 
       #castButton:hover {
@@ -118,34 +124,52 @@
         fill: white;
         opacity: 0.8;
       }
+
+      /* Esconder controles após inatividade */
+      video::-webkit-media-controls {
+        opacity: 1;
+        transition: opacity 0.4s ease;
+      }
+
+      body.hide-ui video::-webkit-media-controls {
+        opacity: 0;
+      }
+
+      body.hide-ui #castButton,
+      body.hide-ui #dv-musiqid {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* Ocultar barra de progresso */
+      video::-webkit-media-controls-timeline,
+      video::-webkit-media-controls-seek-back-button,
+      video::-webkit-media-controls-seek-forward-button {
+        display: none !important;
+      }
     </style>
 
     <!-- Chromecast -->
     <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-
     <!-- HLS -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   </head>
 
   <body>
-    <!-- Splash inicial -->
     <div id="overlay">
       <img src="droptv.svg" alt="DropTV" class="loggo" />
     </div>
 
-    <!-- Player -->
-    <video id="videoPlayer" playsinline autoplay muted></video>
+    <video id="videoPlayer" playsinline autoplay muted controls></video>
 
-    <!-- Botão Chromecast -->
     <button id="castButton" title="Enviar para Chromecast">
       <svg viewBox="0 0 24 24">
         <path d="M1,18V21H4A3,3 0 0,0 1,18M1,14V16A7,7 0 0,1 8,23H10A9,9 0 0,0 1,14M1,10V12A11,11 0 0,1 12,23H14A13,13 0 0,0 1,10M21,3H3A2,2 0 0,0 1,5V8H3V5H21V19H13V21H21A2,2 0 0,0 23,19V5A2,2 0 0,0 21,3Z" />
       </svg>
     </button>
 
-    <!-- Música atual -->
-    <div id="dv-musiqid">
-      <img id="cover" src="https://placehold.co/100x100" alt="Capa" />
+    <div id="dv-musiqid" class="show">
+      <img id="cover" src="musique.png" alt="Capa" />
       <div class="trackname">
         <span id="artist">Artista</span>
         <span id="title">Faixa</span>
@@ -155,13 +179,20 @@
     <script>
       const video = document.getElementById("videoPlayer");
       const overlay = document.getElementById("overlay");
+      const castButton = document.getElementById("castButton");
+      const musiqBox = document.getElementById("dv-musiqid");
+      const artistEl = document.getElementById("artist");
+      const titleEl = document.getElementById("title");
+      const coverEl = document.getElementById("cover");
       const streamUrl = "https://droptv.com.br/play.m3u8";
 
+      // === SPLASH ===
       window.addEventListener("load", () => {
         setTimeout(() => (overlay.style.opacity = 0), 1200);
         setTimeout(() => (overlay.style.display = "none"), 2000);
       });
 
+      // === PLAYER ===
       function initPlayer() {
         if (Hls.isSupported()) {
           const hls = new Hls({ maxBufferLength: 10 });
@@ -175,10 +206,9 @@
           console.error("HLS não suportado neste navegador.");
         }
       }
-
       initPlayer();
 
-      // Chromecast
+      // === CHROMECAST ===
       window.__onGCastApiAvailable = function (isAvailable) {
         if (isAvailable) {
           const context = cast.framework.CastContext.getInstance();
@@ -187,7 +217,6 @@
             autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED,
           });
 
-          const castButton = document.getElementById("castButton");
           castButton.addEventListener("click", () => {
             const session = context.getCurrentSession();
             if (!session) {
@@ -200,6 +229,49 @@
           });
         }
       };
+
+      // === MOSTRAR / ESCONDER UI ===
+      let uiTimer;
+      const showUI = () => {
+        document.body.classList.remove("hide-ui");
+        castButton.classList.add("visible");
+        musiqBox.classList.add("show");
+        clearTimeout(uiTimer);
+        uiTimer = setTimeout(() => {
+          document.body.classList.add("hide-ui");
+          castButton.classList.remove("visible");
+          musiqBox.classList.remove("show");
+        }, 3000);
+      };
+      ["mousemove", "touchstart"].forEach(evt => document.addEventListener(evt, showUI));
+      showUI();
+
+      // === MÚSICA ATUAL ===
+      const lastFmKey = "1423897f73010d0c35257f51be892a1c";
+      const username = "droptv";
+
+      async function getLastFmTrack() {
+        try {
+          const res = await fetch(
+            `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`
+          );
+          const data = await res.json();
+          const track = Array.isArray(data.recenttracks.track)
+            ? data.recenttracks.track[0]
+            : data.recenttracks.track;
+
+          if (track && track["@attr"]?.nowplaying === "true") {
+            titleEl.textContent = track.name || "Faixa desconhecida";
+            artistEl.textContent = track.artist["#text"] || "Artista desconhecido";
+            coverEl.src = track.image?.pop()?.["#text"] || "musique.png";
+          }
+        } catch (e) {
+          console.error("Erro ao obter faixa do LastFM:", e);
+        }
+      }
+
+      getLastFmTrack();
+      setInterval(getLastFmTrack, 15000);
     </script>
   </body>
 </html>

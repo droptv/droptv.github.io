@@ -37,29 +37,28 @@ function showUI() {
 }
 ["mousemove", "touchstart"].forEach(e => document.addEventListener(e, showUI));
 
+// === Detectar Safari ===
+function isSafari() {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+
 // === Inicialização do Player ===
 function startStream() {
-  if (Hls.isSupported()) {
+  if (!isSafari() && window.Hls && Hls.isSupported()) {
     hls = new Hls({ maxBufferLength: 10 });
     hls.loadSource(streamUrl);
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
       video.play().catch(() => playOverlay.style.display = "flex");
     });
-  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+  } else {
+    // Safari e iOS usam HLS nativo (necessário para AirPlay)
     video.src = streamUrl;
-    video.play().catch(() => playOverlay.style.display = "flex");
+    video.addEventListener("loadedmetadata", () => {
+      video.play().catch(() => playOverlay.style.display = "flex");
+    });
   }
 }
-
-// === Eventos de estado do player ===
-video.addEventListener("playing", () => {
-  overlay.classList.add("fade-out");
-  playOverlay.style.display = "none";
-  updatePlayIcon();
-});
-video.addEventListener("pause", updatePlayIcon);
-video.addEventListener("volumechange", updateMuteIcon);
 
 // === Overlay desaparece após 2s ===
 window.addEventListener("load", () => {
@@ -70,15 +69,21 @@ window.addEventListener("load", () => {
   }, 2000);
 });
 
+// === Eventos do player ===
+video.addEventListener("playing", () => {
+  playOverlay.style.display = "none";
+  updatePlayIcon();
+});
+video.addEventListener("pause", updatePlayIcon);
+video.addEventListener("volumechange", updateMuteIcon);
+
 // === Controles customizados ===
 playPause.addEventListener("click", () => {
   if (video.paused) video.play();
   else video.pause();
 });
 
-muteToggle.addEventListener("click", () => {
-  video.muted = !video.muted;
-});
+muteToggle.addEventListener("click", () => video.muted = !video.muted);
 
 // === Toggle ícones ===
 function updatePlayIcon() {
@@ -96,9 +101,9 @@ function updateMuteIcon() {
     : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
         d="M11 5L6 9H3v6h3l5 4V5z"/>`;
 }
-updateMuteIcon(); // garante ícone inicial correto
+updateMuteIcon(); // Ícone inicial correto (muted on)
 
-// === Chromecast e AirPlay (detecção inteligente) ===
+// === Chromecast + AirPlay (detecção inteligente) ===
 function initChromecast() {
   if (!window.cast || !window.cast.framework) {
     setTimeout(initChromecast, 500);
@@ -121,8 +126,8 @@ function initChromecast() {
   });
 }
 
+// Safari → apenas AirPlay / Chrome → apenas Chromecast
 if (window.WebKitPlaybackTargetAvailabilityEvent) {
-  // Safari → mostra só AirPlay
   castButton.style.display = "none";
   airplayButton.style.display = "flex";
   airplayButton.addEventListener("click", () => {
@@ -130,7 +135,6 @@ if (window.WebKitPlaybackTargetAvailabilityEvent) {
       video.webkitShowPlaybackTargetPicker();
   });
 } else {
-  // Outros navegadores → mostra só Chromecast
   airplayButton.style.display = "none";
   initChromecast();
 }

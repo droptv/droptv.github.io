@@ -5,25 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DropTV</title>
 
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#0a0a0a" />
-    <link rel="apple-touch-icon" href="/icon.png" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="DropTV" />
+    <meta name="theme-color" content="#3A72C2" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-title" content="DropTV" />
 
-    <!-- Fonte -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet" />
 
     <style>
       html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
+        margin: 0; padding: 0;
+        width: 100%; height: 100%;
         background: black;
         overflow: hidden;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Josefin Sans', sans-serif;
       }
 
       video {
@@ -33,245 +28,122 @@
         background: black;
       }
 
+      video::-webkit-media-controls-enclosure { display: none !important; }
+
       #overlay {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: black;
-        z-index: 9999;
-        transition: opacity 0.8s ease;
+        position: fixed; inset: 0;
+        display: flex; justify-content: center; align-items: center;
+        background: black; z-index: 999;
+        transition: opacity 1s ease;
       }
+      #overlay.fade-out { opacity: 0; pointer-events: none; }
+      .loggo { max-width: 60%; opacity: 0.9; }
 
-      .loggo {
-        width: 220px;
-        opacity: 0.85;
-        filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+      /* Botão "Tocar" (autoplay bloqueado) */
+      #playOverlay {
+        position: fixed; inset: 0;
+        display: none; justify-content: center; align-items: center;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+        z-index: 900; transition: opacity 0.3s ease;
       }
+      #playOverlay button {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+        border-radius: 50%; width: 80px; height: 80px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: background 0.3s;
+      }
+      #playOverlay button:hover { background: rgba(255,255,255,0.3); }
+      #playOverlay svg { width: 40px; height: 40px; stroke: white; }
 
-      /* Música */
+      /* Música atual */
       #dv-musiqid {
-        position: fixed;
-        top: 5%;
-        left: 50%;
+        position: fixed; top: 5%; left: 50%;
         transform: translateX(-50%);
-        background: rgba(20, 20, 20, 0.55);
+        background: rgba(25,25,25,0.65);
+        border-radius: 16px;
+        padding: 10px 18px;
+        display: flex; align-items: center; gap: 12px;
+        opacity: 0; transition: opacity 0.4s ease;
+        pointer-events: none; backdrop-filter: blur(10px);
+      }
+      #dv-musiqid.show { opacity: 1; }
+      #dv-musiqid img { height: 50px; border-radius: 8px; }
+      .trackname { color: white; font-size: 1.1rem; white-space: nowrap; }
+
+      /* Barra de controles */
+      .controls {
+        position: fixed; bottom: 5%; left: 50%;
+        transform: translateX(-50%);
+        display: flex; gap: 25px;
+        opacity: 0; transition: opacity 0.4s ease;
+        z-index: 10;
+        background: rgba(25,25,25,0.65);
+        border-radius: 16px;
+        padding: 10px 20px;
         backdrop-filter: blur(10px);
-        border-radius: 14px;
-        padding: 0.8rem 1.2rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        opacity: 0;
-        transition: opacity 0.5s ease;
       }
+      .controls.visible { opacity: 1; }
 
-      #dv-musiqid.show {
-        opacity: 1;
+      .ctrl-btn {
+        background: transparent; border: none;
+        color: white; width: 48px; height: 48px;
+        cursor: pointer; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.3s;
       }
-
-      #dv-musiqid img {
-        width: 58px;
-        height: 58px;
-        object-fit: cover;
-        border-radius: 8px;
-      }
-
-      .trackname {
-        color: white;
-        font-size: 1rem;
-        line-height: 1.3;
-        text-align: left;
-      }
-
-      .trackname span {
-        display: block;
-      }
-
-      /* Chromecast */
-      #castButton {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 48px;
-        height: 48px;
-        border: none;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(6px);
-        color: white;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        opacity: 0;
-      }
-
-      #castButton.visible {
-        opacity: 1;
-      }
-
-      #castButton:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-      }
-
-      #castButton svg {
-        width: 22px;
-        height: 22px;
-        fill: white;
-        opacity: 0.8;
-      }
-
-      /* Esconder controles após inatividade */
-      video::-webkit-media-controls {
-        opacity: 1;
-        transition: opacity 0.4s ease;
-      }
-
-      body.hide-ui video::-webkit-media-controls {
-        opacity: 0;
-      }
-
-      body.hide-ui #castButton,
-      body.hide-ui #dv-musiqid {
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      /* Ocultar barra de progresso */
-      video::-webkit-media-controls-timeline,
-      video::-webkit-media-controls-seek-back-button,
-      video::-webkit-media-controls-seek-forward-button {
-        display: none !important;
-      }
+      .ctrl-btn:hover { background: rgba(255,255,255,0.15); }
+      .ctrl-btn svg { width: 28px; height: 28px; }
     </style>
 
-    <!-- Chromecast -->
     <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-    <!-- HLS -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   </head>
 
   <body>
-    <div id="overlay">
-      <img src="droptv.svg" alt="DropTV" class="loggo" />
+    <div id="overlay"><img src="droptv.svg" alt="Drop TV" class="loggo" /></div>
+
+    <div id="playOverlay">
+      <button id="startButton" aria-label="Tocar">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>
+        </svg>
+      </button>
     </div>
 
-    <video id="videoPlayer" playsinline autoplay muted controls></video>
+    <video id="videoPlayer" playsinline autoplay muted x-webkit-airplay="allow" airplay="allow"></video>
 
-    <button id="castButton" title="Enviar para Chromecast">
-      <svg viewBox="0 0 24 24">
-        <path d="M1,18V21H4A3,3 0 0,0 1,18M1,14V16A7,7 0 0,1 8,23H10A9,9 0 0,0 1,14M1,10V12A11,11 0 0,1 12,23H14A13,13 0 0,0 1,10M21,3H3A2,2 0 0,0 1,5V8H3V5H21V19H13V21H21A2,2 0 0,0 23,19V5A2,2 0 0,0 21,3Z" />
-      </svg>
-    </button>
-
-    <div id="dv-musiqid" class="show">
+    <div id="dv-musiqid">
       <img id="cover" src="musique.png" alt="Capa" />
-      <div class="trackname">
-        <span id="artist">Artista</span>
-        <span id="title">Faixa</span>
-      </div>
+      <div class="trackname"><span id="artist">Artista</span> — <span id="title">Música</span></div>
     </div>
 
-    <script>
-      const video = document.getElementById("videoPlayer");
-      const overlay = document.getElementById("overlay");
-      const castButton = document.getElementById("castButton");
-      const musiqBox = document.getElementById("dv-musiqid");
-      const artistEl = document.getElementById("artist");
-      const titleEl = document.getElementById("title");
-      const coverEl = document.getElementById("cover");
-      const streamUrl = "https://droptv.com.br/play.m3u8";
+    <div class="controls" id="controls">
+      <button class="ctrl-btn" id="playPause" title="Play/Pause">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>
+        </svg>
+      </button>
 
-      // === SPLASH ===
-      window.addEventListener("load", () => {
-        setTimeout(() => (overlay.style.opacity = 0), 1200);
-        setTimeout(() => (overlay.style.display = "none"), 2000);
-      });
+      <button class="ctrl-btn" id="muteToggle" title="Mudo">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5L6 9H3v6h3l5 4V5z"/>
+        </svg>
+      </button>
 
-      // === PLAYER ===
-      function initPlayer() {
-        if (Hls.isSupported()) {
-          const hls = new Hls({ maxBufferLength: 10 });
-          hls.loadSource(streamUrl);
-          hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
-        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-          video.src = streamUrl;
-          video.addEventListener("loadedmetadata", () => video.play());
-        } else {
-          console.error("HLS não suportado neste navegador.");
-        }
-      }
-      initPlayer();
+      <button class="ctrl-btn" id="castButton" title="Chromecast">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="white" viewBox="0 0 24 24">
+          <path d="M1,18v3h3A3,3,0,0,0,1,18Zm0-4v2a5,5,0,0,1,5,5h2A7,7,0,0,0,1,14ZM1,10v2a9,9,0,0,1,9,9h2A11,11,0,0,0,1,10ZM21,3H3A2,2,0,0,0,1,5v3H3V5H21V19H13v2h8a2,2,0,0,0,2-2V5A2,2,0,0,0,21,3Z"/>
+        </svg>
+      </button>
 
-      // === CHROMECAST ===
-      window.__onGCastApiAvailable = function (isAvailable) {
-        if (isAvailable) {
-          const context = cast.framework.CastContext.getInstance();
-          context.setOptions({
-            receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-            autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED,
-          });
+      <button class="ctrl-btn" id="airplayButton" title="AirPlay" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 22l6-6 6 6M2 4h20v12H2z"/>
+        </svg>
+      </button>
+    </div>
 
-          castButton.addEventListener("click", () => {
-            const session = context.getCurrentSession();
-            if (!session) {
-              context.requestSession();
-            } else {
-              const mediaInfo = new chrome.cast.media.MediaInfo(streamUrl, "application/x-mpegURL");
-              const request = new chrome.cast.media.LoadRequest(mediaInfo);
-              session.loadMedia(request);
-            }
-          });
-        }
-      };
-
-      // === MOSTRAR / ESCONDER UI ===
-      let uiTimer;
-      const showUI = () => {
-        document.body.classList.remove("hide-ui");
-        castButton.classList.add("visible");
-        musiqBox.classList.add("show");
-        clearTimeout(uiTimer);
-        uiTimer = setTimeout(() => {
-          document.body.classList.add("hide-ui");
-          castButton.classList.remove("visible");
-          musiqBox.classList.remove("show");
-        }, 3000);
-      };
-      ["mousemove", "touchstart"].forEach(evt => document.addEventListener(evt, showUI));
-      showUI();
-
-      // === MÚSICA ATUAL ===
-      const lastFmKey = "1423897f73010d0c35257f51be892a1c";
-      const username = "droptv";
-
-      async function getLastFmTrack() {
-        try {
-          const res = await fetch(
-            `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`
-          );
-          const data = await res.json();
-          const track = Array.isArray(data.recenttracks.track)
-            ? data.recenttracks.track[0]
-            : data.recenttracks.track;
-
-          if (track && track["@attr"]?.nowplaying === "true") {
-            titleEl.textContent = track.name || "Faixa desconhecida";
-            artistEl.textContent = track.artist["#text"] || "Artista desconhecido";
-            coverEl.src = track.image?.pop()?.["#text"] || "musique.png";
-          }
-        } catch (e) {
-          console.error("Erro ao obter faixa do LastFM:", e);
-        }
-      }
-
-      getLastFmTrack();
-      setInterval(getLastFmTrack, 15000);
-    </script>
+    <script src="main.js"></script>
   </body>
 </html>

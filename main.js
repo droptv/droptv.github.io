@@ -1,192 +1,244 @@
-// === PWA Service Worker Registration ===
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js')
-    .then(() => console.log('[PWA] Service worker registrado'))
-    .catch(err => console.error('[PWA] Falha no registro', err));
+// === PWA Service Worker ===
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker.js")
+    .then(() => console.log("[PWA] Service worker registrado"))
+    .catch(err => console.error("[PWA] Falha no registro", err));
 }
 
-// === Configurações globais ===
+// === Elementos globais ===
 const streamUrl = "https://droptv.com.br/play.m3u8";
 const video = document.getElementById("videoPlayer");
 const dvMusic = document.getElementById("dv-musiqid");
-let hideTimeout;
+const artistEl = document.getElementById("artist");
+const titleEl = document.getElementById("title");
+const coverEl = document.getElementById("cover");
+const controls = document.getElementById("controls");
+const playPause = document.getElementById("playPause");
+const muteToggle = document.getElementById("muteToggle");
+const overlay = document.getElementById("overlay");
+const playOverlay = document.getElementById("playOverlay");
+const startButton = document.getElementById("startButton");
+const airplayButton = document.getElementById("airplayButton");
 
-const currentTrackInfo = {
-  title: '',
-  artist: '',
-  cover: '',
-  url: streamUrl
-};
+let hideTimeout, hls;
 
-// === Mostrar / esconder barra de música ===
-function showMusicBar() {
-  dvMusic.style.opacity = 1;
+// === Mostrar/ocultar UI ===
+function showUI() {
+  controls.classList.add("visible");
+  dvMusic.classList.add("show");
   clearTimeout(hideTimeout);
-  hideTimeout = setTimeout(() => dvMusic.style.opacity = 0, 4000);
+  hideTimeout = setTimeout(() => {
+    controls.classList.remove("visible");
+    dvMusic.classList.remove("show");
+  }, 3000);
 }
+["mousemove", "touchstart"].forEach(e => document.addEventListener(e, showUI));
 
-["mousemove", "touchstart", "scroll", "keydown"].forEach(e =>
-  document.addEventListener(e, showMusicBar)
-);
-
-// === Overlay fade ===
-setTimeout(() => {
-  const overlay = document.getElementById("overlay");
-  if (overlay) overlay.style.display = "none";
-}, 2500);
-
-// === Inicializa player HLS ===
-function initPlayer() {
+// === Inicialização do Player ===
+function startStream() {
   if (Hls.isSupported()) {
-    const hls = new Hls({ maxBufferLength: 10 });
+    hls = new Hls({ maxBufferLength: 10 });
     hls.loadSource(streamUrl);
     hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.play().catch(() => {
+        playOverlay.style.display = "flex";
+      });
+    });
   } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
     video.src = streamUrl;
-    video.addEventListener("loadedmetadata", () => video.play());
+    video.play().catch(() => {
+      playOverlay.style.display = "flex";
+    });
   } else {
-    console.error("[Player] HLS não suportado neste navegador.");
+    console.error("HLS não suportado neste navegador.");
   }
 }
 
-initPlayer();
+// === Eventos de reprodução ===
+video.addEventListener("playing", () => {
+  overlay.classList.add("fade-out");
+  playOverlay.style.display = "none";
+});
+video.addEventListener("error", () => {
+  playOverlay.style.display = "flex";
+});
+startButton.addEventListener("click", () => {
+  playOverlay.style.display = "none";
+  startStream();
+});
 
-// === Chromecast Sender Setup ===
-window.__onGCastApiAvailable = function(isAvailable) {
-  if (isAvailable) initializeCastApi();
-};
+// === Controles customizados ===
+playPause.addEventListener("click", () => {
+  if (video.paused) {
+    video.play().catch(() => {});
+  } else {
+    video.pause();
+  }
+});
+muteToggle.addEventListener("click", () => {
+  video.muted = !video.muted;
+});
 
-function initializeCastApi() {
+// === Chromecast ===
+window.__onGCastApiAvailable = function (isAvailable) {
+  if (!isAvailable) return;
   const context = cast.framework.CastContext.getInstance();
   context.setOptions({
     receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-    autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED
+    autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED,
   });
 
-  document.getElementById('castButton').addEventListener('click', async () => {
-    const session = await context.requestSession();
-    if (session && currentTrackInfo.url) {
-      const mediaInfo = new chrome.cast.media.MediaInfo(currentTrackInfo.url, 'application/x-mpegURL');
-      mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
-      mediaInfo.metadata.title = currentTrackInfo.title || "DropTV";
-      mediaInfo.metadata.artist = currentTrackInfo.artist || "Streaming Live";
-      mediaInfo.metadata.images = [{ url: currentTrackInfo.cover || "musique.png" }];
-
+  const castButton = document.getElementById("castButton");
+  castButton.addEventListener("click", async () => {
+    const session = context.getCurrentSession() || await context.requestSession();
+    if (session) {
+      const mediaInfo = new chrome.cast.media.MediaInfo(streamUrl, "application/x-mpegURL");
       const request = new chrome.cast.media.LoadRequest(mediaInfo);
-      session.loadMedia(request).then(() => console.log('[Cast] Enviado com sucesso'));
+      session.loadMedia(request);
+    }
+  });
+};
+
+// === AirPlay ===
+if (window.WebKitPlaybackTargetAvailabilityEvent) {
+  airplayButton.style.display = "flex";
+  airplayButton.addEventListener("click", () => {
+    if (video.webkitShowPlaybackTargetPicker) {
+      video.webkitShowPlaybackTargetPicker();
     }
   });
 }
 
-// === Integração com LastFM / Spotify ===
+// === Last.fm + Spotify + MusicBrainz ===
 const lastFmKey = "1423897f73010d0c35257f51be892a1c";
 const username = "droptv";
-const spotifyClientId = "61c0bd5f320646a3af8ef4c6f23d4855";
-const spotifyClientSecret = "ef8630f80af44ea2b34561c0a565ecbe";
 let spotifyAccessToken = null;
 let spotifyTokenExpiry = 0;
+const spotifyClientId = "61c0bd5f320646a3af8ef4c6f23d4855";
+const spotifyClientSecret = "ef8630f80af44ea2b34561c0a565ecbe";
 
-// Atualiza informações de faixa a cada 15s
-GetLastFMSong();
-setInterval(GetLastFMSong, 15000);
+let currentTrackInfo = { title: "", artist: "", cover: "" };
 
-async function GetLastFMSong() {
+// === Token Spotify ===
+async function getSpotifyToken() {
+  if (spotifyAccessToken && spotifyTokenExpiry > Date.now()) return spotifyAccessToken;
   try {
-    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`);
+    const res = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `grant_type=client_credentials&client_id=${spotifyClientId}&client_secret=${spotifyClientSecret}`,
+    });
     const data = await res.json();
-
-    if (data.recenttracks && data.recenttracks.track) {
-      const track = Array.isArray(data.recenttracks.track)
-        ? data.recenttracks.track[0]
-        : data.recenttracks.track;
-
-      if (track["@attr"] && track["@attr"].nowplaying === "true") {
-        currentTrackInfo.title = track.name || "Unknown Track";
-        currentTrackInfo.artist = track.artist["#text"] || "Unknown Artist";
-
-        const coverUrl = await getCoverImageWithFallbacks(track);
-        currentTrackInfo.cover = coverUrl || "musique.png";
-
-        updateUI();
-        updateMediaSession();
-      }
-    }
+    spotifyAccessToken = data.access_token;
+    spotifyTokenExpiry = Date.now() + data.expires_in * 1000;
+    return spotifyAccessToken;
   } catch (err) {
-    console.error("[LastFM] Erro ao buscar faixa:", err);
+    console.error("Erro ao obter token Spotify:", err);
+    return null;
   }
 }
 
-function updateUI() {
-  document.getElementById("title").textContent = currentTrackInfo.title;
-  document.getElementById("artist").textContent = currentTrackInfo.artist + " / ";
-  document.getElementById("cover").src = currentTrackInfo.cover;
-  showMusicBar();
+// === Fallbacks de capa ===
+async function getCoverFromSpotify(artist, trackName) {
+  try {
+    const token = await getSpotifyToken();
+    if (!token) return null;
+    const query = encodeURIComponent(`${artist} ${trackName}`);
+    const res = await fetch(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    const item = data.tracks?.items?.[0];
+    return item?.album?.images?.[0]?.url || null;
+  } catch {
+    return null;
+  }
+}
+async function getCoverFromMusicBrainz(artist, trackName) {
+  try {
+    const query = encodeURIComponent(`${artist} AND ${trackName}`);
+    const res = await fetch(`https://musicbrainz.org/ws/2/recording?query=${query}&fmt=json`);
+    const data = await res.json();
+    const rec = data.recordings?.[0];
+    const rel = rec?.releases?.[0]?.id;
+    if (!rel) return null;
+    const coverUrl = `https://coverartarchive.org/release/${rel}/front`;
+    const check = await fetch(coverUrl, { method: "HEAD" });
+    return check.ok ? coverUrl : null;
+  } catch {
+    return null;
+  }
+}
+async function getCoverFromLastfmTrackInfo(artist, trackName) {
+  try {
+    const a = encodeURIComponent(artist);
+    const t = encodeURIComponent(trackName);
+    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=${a}&track=${t}&api_key=${lastFmKey}&format=json`);
+    const data = await res.json();
+    const img = data.track?.album?.image;
+    if (Array.isArray(img)) {
+      const large = img.reverse().find(i => i["#text"]);
+      return large?.["#text"] || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+async function getCoverImageWithFallbacks(track) {
+  const artist = track.artist?.["#text"] || "Unknown";
+  const title = track.name || "Unknown";
+  let cover = null;
+  if (track.image?.length) {
+    const lastfmImage = track.image.reverse().find(i => i["#text"]);
+    if (lastfmImage?.["#text"]) return lastfmImage["#text"];
+  }
+  cover = await getCoverFromLastfmTrackInfo(artist, title) ||
+          await getCoverFromMusicBrainz(artist, title) ||
+          await getCoverFromSpotify(artist, title);
+  return cover || "musique.png";
 }
 
+// === Atualização periódica da faixa ===
+async function GetLastFMSong() {
+  try {
+    const res = await fetch(
+      `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`
+    );
+    const data = await res.json();
+    const track = Array.isArray(data.recenttracks.track)
+      ? data.recenttracks.track[0]
+      : data.recenttracks.track;
+    if (track?.["@attr"]?.nowplaying === "true") {
+      const title = track.name || "Faixa Desconhecida";
+      const artist = track.artist?.["#text"] || "Artista Desconhecido";
+      currentTrackInfo = { title, artist };
+      const cover = await getCoverImageWithFallbacks(track);
+      currentTrackInfo.cover = cover || "musique.png";
+      updateUI();
+      updateMediaSession();
+    }
+  } catch (err) {
+    console.error("Erro ao consultar Last.fm:", err);
+  }
+}
+function updateUI() {
+  titleEl.textContent = currentTrackInfo.title;
+  artistEl.textContent = currentTrackInfo.artist;
+  coverEl.src = currentTrackInfo.cover;
+}
 function updateMediaSession() {
-  if ('mediaSession' in navigator) {
+  if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: currentTrackInfo.title,
       artist: currentTrackInfo.artist,
-      artwork: [
-        { src: currentTrackInfo.cover, sizes: '512x512', type: 'image/png' }
-      ]
+      artwork: [{ src: currentTrackInfo.cover, sizes: "512x512", type: "image/png" }],
     });
   }
 }
 
-// === Fallbacks de capa (Spotify / MusicBrainz) ===
-async function getCoverImageWithFallbacks(track) {
-  try {
-    // 1️⃣ Tenta pegar a imagem do próprio LastFM
-    if (track.image && track.image.length > 0) {
-      const largeImg = track.image.pop()["#text"];
-      if (largeImg) return largeImg;
-    }
-
-    // 2️⃣ Tenta Spotify
-    const spotifyUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(track.artist["#text"] + " " + track.name)}&type=track&limit=1`;
-    const token = await getSpotifyAccessToken();
-    const res = await fetch(spotifyUrl, { headers: { Authorization: `Bearer ${token}` } });
-    const spotifyData = await res.json();
-
-    if (spotifyData.tracks?.items?.length > 0) {
-      return spotifyData.tracks.items[0].album.images[0].url;
-    }
-
-    // 3️⃣ Fallback: MusicBrainz
-    const mbRes = await fetch(`https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(track.artist["#text"] + " " + track.name)}&fmt=json`);
-    const mbData = await mbRes.json();
-    const releaseId = mbData.recordings?.[0]?.releases?.[0]?.id;
-
-    if (releaseId) {
-      const coverRes = await fetch(`https://coverartarchive.org/release/${releaseId}`);
-      const coverData = await coverRes.json();
-      if (coverData.images?.length > 0) return coverData.images[0].image;
-    }
-  } catch (err) {
-    console.warn("[Capa] Falha nos fallbacks", err);
-  }
-  return null;
-}
-
-// === Token Spotify ===
-async function getSpotifyAccessToken() {
-  const now = Date.now();
-  if (spotifyAccessToken && now < spotifyTokenExpiry) return spotifyAccessToken;
-
-  const res = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: "Basic " + btoa(`${spotifyClientId}:${spotifyClientSecret}`)
-    },
-    body: "grant_type=client_credentials"
-  });
-
-  const data = await res.json();
-  spotifyAccessToken = data.access_token;
-  spotifyTokenExpiry = now + data.expires_in * 1000;
-  return spotifyAccessToken;
-}
+// === Inicialização ===
+window.addEventListener("load", () => setTimeout(startStream, 500));
+GetLastFMSong();
+setInterval(GetLastFMSong, 15000);

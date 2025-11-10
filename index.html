@@ -33,13 +33,14 @@
       #overlay {
         position: fixed; inset: 0;
         display: flex; justify-content: center; align-items: center;
-        background: black; z-index: 999;
+        background: rgba(0,0,0,0.5); /* agora translúcido */
+        backdrop-filter: blur(8px);
+        z-index: 999;
         transition: opacity 1s ease;
       }
       #overlay.fade-out { opacity: 0; pointer-events: none; }
-      .loggo { max-width: 60%; opacity: 0.9; }
+      .loggo { max-width: 50%; opacity: 0.9; }
 
-      /* Botão "Tocar" (autoplay bloqueado) */
       #playOverlay {
         position: fixed; inset: 0;
         display: none; justify-content: center; align-items: center;
@@ -56,13 +57,11 @@
       #playOverlay button:hover { background: rgba(255,255,255,0.3); }
       #playOverlay svg { width: 40px; height: 40px; stroke: white; }
 
-      /* Música atual */
       #dv-musiqid {
         position: fixed; top: 5%; left: 50%;
         transform: translateX(-50%);
         background: rgba(25,25,25,0.65);
-        border-radius: 16px;
-        padding: 10px 18px;
+        border-radius: 16px; padding: 10px 18px;
         display: flex; align-items: center; gap: 12px;
         opacity: 0; transition: opacity 0.4s ease;
         pointer-events: none; backdrop-filter: blur(10px);
@@ -71,7 +70,6 @@
       #dv-musiqid img { height: 50px; border-radius: 8px; }
       .trackname { color: white; font-size: 1.1rem; white-space: nowrap; }
 
-      /* Barra de controles */
       .controls {
         position: fixed; bottom: 5%; left: 50%;
         transform: translateX(-50%);
@@ -79,8 +77,7 @@
         opacity: 0; transition: opacity 0.4s ease;
         z-index: 10;
         background: rgba(25,25,25,0.65);
-        border-radius: 16px;
-        padding: 10px 20px;
+        border-radius: 16px; padding: 10px 20px;
         backdrop-filter: blur(10px);
       }
       .controls.visible { opacity: 1; }
@@ -120,13 +117,15 @@
 
     <div class="controls" id="controls">
       <button class="ctrl-btn" id="playPause" title="Play/Pause">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
+        <!-- Ícone inicial: Play -->
+        <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>
         </svg>
       </button>
 
       <button class="ctrl-btn" id="muteToggle" title="Mudo">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
+        <!-- Ícone inicial: Volume ligado -->
+        <svg id="volumeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5L6 9H3v6h3l5 4V5z"/>
         </svg>
       </button>

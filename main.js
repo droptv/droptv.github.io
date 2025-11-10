@@ -7,7 +7,7 @@ if ("serviceWorker" in navigator) {
 
 // === Elementos globais ===
 const streamUrl = "https://droptv.com.br/play.m3u8";
-const video = document.getElementById("videoPlayer");
+const iframe = document.getElementById("videoFrame");
 const dvMusic = document.getElementById("dv-musiqid");
 const artistEl = document.getElementById("artist");
 const titleEl = document.getElementById("title");
@@ -18,12 +18,12 @@ const muteToggle = document.getElementById("muteToggle");
 const playIcon = document.getElementById("playIcon");
 const volumeIcon = document.getElementById("volumeIcon");
 const overlay = document.getElementById("overlay");
-const playOverlay = document.getElementById("playOverlay");
-const startButton = document.getElementById("startButton");
 const castButton = document.getElementById("castButton");
 const airplayButton = document.getElementById("airplayButton");
 
-let hideTimeout, hls;
+let hideTimeout;
+let isPlaying = true;
+let isMuted = true;
 
 // === Mostrar/ocultar UI ===
 function showUI() {
@@ -37,71 +37,51 @@ function showUI() {
 }
 ["mousemove", "touchstart"].forEach(e => document.addEventListener(e, showUI));
 
-// === Detectar Safari ===
-function isSafari() {
-  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-}
-
-// === Inicialização do Player ===
-function startStream() {
-  if (!isSafari() && window.Hls && Hls.isSupported()) {
-    hls = new Hls({ maxBufferLength: 10 });
-    hls.loadSource(streamUrl);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      video.play().catch(() => playOverlay.style.display = "flex");
-    });
-  } else {
-    // Safari e iOS usam HLS nativo (necessário para AirPlay)
-    video.src = streamUrl;
-    video.addEventListener("loadedmetadata", () => {
-      video.play().catch(() => playOverlay.style.display = "flex");
-    });
-  }
-}
-
-// === Overlay desaparece após 2s ===
+// === Overlay inicial ===
 window.addEventListener("load", () => {
-  setTimeout(startStream, 500);
+  // inicia o iframe (já com autoplay se permitido)
+  iframe.src = streamUrl;
+
+  // remove o overlay após 2s
   setTimeout(() => {
     overlay.classList.add("fade-out");
-    setTimeout(() => overlay.style.display = "none", 1000);
+    setTimeout(() => (overlay.style.display = "none"), 1000);
   }, 2000);
+
+  updatePlayIcon();
+  updateMuteIcon();
+  // Desativa completamente os controles visuais
+controls.style.display = "none";
+
 });
 
-// === Eventos do player ===
-video.addEventListener("playing", () => {
-  playOverlay.style.display = "none";
+// === Controles (simulados, pois iframe não é acessível diretamente) ===
+playPause.addEventListener("click", () => {
+  isPlaying = !isPlaying;
   updatePlayIcon();
 });
-video.addEventListener("pause", updatePlayIcon);
-video.addEventListener("volumechange", updateMuteIcon);
 
-// === Controles customizados ===
-playPause.addEventListener("click", () => {
-  if (video.paused) video.play();
-  else video.pause();
+muteToggle.addEventListener("click", () => {
+  isMuted = !isMuted;
+  updateMuteIcon();
 });
-
-muteToggle.addEventListener("click", () => video.muted = !video.muted);
 
 // === Toggle ícones ===
 function updatePlayIcon() {
-  playIcon.innerHTML = video.paused
+  playIcon.innerHTML = isPlaying
     ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>`
+        d="M10 9v6m4-6v6"/>` // pause
     : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M10 9v6m4-6v6"/>`;
+        d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>`; // play
 }
 
 function updateMuteIcon() {
-  volumeIcon.innerHTML = video.muted
+  volumeIcon.innerHTML = isMuted
     ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
         d="M11 5L6 9H3v6h3l5 4V5z M19 9l-4 4m0-4l4 4"/>`
     : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
         d="M11 5L6 9H3v6h3l5 4V5z"/>`;
 }
-updateMuteIcon(); // Ícone inicial correto (muted on)
 
 // === Chromecast + AirPlay (detecção inteligente) ===
 function initChromecast() {
@@ -109,7 +89,6 @@ function initChromecast() {
     setTimeout(initChromecast, 500);
     return;
   }
-
   const ctx = cast.framework.CastContext.getInstance();
   ctx.setOptions({
     receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
@@ -131,8 +110,10 @@ if (window.WebKitPlaybackTargetAvailabilityEvent) {
   castButton.style.display = "none";
   airplayButton.style.display = "flex";
   airplayButton.addEventListener("click", () => {
-    if (video.webkitShowPlaybackTargetPicker)
-      video.webkitShowPlaybackTargetPicker();
+    const vid = document.createElement("video");
+    vid.src = streamUrl;
+    if (vid.webkitShowPlaybackTargetPicker)
+      vid.webkitShowPlaybackTargetPicker();
   });
 } else {
   airplayButton.style.display = "none";
@@ -252,11 +233,13 @@ async function GetLastFMSong() {
     console.error("Erro ao consultar Last.fm:", err);
   }
 }
+
 function updateUI() {
   titleEl.textContent = currentTrackInfo.title;
   artistEl.textContent = currentTrackInfo.artist;
   coverEl.src = currentTrackInfo.cover;
 }
+
 function updateMediaSession() {
   if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
@@ -267,6 +250,6 @@ function updateMediaSession() {
   }
 }
 
-// === Inicialização ===
+// === Inicialização da faixa ===
 GetLastFMSong();
 setInterval(GetLastFMSong, 15000);

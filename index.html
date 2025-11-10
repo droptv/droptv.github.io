@@ -20,6 +20,9 @@
         overflow: hidden;
         font-family: 'Josefin Sans', sans-serif;
       }
+      
+
+
 
       video {
         width: 100%;
@@ -80,6 +83,14 @@
 
 #dv-musiqid.show { opacity: 1; }
 
+#dv-musiqid,
+.controls {
+  position: fixed;
+  z-index: 10; /* ou algo maior que 1 */
+  pointer-events: auto;
+}
+
+
 #dv-musiqid img {
   height: 42px;
   width: 42px;
@@ -124,7 +135,7 @@
     </style>
 
     <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
   </head>
 
   <body>
@@ -138,7 +149,15 @@
       </button>
     </div>
 
-    <video id="videoPlayer" playsinline autoplay muted x-webkit-airplay="allow" airplay="allow"></video>
+<iframe
+  id="videoFrame"
+  src="https://droptv.com.br/player.m3u8" 
+  allow="autoplay; fullscreen;"
+  frameborder="0"
+  allowfullscreen
+  style="width:100%;height:100%;border:none;"
+></iframe>
+
 
     <div id="dv-musiqid">
       <img id="cover" src="musique.png" alt="Capa" />

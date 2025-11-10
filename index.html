@@ -57,18 +57,48 @@
       #playOverlay button:hover { background: rgba(255,255,255,0.3); }
       #playOverlay svg { width: 40px; height: 40px; stroke: white; }
 
-      #dv-musiqid {
-        position: fixed; top: 5%; left: 50%;
-        transform: translateX(-50%);
-        background: rgba(25,25,25,0.65);
-        border-radius: 16px; padding: 10px 18px;
-        display: flex; align-items: center; gap: 12px;
-        opacity: 0; transition: opacity 0.4s ease;
-        pointer-events: none; backdrop-filter: blur(10px);
-      }
-      #dv-musiqid.show { opacity: 1; }
-      #dv-musiqid img { height: 50px; border-radius: 8px; }
-      .trackname { color: white; font-size: 1.1rem; white-space: nowrap; }
+/* Painel de música responsivo */
+#dv-musiqid {
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(25,25,25,0.65);
+  border-radius: 16px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  max-width: 90vw;          /* ← Limita o tamanho total à tela */
+  box-sizing: border-box;   /* ← Evita estourar padding */
+  overflow: hidden;         /* ← Garante que nada vaze */
+}
+
+#dv-musiqid.show { opacity: 1; }
+
+#dv-musiqid img {
+  height: 42px;
+  width: 42px;
+  border-radius: 8px;
+  flex-shrink: 0;           /* ← Evita que a capa distorça */
+}
+
+.trackname {
+  color: white;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;          /* ← Corta texto muito longo */
+  text-overflow: ellipsis;   /* ← Adiciona "…" no final */
+  min-width: 0;              /* ← Necessário para flex truncar texto */
+  flex: 1;                   /* ← Permite encolher */
+}
+
+      
+
 
       .controls {
         position: fixed; bottom: 5%; left: 50%;

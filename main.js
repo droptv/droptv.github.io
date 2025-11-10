@@ -20,6 +20,7 @@ const volumeIcon = document.getElementById("volumeIcon");
 const overlay = document.getElementById("overlay");
 const playOverlay = document.getElementById("playOverlay");
 const startButton = document.getElementById("startButton");
+const castButton = document.getElementById("castButton");
 const airplayButton = document.getElementById("airplayButton");
 
 let hideTimeout, hls;
@@ -51,6 +52,7 @@ function startStream() {
   }
 }
 
+// === Eventos de estado do player ===
 video.addEventListener("playing", () => {
   overlay.classList.add("fade-out");
   playOverlay.style.display = "none";
@@ -59,9 +61,13 @@ video.addEventListener("playing", () => {
 video.addEventListener("pause", updatePlayIcon);
 video.addEventListener("volumechange", updateMuteIcon);
 
-startButton.addEventListener("click", () => {
-  playOverlay.style.display = "none";
-  startStream();
+// === Overlay desaparece após 2s ===
+window.addEventListener("load", () => {
+  setTimeout(startStream, 500);
+  setTimeout(() => {
+    overlay.classList.add("fade-out");
+    setTimeout(() => overlay.style.display = "none", 1000);
+  }, 2000);
 });
 
 // === Controles customizados ===
@@ -69,47 +75,65 @@ playPause.addEventListener("click", () => {
   if (video.paused) video.play();
   else video.pause();
 });
-muteToggle.addEventListener("click", () => video.muted = !video.muted);
+
+muteToggle.addEventListener("click", () => {
+  video.muted = !video.muted;
+});
 
 // === Toggle ícones ===
 function updatePlayIcon() {
   playIcon.innerHTML = video.paused
-    ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>`
-    : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6"/>`;
+    ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>`
+    : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M10 9v6m4-6v6"/>`;
 }
 
 function updateMuteIcon() {
   volumeIcon.innerHTML = video.muted
-    ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5L6 9H3v6h3l5 4V5z M19 9l-4 4m0-4l4 4"/>`
-    : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5L6 9H3v6h3l5 4V5z"/>`;
+    ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M11 5L6 9H3v6h3l5 4V5z M19 9l-4 4m0-4l4 4"/>`
+    : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M11 5L6 9H3v6h3l5 4V5z"/>`;
 }
+updateMuteIcon(); // garante ícone inicial correto
 
-// === Chromecast ===
-window.__onGCastApiAvailable = function (isAvailable) {
-  if (!isAvailable) return;
+// === Chromecast e AirPlay (detecção inteligente) ===
+function initChromecast() {
+  if (!window.cast || !window.cast.framework) {
+    setTimeout(initChromecast, 500);
+    return;
+  }
+
   const ctx = cast.framework.CastContext.getInstance();
   ctx.setOptions({
     receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
     autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED,
   });
-  document.getElementById("castButton").addEventListener("click", async () => {
+
+  castButton.addEventListener("click", async () => {
     const session = ctx.getCurrentSession() || await ctx.requestSession();
     if (session) {
       const mediaInfo = new chrome.cast.media.MediaInfo(streamUrl, "application/x-mpegURL");
-      session.loadMedia(new chrome.cast.media.LoadRequest(mediaInfo));
+      const request = new chrome.cast.media.LoadRequest(mediaInfo);
+      session.loadMedia(request);
     }
-  });
-};
-
-// === AirPlay ===
-if (window.WebKitPlaybackTargetAvailabilityEvent) {
-  airplayButton.style.display = "flex";
-  airplayButton.addEventListener("click", () => {
-    if (video.webkitShowPlaybackTargetPicker) video.webkitShowPlaybackTargetPicker();
   });
 }
 
-
+if (window.WebKitPlaybackTargetAvailabilityEvent) {
+  // Safari → mostra só AirPlay
+  castButton.style.display = "none";
+  airplayButton.style.display = "flex";
+  airplayButton.addEventListener("click", () => {
+    if (video.webkitShowPlaybackTargetPicker)
+      video.webkitShowPlaybackTargetPicker();
+  });
+} else {
+  // Outros navegadores → mostra só Chromecast
+  airplayButton.style.display = "none";
+  initChromecast();
+}
 
 // === Last.fm + Spotify + MusicBrainz ===
 const lastFmKey = "1423897f73010d0c35257f51be892a1c";
@@ -195,9 +219,9 @@ async function getCoverImageWithFallbacks(track) {
     const lastfmImage = track.image.reverse().find(i => i["#text"]);
     if (lastfmImage?.["#text"]) return lastfmImage["#text"];
   }
-  cover = await getCoverFromLastfmTrackInfo(artist, title) ||
-          await getCoverFromMusicBrainz(artist, title) ||
-          await getCoverFromSpotify(artist, title);
+  cover = await getCoverFromLastfmTrackInfo(artist, title)
+    || await getCoverFromMusicBrainz(artist, title)
+    || await getCoverFromSpotify(artist, title);
   return cover || "musique.png";
 }
 
@@ -240,6 +264,5 @@ function updateMediaSession() {
 }
 
 // === Inicialização ===
-window.addEventListener("load", () => setTimeout(startStream, 500));
 GetLastFMSong();
 setInterval(GetLastFMSong, 15000);

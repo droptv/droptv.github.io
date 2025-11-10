@@ -1,465 +1,205 @@
 <!DOCTYPE html>
-<html>
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>DropTV</title>
-      <link rel="manifest" href="manifest.json" />
-      <link rel="apple-touch-icon" href="/icon.png">
-      <meta name="apple-mobile-web-app-title" content="DropTV">
-      <meta name="apple-mobile-web-app-capable" content="yes">
-      <!-- <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> -->
-      <meta name="description" content="Um canal que inspira as pessoas através da arte, esporte, musica e natureza." />
-      <meta name="theme-color" content="#3A72C2"/>
-      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-      <link rel="icon" href="/favicon.ico" type="image/x-icon">
-      <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet">
-      <style media="screen" type="text/css">
-         html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Josefin Sans', sans-serif;
-}
-         
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DropTV</title>
 
-         p {
-         color: white;
-         font-size: 18px;
-         }
-         a {
-         color: #5DB5A0;
-         font-weight: bold;
-         text-decoration: none;
-         }
-         .footer {
-         position:fixed;
-         left:0px;
-         top:0px;
-         width:100%;
-         
-         text-align: center;
-         }
-         .centro {
-         position:fixed;
-         left:0px;
-         right:0px;
-         bottom:5%;
-         }
-         .topo {
-         position:fixed;
-         left:0px;
-         right:0px;
-         top:5%;
-         height:300px;
-         }
-         .caixa {
-         position: relative;
-         margin: auto;
-         bottom:10%;
-         width:250px;
-         padding:1px;
-         letter-spacing: 10px;
-         border-radius: 16px;
-         background:rgba(34,34,34,0.75);
-         -moz-user-select: none;
-         -khtml-user-select: none;
-         -webkit-user-select: none;
-         -ms-user-select: none;
-         user-select: none;
-         }
-         .loggo {
-            max-width: 100%;
-    max-height: 100%;
-         }
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="apple-touch-icon" href="/icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="DropTV" />
 
-         #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  /*  background-color: white;*/
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-#dv-musiqid {
-   opacity: 0;
-   display:none;
-}
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap" rel="stylesheet" />
 
-         .box {
-         padding: 10px;
-         }
-         .leitura {
-         overflow:auto;
-         position: absolute;
-         margin: auto;
-         left:25%;
-         right:25%;
-         width:50%;
-         max-height:75%;
-         border-radius: 16px;
-         background:rgba(34,34,34,0.9);
-   
-         /*text-align: left; */
-         }
-         .paragrafo {
-         padding:15px;
-         }
-      .videobox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: black;
- /*   z-index: -1; opcional, para ficar atrás de outros elementos */
-}
+    <!-- Estilos -->
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: black;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+      }
 
-.videobox iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-}
-         .close {
-         top: 0px;
-         float: right;
-         background-color: white;
-         color: black;
-         text-decoration: none;
-         opacity:0.3;
-         }
-         .close:hover {
-         opacity:0.8;
-         }
-         .close:after {
-         content: '✖'; 
-         }
-         .musiq {
-         color: white;
-         padding: 15px;
-         font-size:3vw;
-         display: table;
-         }
-         .musiq img{
-            padding-right: 15px;
-          max-height: 4em;
-         }
-         .trackname {
-         display: table-cell;
-         vertical-align: middle;
-         }
-      </style>
-   </head>
-   <body>
-      <div id="overlay"><img src="droptv.svg" alt="Drop TV" class="loggo"></img></div>
-      <div class="">
-         
-         <div class="videobox" id="videoboxid">
-            <!-- "https://player.twitch.tv/?channel=droptvlive&parent=droptv-github-io.pages.dev&parent=droptv.com.br" -->
-      <iframe src="https://droptv.com.br/play.m3u8" 
-               frameborder="0" 
-               allowfullscreen="true" 
-               scrolling="no" 
-               height="100%" 
-               width="100%"
-               >
-            </iframe>
-            
-         </div>
-         <div class="box">
-            <div class="dv-musiq leitura bt-musiq" id="dv-musiqid">
-               <div id="nowplay"></div>
-               <div class="musiq">
-                  <img src="#" id="cover" />
-                  <div class="trackname">
-                     <p style="font-size:3vw;"><span id="artist">Artist</span><span id="title">Music</span></p>
-                  </div>
-               </div>
-            </div>
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: black;
+      }
 
-         </div>
+      #overlay {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: black;
+        z-index: 9999;
+        transition: opacity 0.8s ease;
+      }
+
+      .loggo {
+        width: 220px;
+        opacity: 0.85;
+        filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+      }
+
+      /* Música */
+      #dv-musiqid {
+        position: fixed;
+        bottom: 6%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(20, 20, 20, 0.6);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 0.8rem 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      #dv-musiqid.show {
+        opacity: 1;
+      }
+
+      #dv-musiqid img {
+        width: 58px;
+        height: 58px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .trackname {
+        color: white;
+        font-size: 1rem;
+        line-height: 1.3;
+      }
+
+      .trackname span {
+        display: block;
+      }
+
+      /* Chromecast */
+      #castButton {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 48px;
+        height: 48px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(6px);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      #castButton:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+
+      #castButton svg {
+        width: 22px;
+        height: 22px;
+        fill: white;
+        opacity: 0.8;
+      }
+    </style>
+
+    <!-- Chromecast -->
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+
+    <!-- HLS -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  </head>
+
+  <body>
+    <!-- Splash inicial -->
+    <div id="overlay">
+      <img src="droptv.svg" alt="DropTV" class="loggo" />
+    </div>
+
+    <!-- Player -->
+    <video id="videoPlayer" playsinline autoplay muted></video>
+
+    <!-- Botão Chromecast -->
+    <button id="castButton" title="Enviar para Chromecast">
+      <svg viewBox="0 0 24 24">
+        <path d="M1,18V21H4A3,3 0 0,0 1,18M1,14V16A7,7 0 0,1 8,23H10A9,9 0 0,0 1,14M1,10V12A11,11 0 0,1 12,23H14A13,13 0 0,0 1,10M21,3H3A2,2 0 0,0 1,5V8H3V5H21V19H13V21H21A2,2 0 0,0 23,19V5A2,2 0 0,0 21,3Z" />
+      </svg>
+    </button>
+
+    <!-- Música atual -->
+    <div id="dv-musiqid">
+      <img id="cover" src="https://placehold.co/100x100" alt="Capa" />
+      <div class="trackname">
+        <span id="artist">Artista</span>
+        <span id="title">Faixa</span>
       </div>
-   </body>
-   <script>
-      document.addEventListener("DOMContentLoaded", function () {
-          
-          let dvMusic = document.getElementById("dv-musiqid");
-          let timeoutId;
-      
-          function hideDvMusic() {
-              dvMusic.style.opacity = 0;
-          }
-      
-          function showDvMusic() {
-              dvMusic.style.opacity = 1;
-              clearTimeout(timeoutId);
-              timeoutId = setTimeout(hideDvMusic, 3000);
-          }
-      
-        //  showDvMusic();
+    </div>
 
-    var overlay = document.getElementById("overlay");
+    <script>
+      const video = document.getElementById("videoPlayer");
+      const overlay = document.getElementById("overlay");
+      const streamUrl = "https://droptv.com.br/play.m3u8";
 
-    // Hide the overlay after 3 seconds
-    setTimeout(function () {
-        overlay.style.display = "none";
-        document.getElementById("dv-musiqid").style.display = "block";
-
-    }, 2000);
-
-
-      
-          document.addEventListener("mousemove", showDvMusic);
-          document.addEventListener("touchstart", showDvMusic);
-          document.addEventListener("scroll", showDvMusic);
-          document.addEventListener("keydown", showDvMusic);
-      
+      window.addEventListener("load", () => {
+        setTimeout(() => (overlay.style.opacity = 0), 1200);
+        setTimeout(() => (overlay.style.display = "none"), 2000);
       });
-      
-      
-   </script>
-   <script>
-      var lastFmKey = "1423897f73010d0c35257f51be892a1c";
-      var username = "droptv";
-      var spotifyAccessToken = null;
-      var spotifyTokenExpiry = 0;
-      
-      // Credenciais Spotify (substitua pelas suas)
-      var spotifyClientId = "61c0bd5f320646a3af8ef4c6f23d4855";
-      var spotifyClientSecret = "ef8630f80af44ea2b34561c0a565ecbe";
-      
-      GetLastFMSong();
-      setInterval(GetLastFMSong, 15000)
-      
-      // Obtém token de acesso do Spotify
-      async function getSpotifyToken() {
-           // Se o token ainda é válido, retorna o existente
-           if (spotifyAccessToken && spotifyTokenExpiry > Date.now()) {
-                return spotifyAccessToken;
-           }
-           
-           try {
-                const response = await fetch("https://accounts.spotify.com/api/token", {
-                     method: "POST",
-                     headers: {
-                          "Content-Type": "application/x-www-form-urlencoded",
-                     },
-                     body: `grant_type=client_credentials&client_id=${spotifyClientId}&client_secret=${spotifyClientSecret}`
-                });
-                
-                if (response.ok) {
-                     const data = await response.json();
-                     spotifyAccessToken = data.access_token;
-                     spotifyTokenExpiry = Date.now() + (data.expires_in * 1000);
-                     return spotifyAccessToken;
-                } else {
-                     console.error("Erro ao obter token Spotify");
-                     return null;
-                }
-           } catch (error) {
-                console.error("Erro na requisição de token Spotify:", error);
-                return null;
-           }
+
+      function initPlayer() {
+        if (Hls.isSupported()) {
+          const hls = new Hls({ maxBufferLength: 10 });
+          hls.loadSource(streamUrl);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+          video.src = streamUrl;
+          video.addEventListener("loadedmetadata", () => video.play());
+        } else {
+          console.error("HLS não suportado neste navegador.");
+        }
       }
-      
-      // Obtém capa via Spotify
-      async function getCoverFromSpotify(artist, trackName) {
-           try {
-                const token = await getSpotifyToken();
-                if (!token) return null;
-                
-                const query = encodeURIComponent(`${artist} ${trackName}`);
-                const response = await fetch(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`, {
-                     headers: {
-                          "Authorization": `Bearer ${token}`
-                     }
-                });
-                
-                if (response.ok) {
-                     const data = await response.json();
-                     if (data.tracks && data.tracks.items && data.tracks.items.length > 0) {
-                          const images = data.tracks.items[0].album.images;
-                          if (images && images.length > 0) {
-                               console.log("Capa encontrada via Spotify");
-                               return images[0].url;
-                          }
-                     }
-                }
-           } catch (error) {
-                console.error("Erro ao buscar capa no Spotify:", error);
-           }
-           return null;
-      }
-      
-      // Obtém capa via MusicBrainz CoverArtArchive
-      async function getCoverFromMusicBrainz(artist, trackName) {
-           try {
-                // Primeiro, busca o MBID via MusicBrainz
-                const query = encodeURIComponent(`${artist} AND ${trackName}`);
-                const response = await fetch(`https://musicbrainz.org/ws/2/recording?query=${query}&fmt=json`);
-                
-                if (response.ok) {
-                     const data = await response.json();
-                     if (data.recordings && data.recordings.length > 0) {
-                          const recording = data.recordings[0];
-                          
-                          // Tenta encontrar release com capa
-                          if (recording.releases && recording.releases.length > 0) {
-                               for (let release of recording.releases) {
-                                    if (release.id) {
-                                         const coverUrl = `https://coverartarchive.org/release/${release.id}/front`;
-                                         // Verifica se a capa existe
-                                         const coverCheck = await fetch(coverUrl, { method: 'HEAD' });
-                                         if (coverCheck.ok) {
-                                              console.log("Capa encontrada via MusicBrainz");
-                                              return coverUrl;
-                                         }
-                                    }
-                               }
-                          }
-                     }
-                }
-           } catch (error) {
-                console.error("Erro ao buscar capa no MusicBrainz:", error);
-           }
-           return null;
-      }
-      
-      // Obtém capa via Last.fm (método adicional - track.getInfo)
-      async function getCoverFromLastfmTrackInfo(artist, trackName) {
-           try {
-                const artistParam = encodeURIComponent(artist);
-                const trackParam = encodeURIComponent(trackName);
-                const response = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=${artistParam}&track=${trackParam}&api_key=${lastFmKey}&format=json`);
-                
-                if (response.ok) {
-                     const data = await response.json();
-                     if (data.track && data.track.album && data.track.album.image) {
-                          const images = data.track.album.image;
-                          if (Array.isArray(images)) {
-                               const largeImage = images.find(img => img.size === "large" || img.size === "extralarge");
-                               if (largeImage && largeImage["#text"]) {
-                                    console.log("Capa encontrada via Last.fm track.getinfo");
-                                    return largeImage["#text"];
-                               }
-                          } else if (images["#text"]) {
-                               return images["#text"];
-                          }
-                     }
-                }
-           } catch (error) {
-                console.error("Erro ao buscar capa via Last.fm track.getinfo:", error);
-           }
-           return null;
-      }
-      
-      // Função principal que tenta todos os fallbacks
-      async function getCoverImageWithFallbacks(track) {
-           let cover = null;
-           const artist = track.artist["#text"] || "Unknown";
-           const trackName = track.name || "Unknown";
-           
-           console.log(`Buscando capa para: ${artist} - ${trackName}`);
-           
-           // Tentativa 1: Verificar se Last.fm tem capa
-           if (track.image && Array.isArray(track.image)) {
-                const lastfmImage = track.image.find(img => img["#text"]);
-                if (lastfmImage && lastfmImage["#text"]) {
-                     console.log("Capa encontrada em Last.fm (recenttracks)");
-                     return lastfmImage["#text"];
-                }
-           }
-           
-           // Tentativa 2: Verificar album do track
-           if (track.album && track.album["#text"]) {
-                console.log("Album detectado:", track.album["#text"]);
-           }
-           
-           // Tentativa 3: Last.fm track.getInfo (mais detalhado)
-           cover = await getCoverFromLastfmTrackInfo(artist, trackName);
-           if (cover) return cover;
-           
-           // Tentativa 4: MusicBrainz CoverArtArchive
-           cover = await getCoverFromMusicBrainz(artist, trackName);
-           if (cover) return cover;
-           
-           // Tentativa 5: Spotify
-           cover = await getCoverFromSpotify(artist, trackName);
-           if (cover) return cover;
-           
-           // Fallback final: Usar imagem padrão
-           console.log("Nenhuma capa encontrada, usando imagem padrão");
-           return "musique.png";
-      }
-      
-      function GetLastFMSong(){
-      
-           var title, album, artist, cover, url; 
-           var xmlhttp = new XMLHttpRequest();
-           xmlhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                     var myObj = JSON.parse(this.responseText);
-                     
-                     console.log("Resposta Last.fm:", myObj);
-                     
-                     if (myObj.recenttracks && myObj.recenttracks.track) {
-                          var track = Array.isArray(myObj.recenttracks.track) 
-                               ? myObj.recenttracks.track[0] 
-                               : myObj.recenttracks.track;
-                          
-                          if (track["@attr"] && track["@attr"].nowplaying === "true") {
-                               title = track.name || "Unknown Track";
-                               artist = (track.artist["#text"] || track.artist || "Unknown Artist") + " / ";
-                               url = track.url || "#";
-                               
-                               // Usar a função com fallbacks para obter a capa
-                               getCoverImageWithFallbacks(track).then(function(coverUrl) {
-                                    cover = coverUrl;
-                                    
-                                    // Atualizar DOM
-                                    document.getElementById("nowplay").style.backgroundImage = "url('" + cover + "')";
-                                    document.getElementById("title").innerHTML = title;
-                                    document.getElementById("artist").innerHTML = artist;
-                                    document.getElementById("cover").src = cover;
-                                    
-                                    // Fallback se a imagem não carregar
-                                    document.getElementById("cover").onerror = function() {
-                                         this.src = "musique.png";
-                                         document.getElementById("nowplay").style.backgroundImage = "url('musique.png')";
-                                    };
-                                    
-                                    console.log("Capa final:", cover);
-                               });
-                          } else {
-                               // Track não está tocando agora
-                               album = "";
-                               title = "?";
-                               cover = "musique.png";
-                               artist = "";
-                               
-                               document.getElementById("nowplay").style.backgroundImage = "url('musique.png')";
-                               document.getElementById("title").innerHTML = title;
-                               document.getElementById("artist").innerHTML = artist;
-                               document.getElementById("cover").src = cover;
-                          }
-                     }
-                }
-           };
-           
-           xmlhttp.onerror = function() {
-                console.error("Erro ao conectar à API Last.fm");
-           };
-           
-           xmlhttp.open("GET", "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user="+username+"&api_key="+lastFmKey+"&limit=1&format=json", true);
-           xmlhttp.send();
-      
-      }
-      
-   </script>
+
+      initPlayer();
+
+      // Chromecast
+      window.__onGCastApiAvailable = function (isAvailable) {
+        if (isAvailable) {
+          const context = cast.framework.CastContext.getInstance();
+          context.setOptions({
+            receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+            autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED,
+          });
+
+          const castButton = document.getElementById("castButton");
+          castButton.addEventListener("click", () => {
+            const session = context.getCurrentSession();
+            if (!session) {
+              context.requestSession();
+            } else {
+              const mediaInfo = new chrome.cast.media.MediaInfo(streamUrl, "application/x-mpegURL");
+              const request = new chrome.cast.media.LoadRequest(mediaInfo);
+              session.loadMedia(request);
+            }
+          });
+        }
+      };
+    </script>
+  </body>
 </html>

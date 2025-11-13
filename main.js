@@ -6,7 +6,7 @@ if ("serviceWorker" in navigator) {
 }
 
 // === Elementos globais ===
-const streamUrl = "https://1a-1791.com/live/d0t27del/slot-119/hxks-y1b8_1080p/chunklist_DVR.m3u8";
+const streamUrl = "https://droptv.com.br/play.m3u8";
 const iframe = document.getElementById("videoFrame");
 const dvMusic = document.getElementById("dv-musiqid");
 const artistEl = document.getElementById("artist");

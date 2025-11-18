@@ -1,5 +1,5 @@
 // Configuração principal
-const streamUrl = "https://droptv.com.br/play.m3u8";
+const streamUrl = "https://hearthis.app/droptv/live/listen/";
 const trackTitle = "DropTV Live";
 const artistName = "DropTV";
 const coverUrl = "cover.jpg"; // pode trocar por arte dinâmica

@@ -1,240 +1,361 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DROPTV Rádio</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0a0f1a">
-<style>
-:root {
-  --accent: #00e0ff;
-  --text-light: #f2f6fa;
-  --text-dim: #a9b4c4;
-}
-body {
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at center, #0a0f1a 0%, #060910 100%);
-  font-family: 'Inter', system-ui, sans-serif;
-  color: var(--text-light);
-}
-.player {
-  width: 340px;
-  border-radius: 20px;
-  backdrop-filter: blur(20px);
-  background: rgba(255,255,255,0.06);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px 20px 28px;
-  text-align: center;
-}
-#cover {
-  width: 100%;
-  height: 220px;
-  border-radius: 14px;
-  background-size: cover;
-  background-position: center;
-  margin-bottom: 18px;
-  transition: background-image 0.5s ease-in-out;
-}
-#title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-#artist {
-  font-size: 14px;
-  color: var(--text-dim);
-  margin-bottom: 22px;
-}
-button {
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  border: none;
-  background: var(--accent);
-  color: #000;
-  font-size: 28px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s ease;
-}
-button:hover { background: #4ef1ff; transform: scale(1.05); }
-audio { display: none; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DropTV Music Station</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0f1a">
+  <style>
+    :root {
+      --accent: #00e0ff;
+      --text-light: #f2f6fa;
+      --text-dim: #a9b4c4;
+    }
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #0a0f1a 0%, #060910 100%);
+      font-family: 'Inter', system-ui, sans-serif;
+      color: var(--text-light);
+    }
+    .player {
+      width: 340px;
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 20px 28px;
+      text-align: center;
+      position: relative;
+    }
+    #cover {
+      width: 100%;
+      height: 220px;
+      border-radius: 14px;
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 18px;
+      transition: background-image 0.5s ease-in-out;
+      background-image: url('cover.jpg'); /* fallback inicial */
+    }
+    #title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    #artist {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-bottom: 22px;
+    }
+    button#toggle {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent);
+      color: #000;
+      font-size: 28px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    button#toggle:hover {
+      background: #4ef1ff;
+      transform: scale(1.05);
+    }
+    audio { display: none; }
+
+    /* Botões de Cast no cantinho inferior direito da janela */
+    #castControls {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    .cast-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      width: 46px;
+      height: 46px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .cast-btn:hover {
+      background: rgba(255,255,255,0.18);
+      transform: scale(1.05);
+    }
+
+    .cast-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+  </style>
+
+  <!-- Chromecast sender API -->
+  <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 </head>
 <body>
-<div class="player">
-  <div id="cover" style="background-image:url('cover.jpg');"></div>
-  <div id="title">DROPTV Rádio</div>
-  <div id="artist">Pronto para reproduzir</div>
-  <audio id="audio" src="https://hearthis.app/droptv/live/listen/" playsinline></audio>
-  <button id="toggle">▶</button>
-</div>
+  <div class="player">
+    <div id="cover"></div>
+    <div id="title">DROPTV Rádio</div>
+    <div id="artist">Pronto para reproduzir</div>
 
-<script>
-// --- Reprodutor básico ---
-const audio = document.getElementById('audio');
-const toggle = document.getElementById('toggle');
-let playing = false;
+    <audio
+      id="audio"
+      src="https://hearthis.app/droptv/live/listen/"
+      playsinline
+    ></audio>
 
-toggle.addEventListener('click', () => {
-  if (!playing) {
-    audio.play();
-    toggle.textContent = '❚❚';
-    playing = true;
-  } else {
-    audio.pause();
-    toggle.textContent = '▶';
-    playing = false;
-  }
-});
+    <button id="toggle">▶</button>
+  </div>
 
-// --- Atualiza o MediaSession (Android Auto, CarPlay, Bluetooth) ---
-function updateMediaSession(title, artist, coverUrl) {
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title,
-      artist,
-      album: 'DROPTV Rádio',
-      artwork: [
-        { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
-      ]
+  <!-- Botões de cast no canto inferior direito -->
+  <div id="castControls">
+    <button class="cast-btn" id="castButton" title="Chromecast">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
+        <path d="M1,18v3h3A3,3,0,0,0,1,18Zm0-4v2a5,5,0,0,1,5,5h2A7,7,0,0,0,1,14ZM1,10v2a9,9,0,0,1,9,9h2A11,11,0,0,0,1,10ZM21,3H3A2,2,0,0,0,1,5v3H3V5H21V19H13v2h8a2,2,0,0,0,2-2V5A2,2,0,0,0,21,3Z"/>
+      </svg>
+    </button>
+
+    <button class="cast-btn" id="airplayButton" title="AirPlay" style="display:none;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 22l6-6 6 6M2 4h20v12H2z"/>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    // --- Reprodutor básico ---
+    const audio    = document.getElementById('audio');
+    const toggle   = document.getElementById('toggle');
+    const coverEl  = document.getElementById('cover');
+    const titleEl  = document.getElementById('title');
+    const artistEl = document.getElementById('artist');
+
+    const castControls = document.getElementById('castControls');
+    const castButton   = document.getElementById('castButton');
+    const airplayButton= document.getElementById('airplayButton');
+
+    let playing = false;
+
+    toggle.addEventListener('click', () => {
+      if (!playing) {
+        audio.play();
+        toggle.textContent = '❚❚';
+        playing = true;
+      } else {
+        audio.pause();
+        toggle.textContent = '▶';
+        playing = false;
+      }
     });
-    navigator.mediaSession.setActionHandler('play', () => audio.play());
-    navigator.mediaSession.setActionHandler('pause', () => audio.pause());
-  }
-}
 
-// --- Last.fm + Spotify + MusicBrainz ---
-const lastFmKey = "1423897f73010d0c35257f51be892a1c";
-const username = "droptv";
-let spotifyAccessToken = null;
-let spotifyTokenExpiry = 0;
-
-// ⚙️ Credenciais Spotify
-const spotifyClientId = "YOUR_SPOTIFY_CLIENT_ID";
-const spotifyClientSecret = "YOUR_SPOTIFY_CLIENT_SECRET";
-
-// Atualiza a música atual a cada 15s
-GetLastFMSong();
-setInterval(GetLastFMSong, 15000);
-
-async function getSpotifyToken() {
-  if (spotifyAccessToken && spotifyTokenExpiry > Date.now()) return spotifyAccessToken;
-  try {
-    const res = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `grant_type=client_credentials&client_id=${spotifyClientId}&client_secret=${spotifyClientSecret}`
+    audio.addEventListener('play', () => {
+      playing = true;
+      toggle.textContent = '❚❚';
     });
-    const data = await res.json();
-    spotifyAccessToken = data.access_token;
-    spotifyTokenExpiry = Date.now() + data.expires_in * 1000;
-    return spotifyAccessToken;
-  } catch (e) {
-    console.error("Erro ao obter token Spotify:", e);
-    return null;
-  }
-}
 
-async function getCoverFromSpotify(artist, trackName) {
-  try {
-    const token = await getSpotifyToken();
-    if (!token) return null;
-    const query = encodeURIComponent(`${artist} ${trackName}`);
-    const res = await fetch(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`, {
-      headers: { "Authorization": `Bearer ${token}` }
+    audio.addEventListener('pause', () => {
+      playing = false;
+      toggle.textContent = '▶';
     });
-    const data = await res.json();
-    return data.tracks?.items?.[0]?.album?.images?.[0]?.url || null;
-  } catch (e) {
-    return null;
-  }
-}
 
-async function getCoverFromMusicBrainz(artist, trackName) {
-  try {
-    const query = encodeURIComponent(`${artist} AND ${trackName}`);
-    const res = await fetch(`https://musicbrainz.org/ws/2/recording?query=${query}&fmt=json`);
-    const data = await res.json();
-    const release = data.recordings?.[0]?.releases?.[0];
-    if (release?.id) {
-      const coverUrl = `https://coverartarchive.org/release/${release.id}/front`;
-      const check = await fetch(coverUrl, { method: 'HEAD' });
-      if (check.ok) return coverUrl;
+    // --- MediaSession (Android Auto, CarPlay, Bluetooth) ---
+    function updateMediaSession(title, artist, coverUrl) {
+      if (!('mediaSession' in navigator)) return;
+
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title,
+        artist,
+        album: 'DROPTV Rádio',
+        artwork: coverUrl ? [
+          { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
+        ] : []
+      });
+
+      navigator.mediaSession.setActionHandler('play', () => audio.play());
+      navigator.mediaSession.setActionHandler('pause', () => audio.pause());
     }
-  } catch (e) {}
-  return null;
-}
 
-async function getCoverFromLastfmTrackInfo(artist, trackName) {
-  try {
-    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=track.getinfo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(trackName)}&api_key=${lastFmKey}&format=json`);
-    const data = await res.json();
-    const imgs = data.track?.album?.image;
-    return imgs?.find(x => x.size === "extralarge" || x.size === "large")?.["#text"] || null;
-  } catch (e) {
-    return null;
-  }
-}
+    /* =======================================================================
+       NOW PLAYING via https://droptv.com.br/now.json
+       ======================================================================= */
 
-async function getCoverImageWithFallbacks(track) {
-  const artist = track.artist?.["#text"] || "Unknown";
-  const trackName = track.name || "Unknown";
+    let lastMusicFile = null;
+    let currentTrackInfo = {
+      title:  '',
+      artist: '',
+      cover:  ''
+    };
 
-  console.log(`🎵 Buscando capa: ${artist} - ${trackName}`);
+    async function fetchNowPlayingFromNowJson() {
+      try {
+        const res = await fetch('https://droptv.com.br/now.json', {
+          cache: 'no-store',
+          headers: { 'Accept': 'application/json' }
+        });
 
-  const lastfmImg = track.image?.slice(-1)?.[0]?.["#text"];
-  if (lastfmImg) return lastfmImg;
+        if (!res.ok) {
+          console.error('[now.json] HTTP error:', res.status, res.statusText);
+          return;
+        }
 
-  let cover = await getCoverFromLastfmTrackInfo(artist, trackName);
-  if (cover) return cover;
+        const contentType = res.headers.get('content-type') || '';
+        const text = await res.text();
 
-  cover = await getCoverFromMusicBrainz(artist, trackName);
-  if (cover) return cover;
+        if (!contentType.includes('application/json')) {
+          console.error(
+            '[now.json] Conteúdo não é JSON:',
+            'status =', res.status,
+            'content-type =', contentType,
+            'trecho =', text.slice(0, 120)
+          );
+          return;
+        }
 
-  cover = await getCoverFromSpotify(artist, trackName);
-  if (cover) return cover;
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          console.error(
+            '[now.json] Erro ao fazer JSON.parse:',
+            e,
+            'trecho =', text.slice(0, 120)
+          );
+          return;
+        }
 
-  return "cover.jpg";
-}
+        if (!data || !data.music_file) {
+          return;
+        }
 
-async function GetLastFMSong() {
-  try {
-    const res = await fetch(`https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${lastFmKey}&limit=1&format=json`);
-    const data = await res.json();
-    const track = Array.isArray(data.recenttracks.track)
-      ? data.recenttracks.track[0]
-      : data.recenttracks.track;
+        if (lastMusicFile !== null && data.music_file === lastMusicFile) {
+          return; // mesma música, não atualiza
+        }
+        lastMusicFile = data.music_file;
 
-    if (track && track["@attr"]?.nowplaying === "true") {
-      const artist = track.artist["#text"];
-      const title = track.name;
-      const cover = await getCoverImageWithFallbacks(track);
+        const title  = data.title  || 'DROPTV Rádio';
+        const artist = data.artist || '';
+        const cover  = (data.cover_url || '').trim();
 
-      document.getElementById('title').textContent = title;
-      document.getElementById('artist').textContent = artist;
-      document.getElementById('cover').style.backgroundImage = `url('${cover}')`;
+        currentTrackInfo = { title, artist, cover };
+        updateUI();
+        updateMediaSession(title, artist, cover || undefined);
 
-      updateMediaSession(title, artist, cover);
+      } catch (err) {
+        console.error('[now.json] Erro ao consultar now.json:', err);
+      }
     }
-  } catch (e) {
-    console.error("Erro metadata:", e);
-  }
-}
 
-// --- Instalação PWA ---
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/music/service-worker.js').catch(console.error);
-}
-</script>
+    function updateUI() {
+      titleEl.textContent  = currentTrackInfo.title  || 'DROPTV Rádio';
+      artistEl.textContent = currentTrackInfo.artist || '';
+      if (currentTrackInfo.cover) {
+        coverEl.style.backgroundImage = `url('${currentTrackInfo.cover}')`;
+      }
+    }
+
+    // Atualiza a música atual periodicamente
+    fetchNowPlayingFromNowJson();
+    setInterval(fetchNowPlayingFromNowJson, 5000);
+
+    /* =======================================================================
+       Chromecast + AirPlay
+       ======================================================================= */
+
+    // AirPlay (Safari / iOS / macOS)
+    if (window.WebKitPlaybackTargetAvailabilityEvent) {
+      airplayButton.style.display = 'flex';
+      audio.addEventListener('webkitplaybacktargetavailabilitychanged', event => {
+        // poderíamos reagir a disponibilidade aqui se quiser
+      });
+      airplayButton.addEventListener('click', () => {
+        if (audio.webkitShowPlaybackTargetPicker) {
+          audio.webkitShowPlaybackTargetPicker();
+        }
+      });
+    } else {
+      airplayButton.style.display = 'none';
+    }
+
+    // Chromecast
+    function initChromecast() {
+      if (!window.cast || !window.cast.framework) {
+        console.log('[Cast] API do Chromecast não disponível neste contexto.');
+        return;
+      }
+
+      const ctx = cast.framework.CastContext.getInstance();
+      ctx.setOptions({
+        receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+        autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED,
+      });
+
+      castButton.addEventListener('click', async () => {
+        try {
+          const session =
+            ctx.getCurrentSession() || await ctx.requestSession();
+
+          if (!session) {
+            console.log('[Cast] nenhuma sessão de cast ativa.');
+            return;
+          }
+
+          const mediaInfo = new chrome.cast.media.MediaInfo(
+            audio.src,
+            'audio/mpeg' // genérico; o receiver se vira com o stream
+          );
+          const request = new chrome.cast.media.LoadRequest(mediaInfo);
+          session.loadMedia(request);
+        } catch (err) {
+          const code = err && err.code ? err.code : err;
+          if (code === 'cancel') {
+            console.log('[Cast] sessão cancelada pelo usuário (normal).');
+          } else if (code === 'session_error') {
+            console.log('[Cast] não foi possível iniciar sessão de cast.', err);
+          } else {
+            console.error('[Cast] erro inesperado ao iniciar cast:', err);
+          }
+        }
+      });
+    }
+
+    // Callback padrão do Cast Sender API
+    window.__onGCastApiAvailable = function(isAvailable) {
+      if (isAvailable) {
+        initChromecast();
+      } else {
+        console.log('[Cast] API Chromecast não disponível.');
+      }
+    };
+
+    // --- Instalação PWA ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/music/service-worker.js')
+        .catch(console.error);
+    }
+  </script>
 </body>
 </html>

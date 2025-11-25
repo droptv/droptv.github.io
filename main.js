@@ -8,7 +8,7 @@ if ("serviceWorker" in navigator) {
 
 // === Elementos globais ===
 const streamUrl     = "https://droptv.com.br/play.m3u8";
-const iframe        = document.getElementById("videoFrame");
+const video         = document.getElementById("videoPlayer");
 const dvMusic       = document.getElementById("dv-musiqid");
 const artistEl      = document.getElementById("artist");
 const titleEl       = document.getElementById("title");
@@ -21,7 +21,7 @@ const airplayButton = document.getElementById("airplayButton");
 let hideTimeout = null;
 
 /* =======================================================================
-   LOGO INICIAL: sempre some após ~3s, independente de load do iframe
+   LOGO INICIAL: sempre some após ~3s, independente do vídeo
    ======================================================================= */
 
 setTimeout(() => {
@@ -34,15 +34,7 @@ setTimeout(() => {
 }, 3000);
 
 /* =======================================================================
-   PLAYER: garante que o iframe está apontando para o stream
-   ======================================================================= */
-
-if (iframe) {
-  iframe.src = streamUrl; // reforça o src, sem depender de window.load
-}
-
-/* =======================================================================
-   UI: painel de música + botões de cast
+   UI: painel de música + botões de cast (despertar por 3s)
    ======================================================================= */
 
 function showUI() {
@@ -56,18 +48,17 @@ function showUI() {
   }, 3000);
 }
 
-// 1) Movimento / toque / clique em QUALQUER parte da página PAI
+// Movimento / toque / clique em QUALQUER parte da página (inclui o vídeo)
 ["mousemove", "touchstart"].forEach(ev => {
   document.addEventListener(ev, showUI, { passive: true });
 });
-
-// click não precisa ser passive
 document.addEventListener("click", showUI);
 
-// 2) Mouse entra / sai da área do iframe (mesmo sem clicar)
-if (iframe) {
-  iframe.addEventListener("mouseenter", showUI);
-  iframe.addEventListener("mouseleave", showUI);
+// também acordar ao interagir direto com o vídeo (play/pause/seek)
+if (video) {
+  ["play", "pause", "seeking", "click"].forEach(ev => {
+    video.addEventListener(ev, showUI);
+  });
 }
 
 /* =======================================================================
@@ -115,10 +106,8 @@ if (window.WebKitPlaybackTargetAvailabilityEvent) {
   castButton.style.display = "none";
   airplayButton.style.display = "flex";
   airplayButton.addEventListener("click", () => {
-    const vid = document.createElement("video");
-    vid.src = streamUrl;
-    if (vid.webkitShowPlaybackTargetPicker) {
-      vid.webkitShowPlaybackTargetPicker();
+    if (video && video.webkitShowPlaybackTargetPicker) {
+      video.webkitShowPlaybackTargetPicker();
     }
   });
 } else {
@@ -186,14 +175,14 @@ async function fetchNowPlayingFromNowJson() {
     const cover  = (data.cover_url || "").trim(); // now.json já cuida de fallback
 
     currentTrackInfo = { title, artist, cover };
-    updateUI();
+    updateUIFromTrack();
     updateMediaSession();
   } catch (err) {
     console.error("[now.json] Erro ao consultar now.json:", err);
   }
 }
 
-function updateUI() {
+function updateUIFromTrack() {
   if (titleEl)  titleEl.textContent  = currentTrackInfo.title  || "";
   if (artistEl) artistEl.textContent = currentTrackInfo.artist || "";
   if (coverEl && currentTrackInfo.cover) {
@@ -214,6 +203,13 @@ function updateMediaSession() {
         type:  "image/jpeg"
       }
     ]
+  });
+
+  navigator.mediaSession.setActionHandler("play", () => {
+    if (video) video.play().catch(() => {});
+  });
+  navigator.mediaSession.setActionHandler("pause", () => {
+    if (video) video.pause();
   });
 }
 

@@ -56,10 +56,13 @@ function showUI() {
   }, 3000);
 }
 
-// 1) Movimento / toque / clique em QUALQUER parte do documento
-["mousemove", "touchstart", "click"].forEach(ev => {
+// 1) Movimento / toque / clique em QUALQUER parte da página PAI
+["mousemove", "touchstart"].forEach(ev => {
   document.addEventListener(ev, showUI, { passive: true });
 });
+
+// click não precisa ser passive
+document.addEventListener("click", showUI);
 
 // 2) Mouse entra / sai da área do iframe (mesmo sem clicar)
 if (iframe) {
@@ -185,7 +188,6 @@ async function fetchNowPlayingFromNowJson() {
     currentTrackInfo = { title, artist, cover };
     updateUI();
     updateMediaSession();
-    // UI só aparece em resposta a movimento/click, não aqui
   } catch (err) {
     console.error("[now.json] Erro ao consultar now.json:", err);
   }

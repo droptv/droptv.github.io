@@ -1,10 +1,5 @@
-// === PWA Service Worker ===
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/service-worker.js")
-    .then(() => console.log("[PWA] Service worker registrado"))
-    .catch(err => console.error("[PWA] Falha no registro", err));
-}
+
+
 
 // === Elementos globais ===
 const streamUrl     = "https://droptv.com.br/play.m3u8";

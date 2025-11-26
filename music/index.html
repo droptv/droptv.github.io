@@ -26,8 +26,8 @@
       width: 340px;
       border-radius: 20px;
       backdrop-filter: blur(20px);
-      background: rgba(255,255,255,0.06);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 5px 10px #4ef1ff;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -188,7 +188,7 @@
       navigator.mediaSession.metadata = new MediaMetadata({
         title,
         artist,
-        album: 'DROPTV Rádio',
+        album: 'DropTV Music Station',
         artwork: coverUrl ? [
           { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
         ] : []
@@ -349,6 +349,21 @@
         console.log('[Cast] API Chromecast não disponível.');
       }
     };
+        // --- Clique no background leva para "/" ---
+    const playerBox      = document.querySelector('.player');
+    const castControlsEl = document.getElementById('castControls');
+
+    document.addEventListener('click', (ev) => {
+      // Se clicou dentro do player, não faz nada
+      if (playerBox && playerBox.contains(ev.target)) return;
+
+      // Se clicou nos botões de cast, também não sai da página
+      if (castControlsEl && castControlsEl.contains(ev.target)) return;
+
+      // Qualquer clique "no fundo" leva para a raiz
+      window.location.href = '/';
+    });
+
 
   </script>
 </body>

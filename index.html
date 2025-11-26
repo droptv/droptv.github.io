@@ -2,7 +2,10 @@
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <title>DropTV</title>
 
     <link rel="manifest" href="manifest.json" />
@@ -10,23 +13,35 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-title" content="DropTV" />
 
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
+        background: #000;
         width: 100%;
         height: 100%;
-        background: black;
-        overflow: hidden;
-        font-family: 'Josefin Sans', sans-serif;
       }
 
-      /* Vídeo ocupando a tela toda (player nativo do browser/TV) */
+      body {
+        position: relative;
+        overflow: hidden;
+        font-family: "Josefin Sans", sans-serif;
+      }
+
+      /* Vídeo em tela cheia, amigável para TVs */
       video#videoPlayer {
-        width: 100%;
-        height: 100%;
+        position: fixed;
+        inset: 0; /* top:0; right:0; bottom:0; left:0 */
+        width: 100vw;
+        height: 100vh;
+        max-width: 100%;
+        max-height: 100%;
         border: none;
         background: black;
         object-fit: contain;
@@ -38,7 +53,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(8px);
         z-index: 999;
         transition: opacity 1s ease;
@@ -58,14 +73,14 @@
         display: none; /* deixamos pronto caso queira usar depois */
         justify-content: center;
         align-items: center;
-        background: rgba(0,0,0,0.6);
+        background: rgba(0, 0, 0, 0.6);
         backdrop-filter: blur(10px);
         z-index: 900;
         transition: opacity 0.3s ease;
       }
       #playOverlay button {
-        background: rgba(255,255,255,0.2);
-        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 50%;
         width: 80px;
         height: 80px;
@@ -76,7 +91,7 @@
         transition: background 0.3s;
       }
       #playOverlay button:hover {
-        background: rgba(255,255,255,0.3);
+        background: rgba(255, 255, 255, 0.3);
       }
       #playOverlay svg {
         width: 40px;
@@ -90,7 +105,7 @@
         top: 5%;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(25,25,25,0.65);
+        background: rgba(25, 25, 25, 0.65);
         border-radius: 16px;
         padding: 8px 12px;
         display: flex;
@@ -112,8 +127,8 @@
       }
 
       #dv-musiqid img {
-        height: 42px;
-        width: 42px;
+        height: 80px;
+        width: 80px;
         border-radius: 8px;
         flex-shrink: 0;
       }
@@ -146,7 +161,7 @@
       }
 
       .cast-btn {
-        background: rgba(25,25,25,0.65);
+        background: rgba(25, 25, 25, 0.65);
         border: none;
         color: white;
         width: 48px;
@@ -161,7 +176,7 @@
       }
 
       .cast-btn:hover {
-        background: rgba(255,255,255,0.15);
+        background: rgba(255, 255, 255, 0.15);
       }
 
       .cast-btn svg {
@@ -181,9 +196,18 @@
 
     <div id="playOverlay">
       <button id="startButton" aria-label="Tocar">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke="white" stroke-linecap="round" stroke-linejoin="round"
-                d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="white"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"
+          />
         </svg>
       </button>
     </div>
@@ -201,7 +225,7 @@
 
     <!-- Painel de música -->
     <div id="dv-musiqid">
-      <img id="cover" src="musique.png" alt="Capa" />
+      <a href="music"><img id="cover" src="musique.png" alt="Capa" /></a>
       <div class="trackname">
         <span id="artist">Artista</span> — <span id="title">Música</span>
       </div>
@@ -210,19 +234,377 @@
     <!-- Chromecast / AirPlay -->
     <div id="castControls">
       <button class="cast-btn" id="castButton" title="Chromecast">
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="white" viewBox="0 0 24 24">
-          <path d="M1,18v3h3A3,3,0,0,0,1,18Zm0-4v2a5,5,0,0,1,5,5h2A7,7,0,0,0,1,14ZM1,10v2a9,9,0,0,1,9,9h2A11,11,0,0,0,1,10ZM21,3H3A2,2,0,0,0,1,5v3H3V5H21V19H13v2h8a2,2,0,0,0,2-2V5A2,2,0,0,0,21,3Z"/>
-      </svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="26"
+          height="26"
+          fill="white"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M1,18v3h3A3,3,0,0,0,1,18Zm0-4v2a5,5,0,0,1,5,5h2A7,7,0,0,0,1,14ZM1,10v2a9,9,0,0,1,9,9h2A11,11,0,0,0,1,10ZM21,3H3A2,2,0,0,0,1,5v3H3V5H21V19H13v2h8a2,2,0,0,0,2-2V5A2,2,0,0,0,21,3Z"
+          />
+        </svg>
       </button>
 
-      <button class="cast-btn" id="airplayButton" title="AirPlay" style="display:none;">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M6 22l6-6 6 6M2 4h20v12H2z"/>
+      <button
+        class="cast-btn"
+        id="airplayButton"
+        title="AirPlay"
+        style="display:none;"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          stroke="white"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 22l6-6 6 6M2 4h20v12H2z"
+          />
         </svg>
       </button>
     </div>
 
-    <script src="main.js"></script>
+    <script>
+      // === Elementos globais ===
+      const streamUrl = "https://droptv.com.br/play.m3u8";
+      const video = document.getElementById("videoPlayer");
+      const dvMusic = document.getElementById("dv-musiqid");
+      const artistEl = document.getElementById("artist");
+      const titleEl = document.getElementById("title");
+      const coverEl = document.getElementById("cover");
+      const overlay = document.getElementById("overlay");
+      const castControls = document.getElementById("castControls");
+      const castButton = document.getElementById("castButton");
+      const airplayButton = document.getElementById("airplayButton");
+
+      let hideTimeout = null;
+      
+      
+
+      /* =======================================================================
+         WATCHDOG de playback: tenta recuperar travadas automaticamente
+         ======================================================================= */
+
+      let lastPos = 0;
+      let lastPosTs = Date.now();
+      let recovering = false;
+      const STALL_MAX_MS = 15000; // 15s sem avançar => considera travado
+      const CHECK_INTERVAL_MS = 5000;
+
+      if (video) {
+        video.addEventListener("timeupdate", () => {
+          const ct = video.currentTime || 0;
+          // só considera avanço "real"
+          if (Math.abs(ct - lastPos) > 0.1) {
+            lastPos = ct;
+            lastPosTs = Date.now();
+          }
+        });
+
+        ["stalled", "waiting", "error"].forEach((ev) => {
+          video.addEventListener(ev, () => {
+            console.log("[DropTV] Evento de buffer:", ev);
+          });
+        });
+
+        setInterval(() => {
+          if (!video) return;
+
+          // se o usuário pausou/seekou, não mexe
+          if (video.paused || video.ended || video.seeking) return;
+
+          const now = Date.now();
+          const diff = now - lastPosTs;
+
+          if (diff > STALL_MAX_MS) {
+            console.warn(
+              "[DropTV] Detected stall (" + diff + "ms). Trying recovery..."
+            );
+            recoverStream();
+          }
+        }, CHECK_INTERVAL_MS);
+      }
+
+      function recoverStream() {
+        if (!video || recovering) return;
+        recovering = true;
+
+        try {
+          const wasPlaying = !video.paused && !video.ended;
+
+          // força novo GET da .m3u8 (worker gera playback_url novo se precisar)
+          const newUrl =
+            streamUrl +
+            (streamUrl.indexOf("?") === -1 ? "?" : "&") +
+            "r=" +
+            Date.now().toString(36);
+
+          console.log("[DropTV] Reloading stream:", newUrl);
+
+          try {
+            video.pause();
+          } catch (e) {}
+
+          // alguns browsers de TV preferem remover src antes de trocar
+          video.removeAttribute("src");
+          video.load();
+
+          video.src = newUrl;
+          video.load();
+
+          if (wasPlaying) {
+            const p = video.play();
+            if (p && typeof p.then === "function") {
+              p
+                .catch(() => {})
+                .finally(() => {
+                  recovering = false;
+                  lastPosTs = Date.now();
+                });
+            } else {
+              recovering = false;
+              lastPosTs = Date.now();
+            }
+          } else {
+            recovering = false;
+            lastPosTs = Date.now();
+          }
+        } catch (e) {
+          console.error("[DropTV] Erro no recoverStream:", e);
+          recovering = false;
+        }
+      }
+
+      /* =======================================================================
+         LOGO INICIAL: sempre some após ~3s, independente do vídeo
+         ======================================================================= */
+
+      setTimeout(() => {
+        if (!overlay) return;
+        overlay.classList.add("fade-out");
+        // dá 1s para o fade-out completar
+        setTimeout(() => {
+          overlay.style.display = "none";
+        }, 1000);
+      }, 3000);
+
+      /* =======================================================================
+         UI: painel de música + botões de cast (despertar por 3s)
+         ======================================================================= */
+
+      function showUI() {
+        if (dvMusic) dvMusic.classList.add("show");
+        if (castControls) castControls.classList.add("visible");
+
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+          if (dvMusic) dvMusic.classList.remove("show");
+          if (castControls) castControls.classList.remove("visible");
+        }, 3000);
+      }
+
+      // Movimento / toque / clique em QUALQUER parte da página (inclui o vídeo)
+      ["mousemove", "touchstart"].forEach((ev) => {
+        document.addEventListener(ev, showUI, { passive: true });
+      });
+      document.addEventListener("click", showUI);
+
+      // também acordar ao interagir direto com o vídeo (play/pause/seek)
+      if (video) {
+        ["play", "pause", "seeking", "click"].forEach((ev) => {
+          video.addEventListener(ev, showUI);
+        });
+      }
+
+      /* =======================================================================
+         Chromecast + AirPlay
+         ======================================================================= */
+
+      function initChromecast() {
+        if (!window.cast || !window.cast.framework) {
+          setTimeout(initChromecast, 500);
+          return;
+        }
+        const ctx = cast.framework.CastContext.getInstance();
+        ctx.setOptions({
+          receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+          autoJoinPolicy: chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED,
+        });
+
+        castButton.addEventListener("click", async () => {
+          try {
+            const session =
+              ctx.getCurrentSession() || (await ctx.requestSession());
+            if (!session) return;
+
+            const mediaInfo = new chrome.cast.media.MediaInfo(
+              streamUrl,
+              "application/x-mpegURL"
+            );
+            const request = new chrome.cast.media.LoadRequest(mediaInfo);
+            session.loadMedia(request);
+          } catch (err) {
+            const code = err && err.code ? err.code : err;
+            if (code === "cancel") {
+              console.log(
+                "[Cast] sessão/cast cancelado pelo usuário (ok)."
+              );
+            } else if (code === "session_error") {
+              console.log(
+                "[Cast] não foi possível iniciar sessão de cast.",
+                err
+              );
+            } else {
+              console.error("[Cast] erro ao iniciar cast:", err);
+            }
+          }
+        });
+      }
+
+      // Safari → apenas AirPlay / Chrome → apenas Chromecast
+      if (window.WebKitPlaybackTargetAvailabilityEvent) {
+        // Safari: esconder Chromecast, mostrar AirPlay
+        castButton.style.display = "none";
+        airplayButton.style.display = "flex";
+        airplayButton.addEventListener("click", () => {
+          if (video && video.webkitShowPlaybackTargetPicker) {
+            video.webkitShowPlaybackTargetPicker();
+          }
+        });
+      } else {
+        // Chrome/Android TV: esconder AirPlay, inicializar Chromecast
+        airplayButton.style.display = "none";
+        initChromecast();
+      }
+
+      /* =======================================================================
+         NOW PLAYING via https://droptv.com.br/now.json
+         ======================================================================= */
+
+      let currentTrackInfo = { title: "", artist: "", cover: "" };
+      let lastMusicFile = null; // detecta troca de música
+
+      async function fetchNowPlayingFromNowJson() {
+        try {
+          const res = await fetch("https://droptv.com.br/now.json", {
+            cache: "no-store",
+            headers: { Accept: "application/json" },
+          });
+
+          if (!res.ok) {
+            console.error("[now.json] HTTP error:", res.status, res.statusText);
+            return;
+          }
+
+          const contentType = res.headers.get("content-type") || "";
+          const text = await res.text();
+
+          if (!contentType.includes("application/json")) {
+            console.error(
+              "[now.json] Conteúdo não é JSON:",
+              "status =",
+              res.status,
+              "content-type =",
+              contentType,
+              "trecho =",
+              text.slice(0, 120)
+            );
+            return;
+          }
+
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch (e) {
+            console.error(
+              "[now.json] Erro ao fazer JSON.parse:",
+              e,
+              "trecho =",
+              text.slice(0, 120)
+            );
+            return;
+          }
+
+          if (!data || !data.music_file) {
+            return;
+          }
+
+          // Só atualiza se a música trocou
+          if (data.music_file === lastMusicFile) {
+            return;
+          }
+          lastMusicFile = data.music_file;
+
+          const title = data.title || "";
+          const artist = data.artist || "";
+          const cover = (data.cover_url || "").trim(); // now.json já cuida de fallback
+
+          currentTrackInfo = { title, artist, cover };
+          updateUIFromTrack();
+          updateMediaSession();
+        } catch (err) {
+          console.error("[now.json] Erro ao consultar now.json:", err);
+        }
+      }
+
+      function updateUIFromTrack() {
+        if (titleEl) titleEl.textContent = currentTrackInfo.title || "";
+        if (artistEl) artistEl.textContent = currentTrackInfo.artist || "";
+        if (coverEl && currentTrackInfo.cover) {
+          coverEl.src = currentTrackInfo.cover;
+        }
+      }
+
+      function updateMediaSession() {
+        if (!("mediaSession" in navigator) || !currentTrackInfo.cover) return;
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: currentTrackInfo.title,
+          artist: currentTrackInfo.artist,
+          artwork: [
+            {
+              src: currentTrackInfo.cover,
+              sizes: "512x512",
+              type: "image/jpeg",
+            },
+          ],
+        });
+
+        navigator.mediaSession.setActionHandler("play", () => {
+          if (video) video.play().catch(() => {});
+        });
+        navigator.mediaSession.setActionHandler("pause", () => {
+          if (video) video.pause();
+        });
+      }
+
+      // Inicia o polling do now.json assim que o script carrega
+      fetchNowPlayingFromNowJson();
+      setInterval(fetchNowPlayingFromNowJson, 5000);
+      
+          // Tenta autoplay ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const p = audio.play();
+        if (p && typeof p.then === 'function') {
+          p.then(() => {
+            // Autoplay funcionou, o handler de 'play' já ajusta o botão
+            console.log('[Audio] Autoplay OK');
+          }).catch(err => {
+            // Autoplay bloqueado, segue a vida e espera clique no botão
+            console.log('[Audio] Autoplay bloqueado pelo navegador:', err);
+          });
+        }
+      } catch (e) {
+        console.log('[Audio] Erro ao tentar autoplay:', e);
+      }
+    });
+
+    </script>
   </body>
 </html>

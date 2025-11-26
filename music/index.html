@@ -364,6 +364,24 @@
       window.location.href = '/';
     });
 
+    // Tenta autoplay ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const p = audio.play();
+        if (p && typeof p.then === 'function') {
+          p.then(() => {
+            // Autoplay funcionou, o handler de 'play' já ajusta o botão
+            console.log('[Audio] Autoplay OK');
+          }).catch(err => {
+            // Autoplay bloqueado, segue a vida e espera clique no botão
+            console.log('[Audio] Autoplay bloqueado pelo navegador:', err);
+          });
+        }
+      } catch (e) {
+        console.log('[Audio] Erro ao tentar autoplay:', e);
+      }
+    });
+
 
   </script>
 </body>

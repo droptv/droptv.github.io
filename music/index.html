@@ -47,15 +47,19 @@
       --text-light: #f2f6fa;
       --text-dim: #a9b4c4;
     }
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       background: radial-gradient(circle at center, #0a0f1a 0%, #060910 100%);
       font-family: 'Inter', system-ui, sans-serif;
       color: var(--text-light);
+      padding: 0; /* ajustado por media query em telas pequenas */
     }
     .player {
       width: 340px;
@@ -144,6 +148,35 @@
       width: 24px;
       height: 24px;
     }
+
+    /* Layout mais compacto para telas pequenas (iOS mobile etc.) */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      .player {
+        width: 300px;
+        padding: 18px 16px 22px;
+        box-shadow: 3px 6px #4ef1ff;
+      }
+      #cover {
+        height: 190px;
+        margin-bottom: 14px;
+      }
+      #title {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+      #artist {
+        font-size: 13px;
+        margin-bottom: 18px;
+      }
+      button#toggle {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+      }
+    }
   </style>
 
   <!-- Chromecast sender API -->
@@ -172,12 +205,14 @@
 
   <!-- Botões de cast no canto inferior direito -->
   <div id="castControls">
-    <button class="cast-btn" id="castButton" title="Chromecast">
+    <!-- Chromecast: começa escondido; só aparece se Cast API estiver disponível e não for Safari/iOS -->
+    <button class="cast-btn" id="castButton" title="Chromecast" style="display:none;">
       <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
         <path d="M1,18v3h3A3,3,0,0,0,1,18Zm0-4v2a5,5,0,0,1,5,5h2A7,7,0,0,0,1,14ZM1,10v2a9,9,0,0,1,9,9h2A11,11,0,0,0,1,10ZM21,3H3A2,2,0,0,0,1,5v3H3V5H21V19H13v2h8a2,2,0,0,0,2-2V5A2,2,0,0,0,21,3Z"/>
       </svg>
     </button>
 
+    <!-- AirPlay: começa escondido; aparece apenas se WebKitPlaybackTargetAvailabilityEvent existir -->
     <button class="cast-btn" id="airplayButton" title="AirPlay" style="display:none;">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -199,6 +234,17 @@
     const airplayButton= document.getElementById('airplayButton');
 
     let playing = false;
+
+    const ua = navigator.userAgent.toLowerCase();
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isSafariDesktop =
+      ua.includes('safari') &&
+      !ua.includes('chrome') &&
+      !ua.includes('crios') &&
+      !ua.includes('fxios') &&
+      !ua.includes('edgios') &&
+      !isIOS;
+    const isSafariLike = isIOS || isSafariDesktop; // tudo que é WebKit puro/iOS
 
     toggle.addEventListener('click', () => {
       if (!playing) {
@@ -398,8 +444,20 @@
     function initChromecast() {
       if (!window.cast || !window.cast.framework) {
         console.log('[Cast] API do Chromecast não disponível neste contexto.');
+        // não mostra botão
+        castButton.style.display = 'none';
         return;
       }
+
+      // Se for Safari/iOS, não faz sentido mostrar Chromecast
+      if (isSafariLike) {
+        console.log('[Cast] Safari/iOS detectado; Chromecast oculto.');
+        castButton.style.display = 'none';
+        return;
+      }
+
+      // API disponível e não é Safari/iOS -> mostramos botão
+      castButton.style.display = 'flex';
 
       const ctx = cast.framework.CastContext.getInstance();
       ctx.setOptions({
@@ -442,6 +500,7 @@
         initChromecast();
       } else {
         console.log('[Cast] API Chromecast não disponível.');
+        castButton.style.display = 'none';
       }
     };
 
@@ -459,8 +518,6 @@
       // Qualquer clique "no fundo" leva para a raiz
       window.location.href = '/';
     });
-
-
   </script>
 </body>
 </html>

@@ -1,50 +1,46 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>DropTV Music Station</title>
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#0a0f1a" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DropTV Music Station</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0a0f1a" />
 
-    <!-- Additions for SEO and Optimization -->
-    <meta name="description" content="Enjoy live non-stop tunes and immersive audio experiences." />
-    <meta name="keywords" content="music player, live music streams, music playlists, soundtracks, music station, streaming music, DropTV Music" />
-    <meta name="robots" content="index, follow" />
-    <meta name="author" content="DropTV" />
-    <meta name="language" content="en-US" />
+  <!-- SEO -->
+  <meta name="description" content="Enjoy live non-stop tunes and immersive audio experiences." />
+  <meta name="keywords" content="music player, live music streams, music playlists, soundtracks, music station, streaming music, DropTV Music" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="DropTV" />
+  <meta name="language" content="pt-BR" />
 
-    <!-- Open Graph for Social Media Sharing (Facebook, etc.) -->
-    <meta property="og:title" content="DropTV Music Station - Live Streaming" />
-    <meta property="og:description" content="Dive into live music streams for every mood on DropTV Music Station." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://droptv.com.br/music" />
-    <meta property="og:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" /> <!-- Chosen for being close to the ideal size of 1200x630, with good resolution and similar aspect ratio -->
-    <meta property="og:site_name" content="DropTV" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="DropTV Music Station - Live Streaming" />
+  <meta property="og:description" content="Dive into live music streams for every mood on DropTV Music Station." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://droptv.com.br/music" />
+  <meta property="og:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" />
+  <meta property="og:site_name" content="DropTV" />
 
-    <!-- Twitter Cards for Sharing on X (Twitter) -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="DropTV Music Station - Live Streams and Music Playlists" />
-    <meta name="twitter:description" content="Non-stop music streams and playlists for all tastes. Tune in to DropTV Music Station!" />
-    <meta name="twitter:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" /> <!-- Same as og:image, suitable size for large image -->
-    <meta name="twitter:site" content="@DropTV.oficial" /> <!-- Replace with your X handle, if any -->
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DropTV Music Station - Live Streams and Music Playlists" />
+  <meta name="twitter:description" content="Non-stop music streams and playlists for all tastes. Tune in to DropTV Music Station!" />
+  <meta name="twitter:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" />
+  <meta name="twitter:site" content="@DropTV.oficial" />
 
-    <!-- Icons and Favicons for PWA, Browsers and Mobile Devices -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" /> <!-- For root favicon.ico; supports older browsers -->
-    <link rel="apple-touch-icon" sizes="192x192" href="/android/android-launchericon-192-192.png" /> <!-- Closest to 180x180, ideal for Apple -->
-    <link rel="icon" type="image/png" sizes="512x512" href="/assets/droptv_logo_512x512.png" /> <!-- High resolution for PWA -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/android/android-launchericon-192-192.png" />
-    <link rel="icon" type="image/png" sizes="144x144" href="/android/android-launchericon-144-144.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/android/android-launchericon-96-96.png" />
-    <link rel="icon" type="image/png" sizes="72x72" href="/android/android-launchericon-72-72.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="/android/android-launchericon-48-48.png" />
+  <!-- Ícones -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/android/android-launchericon-192-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/droptv_logo_512x512.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/android/android-launchericon-192-192.png" />
+  <link rel="icon" type="image/png" sizes="144x144" href="/android/android-launchericon-144-144.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/android/android-launchericon-96-96.png" />
+  <link rel="icon" type="image/png" sizes="72x72" href="/android/android-launchericon-72-72.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/android/android-launchericon-48-48.png" />
 
-    <!-- Canonical to Avoid Duplicate Content -->
-    <link rel="canonical" href="https://droptv.com.br/music" />
+  <link rel="canonical" href="https://droptv.com.br/music" />
 
-
-</head>
   <style>
     :root {
       --accent: #00e0ff;
@@ -159,10 +155,16 @@
     <div id="title">DropTV</div>
     <div id="artist">Music Station</div>
 
+    <!--
+      Não forçamos mais autoplay via JS.
+      Apenas pedimos autoplay no HTML. Browsers/OS decidem.
+    -->
     <audio
       id="audio"
-      src="https://hearthis.app/droptv/live/listen/"
+      src="https://droptv.com.br/audio.mp3"
       playsinline
+      autoplay
+      preload="none"
     ></audio>
 
     <button id="toggle">▶</button>
@@ -200,24 +202,78 @@
 
     toggle.addEventListener('click', () => {
       if (!playing) {
-        audio.play();
-        toggle.textContent = '❚❚';
-        playing = true;
+        audio.play().catch(err => {
+          console.error('[Audio] Erro ao tentar play via botão:', err);
+        });
       } else {
         audio.pause();
-        toggle.textContent = '▶';
-        playing = false;
       }
     });
 
     audio.addEventListener('play', () => {
       playing = true;
       toggle.textContent = '❚❚';
+      console.log('[Audio] play - src:', audio.currentSrc);
     });
 
     audio.addEventListener('pause', () => {
       playing = false;
       toggle.textContent = '▶';
+      console.log('[Audio] pause');
+    });
+
+    // --- Log detalhado de erros de áudio (inclui possíveis erros de codec) ---
+    const MEDIA_ERROR_MAP = {
+      1: 'MEDIA_ERR_ABORTED',
+      2: 'MEDIA_ERR_NETWORK',
+      3: 'MEDIA_ERR_DECODE (possível problema de codec ou stream corrompido)',
+      4: 'MEDIA_ERR_SRC_NOT_SUPPORTED (formato/codec não suportado ou URL inválida)'
+    };
+
+    audio.addEventListener('error', () => {
+      const err = audio.error;
+      if (!err) {
+        console.error('[Audio] error sem objeto de erro (audio.error null)', {
+          currentSrc: audio.currentSrc,
+          networkState: audio.networkState,
+          readyState: audio.readyState
+        });
+        return;
+      }
+
+      const code = err.code;
+      console.error('[Audio] ERROR', {
+        code,
+        meaning: MEDIA_ERROR_MAP[code] || 'desconhecido',
+        message: err.message || null,
+        currentSrc: audio.currentSrc,
+        networkState: audio.networkState,
+        readyState: audio.readyState
+      });
+    });
+
+    audio.addEventListener('stalled', () => {
+      console.warn('[Audio] stalled (sem dados recebidos do stream)', {
+        currentSrc: audio.currentSrc,
+        networkState: audio.networkState,
+        readyState: audio.readyState
+      });
+    });
+
+    audio.addEventListener('waiting', () => {
+      console.log('[Audio] waiting (buffering...)', {
+        currentSrc: audio.currentSrc,
+        networkState: audio.networkState,
+        readyState: audio.readyState
+      });
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      console.log('[Audio] loadedmetadata', {
+        currentSrc: audio.currentSrc,
+        duration: audio.duration,  // deve ser Infinity para live
+        sampleRateDesconhecidoNoJS: true
+      });
     });
 
     // --- MediaSession (Android Auto, CarPlay, Bluetooth) ---
@@ -233,7 +289,7 @@
         ] : []
       });
 
-      navigator.mediaSession.setActionHandler('play', () => audio.play());
+      navigator.mediaSession.setActionHandler('play', () => audio.play().catch(() => {}));
       navigator.mediaSession.setActionHandler('pause', () => audio.pause());
     }
 
@@ -294,7 +350,7 @@
         }
         lastMusicFile = data.music_file;
 
-        const title  = data.title  || 'DROPTV Rádio';
+        const title  = data.title  || 'DropTV Music Station';
         const artist = data.artist || '';
         const cover  = (data.cover_url || '').trim();
 
@@ -308,7 +364,7 @@
     }
 
     function updateUI() {
-      titleEl.textContent  = currentTrackInfo.title  || 'DROPTV Rádio';
+      titleEl.textContent  = currentTrackInfo.title  || 'DropTV Music Station';
       artistEl.textContent = currentTrackInfo.artist || '';
       if (currentTrackInfo.cover) {
         coverEl.style.backgroundImage = `url('${currentTrackInfo.cover}')`;
@@ -327,7 +383,7 @@
     if (window.WebKitPlaybackTargetAvailabilityEvent) {
       airplayButton.style.display = 'flex';
       audio.addEventListener('webkitplaybacktargetavailabilitychanged', event => {
-        // poderíamos reagir a disponibilidade aqui se quiser
+        console.log('[AirPlay] availability changed:', event.availability);
       });
       airplayButton.addEventListener('click', () => {
         if (audio.webkitShowPlaybackTargetPicker) {
@@ -362,8 +418,8 @@
           }
 
           const mediaInfo = new chrome.cast.media.MediaInfo(
-            audio.src,
-            'audio/mpeg' // genérico; o receiver se vira com o stream
+            audio.currentSrc || audio.src,
+            'audio/mpeg'
           );
           const request = new chrome.cast.media.LoadRequest(mediaInfo);
           session.loadMedia(request);
@@ -388,7 +444,8 @@
         console.log('[Cast] API Chromecast não disponível.');
       }
     };
-        // --- Clique no background leva para "/" ---
+
+    // --- Clique no background leva para "/" ---
     const playerBox      = document.querySelector('.player');
     const castControlsEl = document.getElementById('castControls');
 
@@ -401,24 +458,6 @@
 
       // Qualquer clique "no fundo" leva para a raiz
       window.location.href = '/';
-    });
-
-    // Tenta autoplay ao carregar a página
-    document.addEventListener('DOMContentLoaded', () => {
-      try {
-        const p = audio.play();
-        if (p && typeof p.then === 'function') {
-          p.then(() => {
-            // Autoplay funcionou, o handler de 'play' já ajusta o botão
-            console.log('[Audio] Autoplay OK');
-          }).catch(err => {
-            // Autoplay bloqueado, segue a vida e espera clique no botão
-            console.log('[Audio] Autoplay bloqueado pelo navegador:', err);
-          });
-        }
-      } catch (e) {
-        console.log('[Audio] Erro ao tentar autoplay:', e);
-      }
     });
 
 

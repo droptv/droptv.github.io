@@ -178,7 +178,7 @@
     
 
   let hideTimeout = null;
-  const video         = document.getElementById("videoPlayer");
+
 const dvMusic       = document.getElementById("dv-musiqid");
 const artistEl      = document.getElementById("artist");
 const titleEl       = document.getElementById("title");
@@ -292,12 +292,6 @@ const overlay       = document.getElementById("overlay");
           ],
         });
 
-        navigator.mediaSession.setActionHandler("play", () => {
-          if (video) video.play().catch(() => {});
-        });
-        navigator.mediaSession.setActionHandler("pause", () => {
-          if (video) video.pause();
-        });
       }
 
       // Inicia o polling do now.json assim que o script carrega
@@ -321,12 +315,7 @@ const overlay       = document.getElementById("overlay");
 });
 document.addEventListener("click", showUI);
 
-// também acordar ao interagir direto com o vídeo (play/pause/seek)
-if (video) {
-  ["play", "pause", "seeking", "click"].forEach(ev => {
-    video.addEventListener(ev, showUI);
-  });
-}
+
       
     </script>
   </body>

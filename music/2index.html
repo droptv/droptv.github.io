@@ -3,18 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Frederico Flores - Jardim Sonoro</title>
+  <title>DropTV Music Station</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0a0f1a" />
 
   <!-- SEO -->
-  <meta name="description" content="Life Changing Musical Experience" />
-  <meta name="keywords" content="soul, jazz, dub, house, lounge, surf" />
+  <meta name="description" content="Enjoy live non-stop tunes and immersive audio experiences." />
+  <meta name="keywords" content="music player, live music streams, music playlists, soundtracks, music station, streaming music, DropTV Music" />
   <meta name="robots" content="index, follow" />
-  <meta name="author" content="Jardim Sonoro" />
+  <meta name="author" content="DropTV" />
+  <meta name="language" content="pt-BR" />
 
+  <!-- Open Graph -->
+  <meta property="og:title" content="DropTV Music Station - Live Streaming" />
+  <meta property="og:description" content="Dive into live music streams for every mood on DropTV Music Station." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://droptv.com.br/music" />
+  <meta property="og:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" />
+  <meta property="og:site_name" content="DropTV" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DropTV Music Station - Live Streams and Music Playlists" />
+  <meta name="twitter:description" content="Non-stop music streams and playlists for all tastes. Tune in to DropTV Music Station!" />
+  <meta name="twitter:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" />
+  <meta name="twitter:site" content="@DropTV.oficial" />
+
+  <!-- Ícones -->
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  <link rel="canonical" href="https://jardimsonoro.com/radio" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/android/android-launchericon-192-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/droptv_logo_512x512.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/android/android-launchericon-192-192.png" />
+  <link rel="icon" type="image/png" sizes="144x144" href="/android/android-launchericon-144-144.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/android/android-launchericon-96-96.png" />
+  <link rel="icon" type="image/png" sizes="72x72" href="/android/android-launchericon-72-72.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/android/android-launchericon-48-48.png" />
+
+  <link rel="canonical" href="https://droptv.com.br/music" />
 
   <style>
     :root {
@@ -25,29 +50,17 @@
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;   /* coluna para permitir footer no bottom */
       align-items: center;
+      justify-content: center;
       background: radial-gradient(circle at center, #0a0f1a 0%, #060910 100%);
       font-family: 'Inter', system-ui, sans-serif;
       color: var(--text-light);
-      padding: 0;
+      padding: 0; /* ajustado por media query em telas pequenas */
     }
-
-    /* wrapper que centraliza o player no espaço disponível */
-    .page-main {
-      flex: 1; /* ocupa o espaço e empurra o footer para baixo */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 0; /* ajustado em telas pequenas via media query se quiser */
-    }
-
     .player {
       width: 340px;
       border-radius: 20px;
@@ -61,21 +74,7 @@
       padding: 24px 20px 28px;
       text-align: center;
       position: relative;
-      animation: acidshadow 5s linear infinite;
     }
-
-    @keyframes acidshadow {
-      0%, 100% {
-        box-shadow: 5px 10px #72b6e1;
-      }
-      33.33% {
-        box-shadow: 5px 10px #5bc5aa;
-      }
-      66.67% {
-        box-shadow: 5px 10px #b272e1;
-      }
-    }
-
     #cover {
       width: 100%;
       height: 220px;
@@ -107,7 +106,6 @@
       font-weight: 600;
       cursor: pointer;
       transition: all .2s ease;
-      animation: acidbg 5s linear infinite;
     }
     button#toggle:hover {
       background: #4ef1ff;
@@ -151,48 +149,10 @@
       height: 24px;
     }
 
-    /* FOOTER */
-    #footer.bottom {
-      width: 100%;
-      text-align: center;
-      padding: 14px 16px 14px;
-      font-size: 8px;
-      color: var(--text-dim);
-    }
-
-    #footer.bottom .social-icons {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 6px;
-    }
-
-    #footer.bottom a {
-      color: var(--text-dim);
-      text-decoration: none;
-    }
-
-    #footer.bottom a svg {
-      display: block;
-    }
-
-    #footer.bottom a:hover svg path {
-      fill: var(--accent);
-    }
-
-    #footer.bottom p {
-      margin: 2px 0;
-    }
-
-    #footer.bottom .cnpj-info {
-      font-size: 10px;
-      opacity: 0.8;
-    }
-
     /* Layout mais compacto para telas pequenas (iOS mobile etc.) */
     @media (max-width: 480px) {
-      .page-main {
-        padding: 12px 0;
+      body {
+        padding: 12px;
       }
       .player {
         width: 300px;
@@ -216,27 +176,6 @@
         height: 60px;
         font-size: 24px;
       }
-      #footer.bottom {
-        font-size: 10px;
-        padding: 8px 10px 10px;
-      }
-      #footer.bottom .cnpj-info {
-        font-size: 9px;
-      }
-    }
-
-    @keyframes acid {
-      0%, 100% { color: #5bc5aa; }
-      33.33% { color: #b272e1; }
-      66.67% { color: #72b6e1; }
-    }
-    @keyframes acidbg {
-      0%, 100% { background-color: #72b6e1; }
-      33.33% { background-color: #5bc5aa; }
-      66.67% { background-color: #b272e1; }
-    }
-    video {
-    height: 0px
     }
   </style>
 
@@ -244,34 +183,33 @@
   <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 </head>
 <body>
-  <main class="page-main">
-    <div class="player">
-      <div id="cover"></div>
-      <div id="title">Frederico Flores</div>
-      <div id="artist">Jardim Sonoro</div>
+  <div class="player">
+    <div id="cover"></div>
+    <div id="title">DropTV</div>
+    <div id="artist">Music Station</div>
 
-      <video
-        id="audio"
-        src="https://droptv.com.br/music.m3u8"
-        playsinline
-        autoplay
-        preload="none"
-      ></video>
 
-      <button id="toggle">▶</button>
-    </div>
-  </main>
+    <audio
+      id="audio"
+      src="https://droptv.com.br/music.m3u8"
+      playsinline
+      autoplay
+      preload="none"
+    ></audio>
+
+    <button id="toggle">▶</button>
+  </div>
 
   <!-- Botões de cast no canto inferior direito -->
   <div id="castControls">
-    <!-- Chromecast -->
+    <!-- Chromecast: começa escondido; só aparece se Cast API estiver disponível e não for Safari/iOS -->
     <button class="cast-btn" id="castButton" title="Chromecast" style="display:none;">
       <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
         <path d="M1,18v3h3A3,3,0,0,0,1,18Zm0-4v2a5,5,0,0,1,5,5h2A7,7,0,0,0,1,14ZM1,10v2a9,9,0,0,1,9,9h2A11,11,0,0,0,1,10ZM21,3H3A2,2,0,0,0,1,5v3H3V5H21V19H13v2h8a2,2,0,0,0,2-2V5A2,2,0,0,0,21,3Z"/>
       </svg>
     </button>
 
-    <!-- AirPlay -->
+    <!-- AirPlay: começa escondido; aparece apenas se WebKitPlaybackTargetAvailabilityEvent existir -->
     <button class="cast-btn" id="airplayButton" title="AirPlay" style="display:none;">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -279,26 +217,6 @@
       </svg>
     </button>
   </div>
-
-  <!-- FOOTER -->
-  <section id="footer" class="bottom">
-  <!-- 
-    <div class="social-icons">
-      <a href="https://www.instagram.com/jardimsonoro.rio" aria-label="Instagram">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#aaa" viewBox="0 0 24 24">
-          <path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 2 .2 2.4.4.5.2.9.4 1.3.8s.6.8.8 1.3c.2.4.3 1.2.4 2.4.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 2-.4 2.4-.2.5-.4.9-.8 1.3s-.8.6-1.3.8c-.4.2-1.2.3-2.4.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-2-.2-2.4-.4a3.7 3.7 0 01-2.1-2.1c-.2-.4-.3-1.2-.4-2.4C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-2 .4-2.4A3.7 3.7 0 014.8 2.3c.4-.2 1.2-.3 2.4-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1 .1-1.6.2-2 .3a2 2 0 00-1.1 1.1c-.1.4-.2 1-.3 2-.1 1.2-.1 1.6-.1 4.7s0 3.5.1 4.7c.1 1 .2 1.6.3 2a2 2 0 001.1 1.1c.4.1 1 .2 2 .3 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1-.1 1.6-.2 2-.3a2 2 0 001.1-1.1c.1-.4.2-1 .3-2 .1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1-.2-1.6-.3-2a2 2 0 00-1.1-1.1c-.4-.1-1-.2-2-.3-1.2-.1-1.6-.1-4.7-.1zM12 6.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zm0 1.8a3.7 3.7 0 100 7.4 3.7 3.7 0 000-7.4zm5.4-1.9a1.3 1.3 0 110 2.6 1.3 1.3 0 010-2.6z"/>
-        </svg>
-      </a>
-      <a href="https://x.com/jardimsonoro" aria-label="Twitter">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#aaa" viewBox="0 0 24 24">
-          <path d="M22.25 2l-7.56 8.87L23.5 22h-5.25l-5.83-6.88L6.5 22H.5l8.14-9.55L.5 2h5.25l5.25 6.18L17.5 2z"/>
-        </svg>
-      </a>
-    </div>
-     
-    <p>© 2026 <a href="https://jardimsonoro.com">Jardim Sonoro</a> · Rio de Janeiro, Brasil.</p>
--->  
-</section>
 
   <script>
     // --- Reprodutor básico ---
@@ -347,6 +265,7 @@
       console.log('[Audio] pause');
     });
 
+    // --- Log detalhado de erros de áudio (inclui possíveis erros de codec) ---
     const MEDIA_ERROR_MAP = {
       1: 'MEDIA_ERR_ABORTED',
       2: 'MEDIA_ERR_NETWORK',
@@ -395,18 +314,19 @@
     audio.addEventListener('loadedmetadata', () => {
       console.log('[Audio] loadedmetadata', {
         currentSrc: audio.currentSrc,
-        duration: audio.duration,
+        duration: audio.duration,  // deve ser Infinity para live
         sampleRateDesconhecidoNoJS: true
       });
     });
 
+    // --- MediaSession (Android Auto, CarPlay, Bluetooth) ---
     function updateMediaSession(title, artist, coverUrl) {
       if (!('mediaSession' in navigator)) return;
 
       navigator.mediaSession.metadata = new MediaMetadata({
         title,
         artist,
-        album: 'Jardim Sonoro',
+        album: 'DropTV Music Station',
         artwork: coverUrl ? [
           { src: coverUrl, sizes: '512x512', type: 'image/jpeg' }
         ] : []
@@ -415,6 +335,10 @@
       navigator.mediaSession.setActionHandler('play', () => audio.play().catch(() => {}));
       navigator.mediaSession.setActionHandler('pause', () => audio.pause());
     }
+
+    /* =======================================================================
+       NOW PLAYING via https://droptv.com.br/now.json
+       ======================================================================= */
 
     let lastMusicFile = null;
     let currentTrackInfo = {
@@ -465,12 +389,12 @@
         }
 
         if (lastMusicFile !== null && data.music_file === lastMusicFile) {
-          return;
+          return; // mesma música, não atualiza
         }
         lastMusicFile = data.music_file;
 
-        const title  = data.title  || 'Jardim Sonoro';
-        const artist = data.artist || 'Frederico Flores';
+        const title  = data.title  || 'DropTV Music Station';
+        const artist = data.artist || '';
         const cover  = (data.cover_url || '').trim();
 
         currentTrackInfo = { title, artist, cover };
@@ -483,17 +407,22 @@
     }
 
     function updateUI() {
-      titleEl.textContent  = currentTrackInfo.title  || 'Jardim Sonoro';
-      artistEl.textContent = currentTrackInfo.artist || 'Frederico Flores';
+      titleEl.textContent  = currentTrackInfo.title  || 'DropTV Music Station';
+      artistEl.textContent = currentTrackInfo.artist || '';
       if (currentTrackInfo.cover) {
         coverEl.style.backgroundImage = `url('${currentTrackInfo.cover}')`;
       }
     }
 
+    // Atualiza a música atual periodicamente
     fetchNowPlayingFromNowJson();
     setInterval(fetchNowPlayingFromNowJson, 5000);
 
-    // AirPlay
+    /* =======================================================================
+       Chromecast + AirPlay
+       ======================================================================= */
+
+    // AirPlay (Safari / iOS / macOS)
     if (window.WebKitPlaybackTargetAvailabilityEvent) {
       airplayButton.style.display = 'flex';
       audio.addEventListener('webkitplaybacktargetavailabilitychanged', event => {
@@ -512,16 +441,19 @@
     function initChromecast() {
       if (!window.cast || !window.cast.framework) {
         console.log('[Cast] API do Chromecast não disponível neste contexto.');
+        // não mostra botão
         castButton.style.display = 'none';
         return;
       }
 
+      // Se for Safari/iOS, não faz sentido mostrar Chromecast
       if (isSafariLike) {
         console.log('[Cast] Safari/iOS detectado; Chromecast oculto.');
         castButton.style.display = 'none';
         return;
       }
 
+      // API disponível e não é Safari/iOS -> mostramos botão
       castButton.style.display = 'flex';
 
       const ctx = cast.framework.CastContext.getInstance();
@@ -559,6 +491,7 @@
       });
     }
 
+    // Callback padrão do Cast Sender API
     window.__onGCastApiAvailable = function(isAvailable) {
       if (isAvailable) {
         initChromecast();
@@ -567,8 +500,8 @@
         castButton.style.display = 'none';
       }
     };
-    
-        // --- Clique no background leva para "/" ---
+
+    // --- Clique no background leva para "/" ---
     const playerBox      = document.querySelector('.player');
     const castControlsEl = document.getElementById('castControls');
 
@@ -585,4 +518,3 @@
   </script>
 </body>
 </html>
-

@@ -1,330 +1,193 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
+<head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <title>DropTV</title>
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#3A72C2" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="mobile-web-app-title" content="DropTV" />
-
-    <!-- Additions for SEO and Optimization -->
-    <meta name="description" content="DropTV live stream of incredible videos about art, nature, extreme sports and lots of music. Exclusive and immersive content for adventure and culture enthusiasts." />
-    <meta name="keywords" content="live tv, live streams, art, nature, extreme sports, music, adventure videos, live streaming, DropTV" />
-    <meta name="robots" content="index, follow" />
-    <meta name="author" content="DropTV" />
-    <meta name="language" content="en-US" />
-
-    <!-- Open Graph for Social Media Sharing (Facebook, etc.) -->
-    <meta property="og:title" content="DropTV - Live: Art, Nature, Extreme Sports and Music" />
-    <meta property="og:description" content="Discover live streams of inspiring art, natural beauties, thrilling extreme sports and amazing soundtracks on DropTV." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://droptv.com.br/" />
-    <meta property="og:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" /> <!-- Chosen for being close to the ideal size of 1200x630, with good resolution and similar aspect ratio -->
-    <meta property="og:site_name" content="DropTV" />
-
-    <!-- Twitter Cards for Sharing on X (Twitter) -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="DropTV - Live Streams of Art, Nature and Adventures" />
-    <meta name="twitter:description" content="Live videos of art, nature, extreme sports and lots of music. Join the adventure on DropTV!" />
-    <meta name="twitter:image" content="https://droptv.com.br/assets/droptv_logo_1280x720.png" /> <!-- Same as og:image, suitable size for large image -->
-
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" /> 
+    <meta name="description" content="DropTV live stream of incredible videos about art, nature, extreme sports and lots of music." />
     
-    <!-- Canonical to Avoid Duplicate Content -->
-    <link rel="canonical" href="https://droptv.com.br/" />
-
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet" />
 
     <style>
-      html, body {
-        margin: 0; padding: 0;
-        width: 100%; height: 100%;
-        background: black;
-        overflow: hidden;
-        font-family: 'Josefin Sans', sans-serif;
-      }
-      
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background: black;
+            overflow: hidden;
+            font-family: 'Josefin Sans', sans-serif;
+        }
 
+        /* Video ocupa a tela toda */
+        #videoFrame {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: black;
+        }
 
+        /* Overlay de Logo Inicial */
+        #overlay {
+            position: fixed; inset: 0;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            transition: opacity 1s ease;
+        }
+        #overlay.fade-out { opacity: 0; pointer-events: none; }
+        .loggo { max-width: 50%; opacity: 0.9; }
 
-      video {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        background: black;
-      }
-      
-          iframe {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: contain;
-      background: #000;
-    }
+        /* Botão de Play (Necessário para Chrome/Safari quando autoplay falha) */
+        #playOverlay {
+            position: fixed; inset: 0;
+            display: none; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+            z-index: 900;
+        }
+        #playOverlay button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%; width: 80px; height: 80px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        #playOverlay svg { width: 40px; height: 40px; fill: white; }
 
-      video::-webkit-media-controls-enclosure { display: none !important; }
-
-      #overlay {
-        position: fixed; inset: 0;
-        display: flex; justify-content: center; align-items: center;
-        background: rgba(0,0,0,0.5); /* agora translúcido */
-        backdrop-filter: blur(8px);
-        z-index: 999;
-        transition: opacity 1s ease;
-      }
-      #overlay.fade-out { opacity: 0; pointer-events: none; }
-      .loggo { max-width: 50%; opacity: 0.9; }
-
-      #playOverlay {
-        position: fixed; inset: 0;
-        display: none; justify-content: center; align-items: center;
-        background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
-        z-index: 900; transition: opacity 0.3s ease;
-      }
-      #playOverlay button {
-        background: rgba(255,255,255,0.2);
-        border: 1px solid rgba(255,255,255,0.3);
-        border-radius: 50%; width: 80px; height: 80px;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: background 0.3s;
-      }
-      #playOverlay button:hover { background: rgba(255,255,255,0.3); }
-      #playOverlay svg { width: 40px; height: 40px; stroke: white; }
-
-/* Painel de música responsivo */
-#dv-musiqid {
-  position: fixed;
-  top: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(25,25,25,0.65);
-  border-radius: 16px;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  backdrop-filter: blur(10px);
-  max-width: 90vw;          /* ← Limita o tamanho total à tela */
-  box-sizing: border-box;   /* ← Evita estourar padding */
-  overflow: hidden;         /* ← Garante que nada vaze */
-}
-
-#dv-musiqid.show { opacity: 1; }
-
-#dv-musiqid,
-.controls {
-  position: fixed;
-  z-index: 10; /* ou algo maior que 1 */
-  pointer-events: auto;
-}
-
-
-#dv-musiqid img {
-  height: 80px;
-  width: 80px;
-  border-radius: 8px;
-  flex-shrink: 0;           /* ← Evita que a capa distorça */
-}
-
-.trackname {
-  color: white;
-  font-size: 1rem;
-  white-space: nowrap;
-  overflow: hidden;          /* ← Corta texto muito longo */
-  text-overflow: ellipsis;   /* ← Adiciona "…" no final */
-  min-width: 0;              /* ← Necessário para flex truncar texto */
-  flex: 1;                   /* ← Permite encolher */
-}
-
-      
-
+        /* Painel de música (Banner Overlay) */
+        #dv-musiqid {
+            position: fixed;
+            top: 5%; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(25,25,25,0.65);
+            border-radius: 16px;
+            padding: 8px 12px;
+            display: flex; align-items: center; gap: 10px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+            max-width: 90vw;
+            z-index: 1000;
+        }
+        #dv-musiqid.show { opacity: 1; }
+        #dv-musiqid img { height: 60px; width: 60px; border-radius: 8px; flex-shrink: 0; }
+        .trackname { color: white; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
+</head>
 
-    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+<body>
 
-  </head>
-
-  <body>
     <div id="overlay"><img src="droptv.svg" alt="Drop TV" class="loggo" /></div>
 
     <div id="playOverlay">
-      <button id="startButton" aria-label="Tocar">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke="white" stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-5.197-3.01A1 1 0 008 9.01v5.98a1 1 0 001.555.832l5.197-3.01a1 1 0 000-1.664z"/>
-        </svg>
-      </button>
+        <button id="startButton">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
     </div>
 
-<iframe
-  id="videoFrame"
-  src="https://droptv.com.br/play.m3u8" 
-  allow="autoplay; fullscreen;"
-  frameborder="0"
-  style="width:100%;height:100%;border:none;object-fit:contain;"
-></iframe>
+    <video id="videoFrame" playsinline crossorigin="anonymous"></video>
 
-
-    <!-- Painel de música -->
     <div id="dv-musiqid">
-      <a href="music"><img id="cover" src="musique.png" alt="Capa" /></a>
-      <div class="trackname">
-        <span id="artist">Artista</span> — <span id="title">Música</span>
-      </div>
+        <img id="cover" src="musique.png" alt="Capa" />
+        <div class="trackname">
+            <span id="artist">Artista</span> — <span id="title">Música</span>
+        </div>
     </div>
-
- 
 
     <script>
-    
+        const video = document.getElementById('videoFrame');
+        const playOverlay = document.getElementById('playOverlay');
+        const startButton = document.getElementById('startButton');
+        const videoSrc = 'https://droptv.com.br/play.m3u8';
 
-  let hideTimeout = null;
-
-const dvMusic       = document.getElementById("dv-musiqid");
-const artistEl      = document.getElementById("artist");
-const titleEl       = document.getElementById("title");
-const coverEl       = document.getElementById("cover");
-const overlay       = document.getElementById("overlay");
-         /* =======================================================================
-         LOGO INICIAL: sempre some após ~3s, independente do vídeo
-         ======================================================================= */
-
-      setTimeout(() => {
-        if (!overlay) return;
-        overlay.classList.add("fade-out");
-        // dá 1s para o fade-out completar
-        setTimeout(() => {
-          overlay.style.display = "none";
-        }, 1000);
-      }, 3000);
-
-
-
-      /* =======================================================================
-         NOW PLAYING via https://droptv.com.br/now.json
-         ======================================================================= */
-
-      let currentTrackInfo = { title: "", artist: "", cover: "" };
-      let lastMusicFile = null; // detecta troca de música
-
-      async function fetchNowPlayingFromNowJson() {
-        try {
-          const res = await fetch("https://droptv.com.br/now.json", {
-            cache: "no-store",
-            headers: { Accept: "application/json" },
-          });
-
-          if (!res.ok) {
-            console.error("[now.json] HTTP error:", res.status, res.statusText);
-            return;
-          }
-
-          const contentType = res.headers.get("content-type") || "";
-          const text = await res.text();
-
-          if (!contentType.includes("application/json")) {
-            console.error(
-              "[now.json] Conteúdo não é JSON:",
-              "status =",
-              res.status,
-              "content-type =",
-              contentType,
-              "trecho =",
-              text.slice(0, 120)
-            );
-            return;
-          }
-
-          let data;
-          try {
-            data = JSON.parse(text);
-          } catch (e) {
-            console.error(
-              "[now.json] Erro ao fazer JSON.parse:",
-              e,
-              "trecho =",
-              text.slice(0, 120)
-            );
-            return;
-          }
-
-          if (!data || !data.music_file) {
-            return;
-          }
-
-          // Só atualiza se a música trocou
-          if (data.music_file === lastMusicFile) {
-            return;
-          }
-          lastMusicFile = data.music_file;
-
-          const title = data.title || "";
-          const artist = data.artist || "";
-          const cover = (data.cover_url || "").trim(); // now.json já cuida de fallback
-
-          currentTrackInfo = { title, artist, cover };
-          updateUIFromTrack();
-          updateMediaSession();
-        } catch (err) {
-          console.error("[now.json] Erro ao consultar now.json:", err);
+        // 1. LÓGICA DE PLAYBACK (HLS vs NATIVO)
+        function initPlayer() {
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Safari / iOS (Nativo)
+                video.src = videoSrc;
+                video.addEventListener('loadedmetadata', attemptPlay);
+            } 
+            else {
+                // Chrome / Firefox / Android (HLS.js)
+                const script = document.createElement('script');
+                script.src = "https://cdn.jsdelivr.net/npm/hls.js@latest";
+                script.onload = () => {
+                    if (Hls.isSupported()) {
+                        const hls = new Hls({ enableWorker: true });
+                        hls.loadSource(videoSrc);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, attemptPlay);
+                    }
+                };
+                document.head.appendChild(script);
+            }
         }
-      }
 
-      function updateUIFromTrack() {
-        if (titleEl) titleEl.textContent = currentTrackInfo.title || "";
-        if (artistEl) artistEl.textContent = currentTrackInfo.artist || "";
-        if (coverEl && currentTrackInfo.cover) {
-          coverEl.src = currentTrackInfo.cover;
+        function attemptPlay() {
+            // Tentativa de autoplay (Chrome exige mutado se não houver interação)
+            video.play().catch(() => {
+                playOverlay.style.display = 'flex';
+            });
         }
-      }
 
-      function updateMediaSession() {
-        if (!("mediaSession" in navigator) || !currentTrackInfo.cover) return;
-
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: currentTrackInfo.title,
-          artist: currentTrackInfo.artist,
-          artwork: [
-            {
-              src: currentTrackInfo.cover,
-              sizes: "512x512",
-              type: "image/jpeg",
-            },
-          ],
+        startButton.addEventListener('click', () => {
+            video.muted = false;
+            video.play();
+            playOverlay.style.display = 'none';
         });
 
-      }
+        // 2. LÓGICA DO OVERLAY DE LOGO
+        setTimeout(() => {
+            const over = document.getElementById("overlay");
+            if (over) {
+                over.classList.add("fade-out");
+                setTimeout(() => over.style.display = "none", 1000);
+            }
+        }, 3000);
 
-      // Inicia o polling do now.json assim que o script carrega
-      fetchNowPlayingFromNowJson();
-      setInterval(fetchNowPlayingFromNowJson, 5000);
-      
-      function showUI() {
-  if (dvMusic)       dvMusic.classList.add("show");
+        // 3. AGORA TOCANDO (NOW PLAYING)
+        let lastMusicFile = null;
+        async function fetchNowPlaying() {
+            try {
+                const res = await fetch("https://droptv.com.br/now.json", { cache: "no-store" });
+                const data = await res.json();
+                
+                if (data && data.music_file !== lastMusicFile) {
+                    lastMusicFile = data.music_file;
+                    document.getElementById("artist").textContent = data.artist || "";
+                    document.getElementById("title").textContent = data.title || "";
+                    if (data.cover_url) document.getElementById("cover").src = data.cover_url;
+                    
+                    if ("mediaSession" in navigator) {
+                        navigator.mediaSession.metadata = new MediaMetadata({
+                            title: data.title,
+                            artist: data.artist,
+                            artwork: [{ src: data.cover_url || 'musique.png', sizes: '512x512', type: 'image/jpeg' }]
+                        });
+                    }
+                }
+            } catch (e) { console.error("Erro no JSON:", e); }
+        }
 
+        // 4. INTERAÇÃO E VISIBILIDADE DO BANNER
+        let hideTimeout;
+        function showUI() {
+            const dvMusic = document.getElementById("dv-musiqid");
+            dvMusic.classList.add("show");
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => dvMusic.classList.remove("show"), 3000);
+        }
 
-  clearTimeout(hideTimeout);
-  hideTimeout = setTimeout(() => {
-    if (dvMusic)      dvMusic.classList.remove("show");
+        ["mousemove", "touchstart", "click"].forEach(ev => {
+            document.addEventListener(ev, showUI, { passive: true });
+        });
 
-  }, 3000);
-}
-
-// Movimento / toque / clique em QUALQUER parte da página (inclui o vídeo)
-["mousemove", "touchstart"].forEach(ev => {
-  document.addEventListener(ev, showUI, { passive: true });
-});
-document.addEventListener("click", showUI);
-
-
-      
+        // Início
+        initPlayer();
+        fetchNowPlaying();
+        setInterval(fetchNowPlaying, 5000);
     </script>
-  </body>
+</body>
 </html>

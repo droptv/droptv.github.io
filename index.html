@@ -3,12 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>DropTV</title>
+    <title>DropTV - Iframe Mode</title>
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#3A72C2" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="description" content="DropTV live stream of incredible videos about art, nature, extreme sports and lots of music." />
-    
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet" />
 
     <style>
@@ -20,19 +17,29 @@
             font-family: 'Josefin Sans', sans-serif;
         }
 
-        /* Video ocupa a tela toda */
-        #videoFrame {
+        /* O Iframe ocupa 100% da viewport */
+        #videoIframe {
+            position: absolute;
+            top: 0; left: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            border: none;
+            z-index: 1;
             background: black;
         }
 
-        /* Overlay de Logo Inicial */
+        /* Camada de interação para o banner não ser bloqueado pelo iframe */
+        #ui-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none; /* Permite clicar no iframe por baixo se necessário */
+            z-index: 10;
+        }
+
         #overlay {
             position: fixed; inset: 0;
             display: flex; justify-content: center; align-items: center;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(8px);
             z-index: 999;
             transition: opacity 1s ease;
@@ -40,105 +47,49 @@
         #overlay.fade-out { opacity: 0; pointer-events: none; }
         .loggo { max-width: 50%; opacity: 0.9; }
 
-        /* Botão de Play (Necessário para Chrome/Safari quando autoplay falha) */
-        #playOverlay {
-            position: fixed; inset: 0;
-            display: none; justify-content: center; align-items: center;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
-            z-index: 900;
-        }
-        #playOverlay button {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 50%; width: 80px; height: 80px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        #playOverlay svg { width: 40px; height: 40px; fill: white; }
-
-        /* Painel de música (Banner Overlay) */
+        /* Painel de música */
         #dv-musiqid {
-            position: fixed;
+            position: absolute;
             top: 5%; left: 50%;
             transform: translateX(-50%);
-            background: rgba(25,25,25,0.65);
+            background: rgba(25,25,25,0.7);
             border-radius: 16px;
             padding: 8px 12px;
             display: flex; align-items: center; gap: 10px;
             opacity: 0;
             transition: opacity 0.4s ease;
-            pointer-events: none;
             backdrop-filter: blur(10px);
             max-width: 90vw;
-            z-index: 1000;
+            pointer-events: auto; /* Reativa clique apenas no banner */
         }
         #dv-musiqid.show { opacity: 1; }
         #dv-musiqid img { height: 60px; width: 60px; border-radius: 8px; flex-shrink: 0; }
         .trackname { color: white; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     </style>
 </head>
-
 <body>
 
     <div id="overlay"><img src="droptv.svg" alt="Drop TV" class="loggo" /></div>
 
-    <div id="playOverlay">
-        <button id="startButton">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-    </div>
+    <iframe 
+        id="videoIframe" 
+        src="https://droptv.com.br/play.m3u8" 
+        allow="autoplay; fullscreen; encrypted-media" 
+        sandbox="allow-forms allow-scripts allow-same-origin"
+        scrolling="no">
+    </iframe>
 
-    <video id="videoFrame" playsinline crossorigin="anonymous"></video>
-
-    <div id="dv-musiqid">
-        <img id="cover" src="musique.png" alt="Capa" />
-        <div class="trackname">
-            <span id="artist">Artista</span> — <span id="title">Música</span>
+    <div id="ui-layer">
+        <div id="dv-musiqid">
+            <img id="cover" src="musique.png" alt="Capa" />
+            <div class="trackname">
+                <span id="artist">Artista</span> — <span id="title">Música</span>
+            </div>
         </div>
     </div>
 
     <script>
-        const video = document.getElementById('videoFrame');
-        const playOverlay = document.getElementById('playOverlay');
-        const startButton = document.getElementById('startButton');
-        const videoSrc = 'https://droptv.com.br/play.m3u8';
-
-        // 1. LÓGICA DE PLAYBACK (HLS vs NATIVO)
-        function initPlayer() {
-            if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Safari / iOS (Nativo)
-                video.src = videoSrc;
-                video.addEventListener('loadedmetadata', attemptPlay);
-            } 
-            else {
-                // Chrome / Firefox / Android (HLS.js)
-                const script = document.createElement('script');
-                script.src = "https://cdn.jsdelivr.net/npm/hls.js@latest";
-                script.onload = () => {
-                    if (Hls.isSupported()) {
-                        const hls = new Hls({ enableWorker: true });
-                        hls.loadSource(videoSrc);
-                        hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, attemptPlay);
-                    }
-                };
-                document.head.appendChild(script);
-            }
-        }
-
-        function attemptPlay() {
-            // Tentativa de autoplay (Chrome exige mutado se não houver interação)
-            video.play().catch(() => {
-                playOverlay.style.display = 'flex';
-            });
-        }
-
-        startButton.addEventListener('click', () => {
-            video.muted = false;
-            video.play();
-            playOverlay.style.display = 'none';
-        });
-
-        // 2. LÓGICA DO OVERLAY DE LOGO
+        // Sumir logo inicial
         setTimeout(() => {
             const over = document.getElementById("overlay");
             if (over) {
@@ -147,45 +98,42 @@
             }
         }, 3000);
 
-        // 3. AGORA TOCANDO (NOW PLAYING)
+        // Fetch do JSON de música (Now Playing)
         let lastMusicFile = null;
         async function fetchNowPlaying() {
             try {
                 const res = await fetch("https://droptv.com.br/now.json", { cache: "no-store" });
                 const data = await res.json();
-                
                 if (data && data.music_file !== lastMusicFile) {
                     lastMusicFile = data.music_file;
-                    document.getElementById("artist").textContent = data.artist || "";
-                    document.getElementById("title").textContent = data.title || "";
+                    document.getElementById("artist").textContent = data.artist || "DropTV";
+                    document.getElementById("title").textContent = data.title || "Live Stream";
                     if (data.cover_url) document.getElementById("cover").src = data.cover_url;
-                    
-                    if ("mediaSession" in navigator) {
-                        navigator.mediaSession.metadata = new MediaMetadata({
-                            title: data.title,
-                            artist: data.artist,
-                            artwork: [{ src: data.cover_url || 'musique.png', sizes: '512x512', type: 'image/jpeg' }]
-                        });
-                    }
                 }
-            } catch (e) { console.error("Erro no JSON:", e); }
+            } catch (e) {
+                console.log("Erro ao atualizar metadados");
+            }
         }
 
-        // 4. INTERAÇÃO E VISIBILIDADE DO BANNER
+        // Lógica de mostrar/esconder o banner de música
         let hideTimeout;
+        const dvMusic = document.getElementById("dv-musiqid");
+
         function showUI() {
-            const dvMusic = document.getElementById("dv-musiqid");
             dvMusic.classList.add("show");
             clearTimeout(hideTimeout);
-            hideTimeout = setTimeout(() => dvMusic.classList.remove("show"), 3000);
+            hideTimeout = setTimeout(() => {
+                dvMusic.classList.remove("show");
+            }, 4000);
         }
 
+        // No caso do Iframe, o mousemove no documento pode ser bloqueado se o mouse estiver sobre o iframe.
+        // Por isso, adicionamos o listener também no ui-layer.
         ["mousemove", "touchstart", "click"].forEach(ev => {
             document.addEventListener(ev, showUI, { passive: true });
         });
 
-        // Início
-        initPlayer();
+        // Polling
         fetchNowPlaying();
         setInterval(fetchNowPlaying, 5000);
     </script>

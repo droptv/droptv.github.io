@@ -1,0 +1,15 @@
+{
+  "name": "DROPTV Rádio",
+  "short_name": "DROPTV",
+  "start_url": "/audio/",
+  "display": "standalone",
+  "background_color": "#0a0f1a",
+  "theme_color": "#00e0ff",
+  "icons": [
+    {
+      "src": "cover.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

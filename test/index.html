@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Recursos: HLS & CORS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .veredicto {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 25px 0;
+            padding: 15px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+        .sucesso {
+            background-color: #1b5e20;
+            color: #b9f6ca;
+            border: 2px solid #2e7d32;
+        }
+        .falha {
+            background-color: #c62828;
+            color: #ff8a80;
+            border: 2px solid #d32f2f;
+        }
+        .detalhes {
+            text-align: left;
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .status-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .status-val {
+            font-weight: bold;
+        }
+        .status-true { color: #4CAF50; }
+        .status-false { color: #f44336; }
+    </style>
+</head>
+<body>
+
+    <h1>Diagnóstico de Recursos da TV / Browser</h1>
+    
+    <div class="container">
+        <div id="box-veredicto" class="veredicto">Analisando o navegador...</div>
+        
+        <div class="detalhes">
+            <div class="status-item">
+                <span>HLS Nativo (Estilo Safari/Samsung TV):</span>
+                <span id="status-hls" class="status-val">---</span>
+            </div>
+            <div class="status-item">
+                <span>CORS Desativado / Relaxado:</span>
+                <span id="status-cors" class="status-val">---</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Testa se o navegador suporta HLS nativamente na tag <video>
+        function checarHlsNativo() {
+            const video = document.createElement('video');
+            const suporteM3U8 = video.canPlayType('application/vnd.apple.mpegurl') || 
+                                video.canPlayType('audio/mpegurl');
+            
+            return (suporteM3U8 === "probably" || suporteM3U8 === "maybe");
+        }
+
+        // 2. Testa se o CORS é ignorado fazendo requisição para uma URL estrita
+        async function checarCorsRelaxado() {
+            // URL pública conhecida por NÃO enviar headers de CORS (vai falhar em navegadores normais)
+            const urlProtegida = 'https://codehappy.dev';
+            
+            try {
+                // Força um cache-bust para garantir que a TV não use uma resposta antiga em cache
+                await fetch(urlProtegida, { cache: "no-store" });
+                return true; // Se o fetch funcionou, o CORS está relaxado/desativado!
+            } catch (error) {
+                return false; // Bloqueado pelo CORS padrão (comportamento do Chrome)
+            }
+        }
+
+        // Executa o diagnóstico completo ao carregar a página
+        async function rodarDiagnostico() {
+            const temHlsNativo = checarHlsNativo();
+            const temCorsRelaxado = await checarCorsRelaxado();
+
+            // Atualiza os elementos de detalhes na tela
+            const elHls = document.getElementById('status-hls');
+            const elCors = document.getElementById('status-cors');
+            const elVeredicto = document.getElementById('box-veredicto');
+
+            if (temHlsNativo) {
+                elHls.textContent = "SIM";
+                elHls.className = "status-val status-true";
+            } else {
+                elHls.textContent = "NÃO (Requer hls.js)";
+                elHls.className = "status-val status-false";
+            }
+
+            if (temCorsRelaxado) {
+                elCors.textContent = "SIM (Permissivo)";
+                elCors.className = "status-val status-true";
+            } else {
+                elCors.textContent = "NÃO (Estrito)";
+                elCors.className = "status-val status-false";
+            }
+
+            // Exibe o veredicto final baseado na sua pergunta
+            // O objetivo é ter HLS nativo + CORS relaxado (como as TVs Samsung costumam fazer)
+            if (temHlsNativo && temCorsRelaxado) {
+                elVeredicto.textContent = "Compatível! (Igual Samsung TV / Safari)";
+                elVeredicto.className = "veredicto sucesso";
+            } else {
+                elVeredicto.textContent = "Incompatível (Comportamento Chrome Padrão)";
+                elVeredicto.className = "veredicto falha";
+            }
+        }
+
+        // Inicia o teste automaticamente
+        rodarDiagnostico();
+    </script>
+</body>
+</html>

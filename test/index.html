@@ -1,101 +1,41 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detector de Navegador e TV</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-width: 600px;
-            width: 100%;
-        }
-        h1 { size: 24px; margin-bottom: 20px; text-align: center; }
-        .result {
-            font-size: 22px;
-            font-weight: bold;
-            padding: 15px;
-            text-align: center;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        .sim { background-color: #d4edda; color: #155724; }
-        .nao { background-color: #f8d7da; color: #721c24; }
-        .header-box {
-            background-color: #e2e3e5;
-            padding: 15px;
-            border-radius: 4px;
-            word-break: break-all;
-            font-family: monospace;
-            font-size: 14px;
-        }
-        label { font-weight: bold; display: block; margin-top: 15px; }
-    </style>
+<meta charset="UTF-8">
+<title>HLS Fetch Test</title>
+<style>
+body{font-family:sans-serif;padding:20px}
+.ok{color:green} .err{color:red}
+</style>
 </head>
 <body>
-
-<div class="container">
-    <h1>Análise do Navegador</h1>
-    
-    <div id="resultado" class="result">Detectando...</div>
-
-    <label>Tipo de Dispositivo Identificado:</label>
-    <p id="detalhe">-</p>
-
-    <label>User-Agent Lido:</label>
-    <div id="useragent" class="header-box"></div>
-</div>
-
+<h2>HLS Fetch Test</h2>
+<div id="r">Testando...</div>
 <script>
-    function detectarNavegador() {
-        const ua = navigator.userAgent;
-        document.getElementById('useragent').textContent = ua;
-
-        const isTizen = ua.includes("Tizen");
-        const isWebOS = ua.includes("Web0S") || ua.includes("WebOS");
-        
-        // Safari puro no macOS/iOS (exclui Chrome/Firefox no iOS que usam 'CriOS'/'FxiOS')
-        // Detecção do iPadOS moderno (que finge ser MacIntel) incluída via maxTouchPoints
-        const isApple = ua.includes("Macintosh") || ua.includes("iPhone") || ua.includes("iPad") || ua.includes("iPod") || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-        const isSafari = ua.includes("Safari") && !ua.includes("Chrome") && !ua.includes("Chromium") && !ua.includes("CriOS");
-
-        const resultadoDiv = document.getElementById('resultado');
-        const detalheP = document.getElementById('detalhe');
-
-        if (isApple && isSafari) {
-            resultadoDiv.textContent = "SIM";
-            resultadoDiv.className = "result sim";
-            detalheP.textContent = "Safari Nativo (iOS / macOS)";
-        } else if (isTizen) {
-            resultadoDiv.textContent = "SIM";
-            resultadoDiv.className = "result sim";
-            detalheP.textContent = "Smart TV Samsung (Tizen)";
-        } else if (isWebOS) {
-            resultadoDiv.textContent = "SIM";
-            resultadoDiv.className = "result sim";
-            detalheP.textContent = "Smart TV LG (webOS)";
-        } else {
-            resultadoDiv.textContent = "NÃO";
-            resultadoDiv.className = "result nao";
-            detalheP.textContent = "Outro navegador / Dispositivo não mapeado";
-        }
-    }
-
-    // Executa a função ao carregar a página
-    window.onload = detectarNavegador;
+async function test(){
+  const el=document.getElementById('r');
+  let playlistOk=false, segOk=false, msg='';
+  try{
+    const r=await fetch('https://droptv.com.br/play.m3u8');
+    if(!r.ok) throw new Error(r.status);
+    const text=await r.text();
+    playlistOk=true;
+    msg+='Playlist: OK<br>';
+    const lines=text.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith('#'));
+    if(!lines.length) throw new Error('Nenhum segmento');
+    let seg=lines[0];
+    if(!seg.startsWith('http')) seg=new URL(seg,'https://droptv.com.br/play.m3u8').href;
+    const rs=await fetch(seg);
+    if(!rs.ok) throw new Error(rs.status);
+    segOk=true;
+    msg+='Segmento: OK<br>';
+  }catch(e){
+    if(!playlistOk) msg+='Playlist: FALHOU ('+e.message+')<br>';
+    else msg+='Segmento: FALHOU ('+e.message+')<br>';
+  }
+  el.innerHTML=msg+(playlistOk&&segOk?'<b class="ok">SUCESSO</b>':'<b class="err">FALHA</b>');
+}
+test();
 </script>
-
 </body>
 </html>

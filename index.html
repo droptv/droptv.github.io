@@ -91,14 +91,20 @@
     </div>
 
     <script>
-        // Sumir logo inicial
-        setTimeout(() => {
-            const over = document.getElementById("overlay");
-            if (over) {
-                over.classList.add("fade-out");
-                setTimeout(() => over.style.display = "none", 1000);
-            }
-        }, 3000);
+// Sumir logo inicial (só mostra se NÃO veio do mesmo domínio)
+const fromSameDomain = document.referrer && document.referrer.includes('droptv.com.br');
+if (fromSameDomain) {
+    const over = document.getElementById("overlay");
+    if (over) over.style.display = "none";
+} else {
+    setTimeout(() => {
+        const over = document.getElementById("overlay");
+        if (over) {
+            over.classList.add("fade-out");
+            setTimeout(() => over.style.display = "none", 1000);
+        }
+    }, 3000);
+}
 
         // Fetch do JSON de música (Now Playing)
         let lastMusicFile = null;

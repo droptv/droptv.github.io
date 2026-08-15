@@ -3,149 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detector de Recursos: HLS & CORS</title>
+    <title>Detector de Navegador e TV</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            text-align: center;
-            padding: 40px 20px;
-            margin: 0;
-        }
-        h1 {
-            color: #4CAF50;
-            font-size: 2.2rem;
-            margin-bottom: 30px;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #1e1e1e;
+            background: white;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .veredicto {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 25px 0;
-            padding: 15px;
             border-radius: 8px;
-            text-transform: uppercase;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
         }
-        .sucesso {
-            background-color: #1b5e20;
-            color: #b9f6ca;
-            border: 2px solid #2e7d32;
-        }
-        .falha {
-            background-color: #c62828;
-            color: #ff8a80;
-            border: 2px solid #d32f2f;
-        }
-        .detalhes {
-            text-align: left;
-            background-color: #2a2a2a;
-            padding: 20px;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        .status-item {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .status-val {
+        h1 { size: 24px; margin-bottom: 20px; text-align: center; }
+        .result {
+            font-size: 22px;
             font-weight: bold;
+            padding: 15px;
+            text-align: center;
+            border-radius: 4px;
+            margin-bottom: 20px;
         }
-        .status-true { color: #4CAF50; }
-        .status-false { color: #f44336; }
+        .sim { background-color: #d4edda; color: #155724; }
+        .nao { background-color: #f8d7da; color: #721c24; }
+        .header-box {
+            background-color: #e2e3e5;
+            padding: 15px;
+            border-radius: 4px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        label { font-weight: bold; display: block; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <h1>Diagnóstico de Recursos da TV / Browser</h1>
+<div class="container">
+    <h1>Análise do Navegador</h1>
     
-    <div class="container">
-        <div id="box-veredicto" class="veredicto">Analisando o navegador...</div>
+    <div id="resultado" class="result">Detectando...</div>
+
+    <label>Tipo de Dispositivo Identificado:</label>
+    <p id="detalhe">-</p>
+
+    <label>User-Agent Lido:</label>
+    <div id="useragent" class="header-box"></div>
+</div>
+
+<script>
+    function detectarNavegador() {
+        const ua = navigator.userAgent;
+        document.getElementById('useragent').textContent = ua;
+
+        const isTizen = ua.includes("Tizen");
+        const isWebOS = ua.includes("Web0S") || ua.includes("WebOS");
         
-        <div class="detalhes">
-            <div class="status-item">
-                <span>HLS Nativo (Estilo Safari/Samsung TV):</span>
-                <span id="status-hls" class="status-val">---</span>
-            </div>
-            <div class="status-item">
-                <span>CORS Desativado / Relaxado:</span>
-                <span id="status-cors" class="status-val">---</span>
-            </div>
-        </div>
-    </div>
+        // Safari puro no macOS/iOS (exclui Chrome/Firefox no iOS que usam 'CriOS'/'FxiOS')
+        // Detecção do iPadOS moderno (que finge ser MacIntel) incluída via maxTouchPoints
+        const isApple = ua.includes("Macintosh") || ua.includes("iPhone") || ua.includes("iPad") || ua.includes("iPod") || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const isSafari = ua.includes("Safari") && !ua.includes("Chrome") && !ua.includes("Chromium") && !ua.includes("CriOS");
 
-    <script>
-        // 1. Testa se o navegador suporta HLS nativamente na tag <video>
-        function checarHlsNativo() {
-            const video = document.createElement('video');
-            const suporteM3U8 = video.canPlayType('application/vnd.apple.mpegurl') || 
-                                video.canPlayType('audio/mpegurl');
-            
-            return (suporteM3U8 === "probably" || suporteM3U8 === "maybe");
+        const resultadoDiv = document.getElementById('resultado');
+        const detalheP = document.getElementById('detalhe');
+
+        if (isApple && isSafari) {
+            resultadoDiv.textContent = "SIM";
+            resultadoDiv.className = "result sim";
+            detalheP.textContent = "Safari Nativo (iOS / macOS)";
+        } else if (isTizen) {
+            resultadoDiv.textContent = "SIM";
+            resultadoDiv.className = "result sim";
+            detalheP.textContent = "Smart TV Samsung (Tizen)";
+        } else if (isWebOS) {
+            resultadoDiv.textContent = "SIM";
+            resultadoDiv.className = "result sim";
+            detalheP.textContent = "Smart TV LG (webOS)";
+        } else {
+            resultadoDiv.textContent = "NÃO";
+            resultadoDiv.className = "result nao";
+            detalheP.textContent = "Outro navegador / Dispositivo não mapeado";
         }
+    }
 
-        // 2. Testa se o CORS é ignorado fazendo requisição para uma URL estrita
-        async function checarCorsRelaxado() {
-            // URL pública conhecida por NÃO enviar headers de CORS (vai falhar em navegadores normais)
-            const urlProtegida = 'https://codehappy.dev';
-            
-            try {
-                // Força um cache-bust para garantir que a TV não use uma resposta antiga em cache
-                await fetch(urlProtegida, { cache: "no-store" });
-                return true; // Se o fetch funcionou, o CORS está relaxado/desativado!
-            } catch (error) {
-                return false; // Bloqueado pelo CORS padrão (comportamento do Chrome)
-            }
-        }
+    // Executa a função ao carregar a página
+    window.onload = detectarNavegador;
+</script>
 
-        // Executa o diagnóstico completo ao carregar a página
-        async function rodarDiagnostico() {
-            const temHlsNativo = checarHlsNativo();
-            const temCorsRelaxado = await checarCorsRelaxado();
-
-            // Atualiza os elementos de detalhes na tela
-            const elHls = document.getElementById('status-hls');
-            const elCors = document.getElementById('status-cors');
-            const elVeredicto = document.getElementById('box-veredicto');
-
-            if (temHlsNativo) {
-                elHls.textContent = "SIM";
-                elHls.className = "status-val status-true";
-            } else {
-                elHls.textContent = "NÃO (Requer hls.js)";
-                elHls.className = "status-val status-false";
-            }
-
-            if (temCorsRelaxado) {
-                elCors.textContent = "SIM (Permissivo)";
-                elCors.className = "status-val status-true";
-            } else {
-                elCors.textContent = "NÃO (Estrito)";
-                elCors.className = "status-val status-false";
-            }
-
-            // Exibe o veredicto final baseado na sua pergunta
-            // O objetivo é ter HLS nativo + CORS relaxado (como as TVs Samsung costumam fazer)
-            if (temHlsNativo && temCorsRelaxado) {
-                elVeredicto.textContent = "Compatível! (Igual Samsung TV / Safari)";
-                elVeredicto.className = "veredicto sucesso";
-            } else {
-                elVeredicto.textContent = "Incompatível (Comportamento Chrome Padrão)";
-                elVeredicto.className = "veredicto falha";
-            }
-        }
-
-        // Inicia o teste automaticamente
-        rodarDiagnostico();
-    </script>
 </body>
 </html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <title>DropTV - Teste Puro HLS.js</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style>
+        html, body {
+            margin: 0; 
+            padding: 0;
+            width: 100%; 
+            height: 100%;
+            background: black;
+            overflow: hidden;
+        }
+
+        #video-player {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Controles nativos de volta. Muted garante que o autoplay funcione na maioria dos navegadores. -->
+    <video id="video-player" controls autoplay muted playsinline></video>
+
+    <script>
+        const video = document.getElementById('video-player');
+        const videoSrc = 'https://droptv.com.br/full.m3u8'; 
+
+        // Verificação estrita para Safari: evita que o Safari desktop use o HLS.js (o que causava a aceleração)
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        if (isSafari && video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Safari nativo puro (iOS e macOS)
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                video.play().catch(e => console.log("Autoplay bloqueado:", e));
+            });
+        } 
+        else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+            // Chrome, Firefox, Linux, Windows com hls.js (velocidade normal padrão mantida)
+            const hls = new Hls(); 
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play().catch(e => console.log("Autoplay bloqueado:", e));
+            });
+        } 
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Fallback final para outros que dizem suportar
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                video.play().catch(e => console.log("Autoplay bloqueado:", e));
+            });
+        }
+    </script>
+</body>
+</html>

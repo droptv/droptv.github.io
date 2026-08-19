@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap" rel="stylesheet"/>
 <style>
 html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;font-family:'Josefin Sans',sans-serif}
-#videoIframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;z-index:1;background:#000}
+#videoIframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:1;background:#000}
 #ui-layer{position:fixed;inset:0;pointer-events:none;z-index:10}
 #overlay{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:999;transition:opacity 1s ease}
 #overlay.fade-out{opacity:0;pointer-events:none}
@@ -22,7 +22,7 @@ html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hid
 </head>
 <body>
 <div id="overlay"><img src="droptv.svg" alt="Drop TV" class="loggo"/></div>
-<iframe id="videoIframe" src="https://droptv.com.br/play.m3u8" allow="autoplay; fullscreen; encrypted-media" sandbox="allow-forms allow-scripts allow-same-origin" scrolling="no"></iframe>
+<iframe id="videoIframe" allow="autoplay; fullscreen; encrypted-media" sandbox="allow-forms allow-scripts allow-same-origin" scrolling="no"></iframe>
 <div id="ui-layer">
 <a href="/music">
 <div id="dv-musiqid">
@@ -33,9 +33,14 @@ html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hid
 </div>
 <script>
 const ua=navigator.userAgent;
-const keep=/Macintosh|Mac OS X|iPhone|iPad|iPod|Tizen|Web0S|webOS|WebOS/.test(ua)||/^((?!chrome|android|crios).)*safari/i.test(ua);
+const isIOS=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isSafari=/^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+const isTizen=/Tizen/i.test(ua);
+const isWebOS=/Web0S|webOS|WebOS/i.test(ua);
 const iframe=document.getElementById('videoIframe');
-if(!keep){
+if(isIOS||isSafari||isTizen||isWebOS){
+iframe.src='https://droptv.com.br/play.m3u8';
+}else{
 iframe.src='https://player.twitch.tv/?channel=droptvlive&parent=droptv.com.br';
 iframe.removeAttribute('sandbox');
 iframe.removeAttribute('allow');
@@ -43,20 +48,26 @@ iframe.setAttribute('frameborder','0');
 iframe.setAttribute('allowfullscreen','true');
 }
 const fromSameDomain=document.referrer&&document.referrer.includes('droptv.com.br');
-if(fromSameDomain){const o=document.getElementById('overlay');if(o)o.style.display='none'}
-else setTimeout(()=>{const o=document.getElementById('overlay');if(o){o.classList.add('fade-out');setTimeout(()=>o.style.display='none',1000)}},3000);
+const overlay=document.getElementById('overlay');
+if(fromSameDomain){if(overlay)overlay.style.display='none'}
+else setTimeout(()=>{if(overlay){overlay.classList.add('fade-out');setTimeout(()=>overlay.style.display='none',1000)}},3000);
 let lastMusicFile=null;
 async function fetchNowPlaying(){
-try{const res=await fetch('https://droptv.com.br/now.json',{cache:'no-store'});const data=await res.json();
-if(data&&data.music_file!==lastMusicFile){lastMusicFile=data.music_file;
+try{
+const res=await fetch('https://droptv.com.br/now.json',{cache:'no-store'});
+const data=await res.json();
+if(!data||data.music_file===lastMusicFile)return;
+lastMusicFile=data.music_file;
 document.getElementById('artist').textContent=data.artist||'DropTV';
 document.getElementById('title').textContent=data.title||'Live Stream';
-if(data.cover_url)document.getElementById('cover').src=data.cover_url}}
-catch(e){console.log('Erro ao atualizar metadados')}}
-let hideTimeout;const dvMusic=document.getElementById('dv-musiqid');
+if(data.cover_url)document.getElementById('cover').src=data.cover_url;
+}catch(e){}}
+const dvMusic=document.getElementById('dv-musiqid');
+let hideTimeout;
 function showUI(){dvMusic.classList.add('show');clearTimeout(hideTimeout);hideTimeout=setTimeout(()=>dvMusic.classList.remove('show'),4000)}
 ['mousemove','touchstart','click'].forEach(ev=>document.addEventListener(ev,showUI,{passive:true}));
-fetchNowPlaying();setInterval(fetchNowPlaying,5000);
+fetchNowPlaying();
+setInterval(fetchNowPlaying,5000);
 </script>
 </body>
 </html>

@@ -1,142 +1,117 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surf Rio</title>
-    <style>
-        body, html {
-            display: flex;
-            flex-wrap: wrap; /* Permite que os botões quebrem para a linha de baixo */
-            justify-content: flex-start; /* Alinha os botões à esquerda */
-            padding: 10px;
-        }
-        a {
-            background-color: #007bff;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            display: block;
-            width: 100px;
-            height: 100px;
-            margin: 5px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            line-height: 100px; /* Centraliza verticalmente o texto */
-            font-family: sans-serif;
-            font-size: 12px;
-        }
-        a:hover {
-            background-color: #0056b3;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surf Rio</title>
+<style>
+  html,body{margin:0;background:#111;font-family:sans-serif}
+  #grid{display:flex;flex-wrap:wrap;padding:10px}
+  .btn{width:100px;height:100px;margin:5px;border-radius:5px;background:#007bff;color:#fff;
+       text-decoration:none;font-size:12px;display:flex;align-items:center;justify-content:center;
+       text-align:center;outline:none}
+  .btn:hover{background:#0056b3}
+  .btn:focus{background:#0056b3;box-shadow:0 0 0 4px #ffd24d}
+  #viewer{display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:#000;z-index:9}
+  #viewer img,#viewer video{width:100%;height:100%;object-fit:contain}
+  #msg{position:absolute;left:10px;bottom:10px;color:#ffd24d;font-size:16px;text-shadow:0 0 4px #000}
+</style>
 </head>
 <body>
-    <a href="https://dvr-br1.hostlink.com/cam-be35bd7a7f/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvpT7FOxsoeZc16xfAjJK1jAarij_">
-        LEBLON P12
-    </a>
+<div id="grid"></div>
+<div id="viewer"><img id="img" alt=""><video id="vid" autoplay muted playsinline></video><div id="msg"></div></div>
 
-    <a href="https://dvr-br1.hostlink.com/cam-d6e2a5d417/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRYUYeQQ4hMVFh-5rSSQYvLtKN5zJ">
-        ARPEX
-    </a>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.13/hls.min.js"></script>
+<script>
+// Worker Cloudflare que faz o proxy HTTPS das cameras da casa
+const WORKER = "https://cam-proxy.fred1807.workers.dev";
+const KEY = "Samuel2626262626";
+const P = id => WORKER + "/stream/" + id + "?k=" + KEY;
 
-    <a href="https://dvr-br1.hostlink.com/cam-bde211ea8d/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvempIzrD3GI4tDGEAYWYq2KOZ5iN">
-        SANCA
-    </a>
+// Mesmo formato do cams.json usado no app Roku. type: "hls" ou "jpg" (automatico se omitido)
+const CAMS = [
+  {name:"LEBLON P12",url:"https://dvr-br1.hostlink.com/cam-be35bd7a7f/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvpT7FOxsoeZc16xfAjJK1jAarij_"},
+  {name:"ARPEX",url:"https://dvr-br1.hostlink.com/cam-d6e2a5d417/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRYUYeQQ4hMVFh-5rSSQYvLtKN5zJ"},
+  {name:"SANCA",url:"https://dvr-br1.hostlink.com/cam-bde211ea8d/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvempIzrD3GI4tDGEAYWYq2KOZ5iN"},
+  {name:"BARRA MEIO",url:"https://dvr-br1.hostlink.com/cam-af1decf92c/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvdoYXWaCNF2paAkXnUo9kOKGisJ5"},
+  {name:"LEBLON P11",url:"https://dvr-br1.hostlink.com/cam-c7e13d9046/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvSkdFzB9EYGmC7AROu6DDdxoWYy_"},
+  {name:"LEME",url:"https://dvr-br1.hostlink.com/cam-ee5a8ad7d4/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvoU0CiHGIjfMwTgZXQsR4ZeKTmIE"},
+  {name:"MACUMBA",url:"https://dvr-br1.hostlink.com/cam-8e2b0bb753/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvg0RzAyfSYH3fQP_mUycNMUPz7Xn"},
+  {name:"RECREIO",url:"https://dvr-br1.hostlink.com/recreio-43ae36b368/index.m3u8?dvr=true&token=3.FvacFA2sAAAAAAAAAAIABiXFxdvlbIve6gOOgutTbMrAKe4Q0L8Menn2"},
+  {name:"IPANEMA P10",url:"https://dvr-br1.hostlink.com/cam-c9f0be710a/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRZiZAurJ1zeVNT8EuVMiooDkQuT_"},
+  {name:"IPANEMA MEIO",url:"https://dvr-br1.hostlink.com/cam-cb8432f2f4/index.m3u8?dvr=true&token=3.o86edfNWAAAAAAAAAAIABhu5t7S1ENhuefVigEaj8cWIWDQFap2eKYIr"},
+  {name:"DIABO",url:"https://dvr-br1.hostlink.com/cam-e205726199/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvesnNzpWguFPLvbsy5cjg-SQQFwH"},
+  {name:"COPA P5",url:"https://dvr-br1.hostlink.com/cam-ed65266654/index.m3u8?dvr=true&token=3.wAHAmSNQAAAAAAAAAAIABhsajqrrAykQYBFSXZdPgg9wefx9ZoiDbGKX"},
+  {name:"ITAÚNA",url:"https://dvr-br1.hostlink.com/cam-f626b0bf31/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRdxFi7N6fznVXmZ_JOTiMYq34IiE"},
+  {name:"GERIBÁ",url:"https://dvr-br1.hostlink.com/cam-fb59a008b0/index.m3u8?dvr=true&token=3.zWDLqHe0AAAAAAAAAAIABhveywOxjTCYZsNIVZKBc5FLTT8KckFXpAkY"},
+  {name:"PRAINHA",url:"https://dvr-br1.hostlink.com/cam-8277034532/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRUYcer8Oj9QGu9m5rLuxZK0_Jw-y"},
+  {name:"MACUMBA CURVÃO",url:"https://dvr-br1.hostlink.com/cam-843c89db89/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvUy8L4VfedB4lT7j07tT15MDhQkU"},
+  {name:"MACUMBA 5W",url:"https://dvr-br1.hostlink.com/cam-8e2b0bb753/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvg0RzAyfSYH3fQP_mUycNMUPz7Xn"},
+  {name:"MACUMBA 1W",url:"https://dvr-br1.hostlink.com/cam-c0bcac1458/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRf22EkZpdDDx1spSa0EPpvfSdUdS"},
+  {name:"RESERVA",url:"https://dvr-br1.hostlink.com/cam-9d7372a626/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvgKUblTVDQBpiv2C7xShqZjOObbm"},
+  {name:"BARRA P6",url:"https://dvr-br1.hostlink.com/cam-a1e7fb3d14/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRbeXkHIGB5slLRvBK8g7XJC0kaZa"},
+  {name:"POSTINHO",url:"https://dvr-br1.hostlink.com/cam-afc645de3c/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRRUYk-p48WgGoK0Fz99-Wv-lLmXk"},
+  {name:"CasaFontal",type:"jpg",url:P("casafontal")},
+  {name:"CasaEntrada",type:"jpg",url:P("casaentrada")},
+  {name:"CasaPortaria",type:"jpg",url:P("casaportaria")},
+  {name:"CasaCasa",type:"jpg",url:P("casacasa")},
+  {name:"CasaCasaW",type:"jpg",url:P("casacasaw")},
+  {name:"CasaRotula",type:"jpg",url:P("casarotula")}
+];
 
-    <a href="https://dvr-br1.hostlink.com/cam-af1decf92c/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvdoYXWaCNF2paAkXnUo9kOKGisJ5">
-        BARRA MEIO
-    </a>
+// 0 = stream MJPEG direto no <img>; >0 = recarrega um quadro (/snap/) a cada N ms (mais compativel com TVs simples)
+const SNAPSHOT_MS = 0;
 
-    <a href="https://dvr-br1.hostlink.com/cam-c7e13d9046/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvSkdFzB9EYGmC7AROu6DDdxoWYy_">
-        LEBLON P11
-    </a>
+const $ = id => document.getElementById(id);
+const grid=$("grid"), viewer=$("viewer"), img=$("img"), vid=$("vid"), msg=$("msg");
+let hls=null, timer=null, lastBtn=null, n=0;
 
-    <a href="https://dvr-br1.hostlink.com/cam-ee5a8ad7d4/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvoU0CiHGIjfMwTgZXQsR4ZeKTmIE">
-        LEME
-    </a>
+function resolveUrl(u){ return SNAPSHOT_MS>0 ? u.replace("/stream/","/snap/") : u; }
+function isHls(c){ return c.type ? c.type==="hls" : c.url.indexOf(".m3u8")>-1; }
+function bust(u){ return u+(u.indexOf("?")>-1?"&":"?")+"_t="+(++n)+Date.now(); }
 
-    <a href="https://dvr-br1.hostlink.com/cam-8e2b0bb753/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvg0RzAyfSYH3fQP_mUycNMUPz7Xn">
-        MACUMBA
-    </a>
+CAMS.forEach(c=>{
+  const a=document.createElement("a");
+  a.className="btn"; a.href=resolveUrl(c.url); a.textContent=c.name; a.tabIndex=0;
+  a.addEventListener("click",e=>{e.preventDefault(); lastBtn=a; openCam(c);});
+  grid.appendChild(a);
+});
 
-    <a href="https://dvr-br1.hostlink.com/recreio-43ae36b368/index.m3u8?dvr=true&token=3.FvacFA2sAAAAAAAAAAIABiXFxdvlbIve6gOOgutTbMrAKe4Q0L8Menn2">
-        RECREIO
-    </a>
+function openCam(c){
+  const url=resolveUrl(c.url);
+  viewer.style.display="block"; msg.textContent="Carregando "+c.name+"...";
+  if(isHls(c)){
+    img.style.display="none"; vid.style.display="block";
+    if(vid.canPlayType("application/vnd.apple.mpegurl")){ vid.src=url; }
+    else if(window.Hls && Hls.isSupported()){ hls=new Hls({lowLatencyMode:true}); hls.loadSource(url); hls.attachMedia(vid);
+      hls.on(Hls.Events.ERROR,(e,d)=>{ if(d.fatal) msg.textContent="Erro no stream HLS"; }); }
+    else { msg.textContent="Navegador sem suporte a HLS"; return; }
+    vid.play&&vid.play().catch(()=>{});
+    vid.onplaying=()=>{msg.textContent="";};
+  } else {
+    vid.style.display="none"; img.style.display="block";
+    img.onload=()=>{msg.textContent="";};
+    img.onerror=()=>{msg.textContent="Falha ao carregar. Se o erro for 'cleartext', verifique o Worker (chave e URL).";};
+    if(SNAPSHOT_MS>0){ img.src=bust(url); timer=setInterval(()=>{img.src=bust(url);},SNAPSHOT_MS); }
+    else img.src=url;
+  }
+}
 
-    <a href="https://dvr-br1.hostlink.com/cam-c9f0be710a/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRZiZAurJ1zeVNT8EuVMiooDkQuT_">
-        IPANEMA P10
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-cb8432f2f4/index.m3u8?dvr=true&token=3.o86edfNWAAAAAAAAAAIABhu5t7S1ENhuefVigEaj8cWIWDQFap2eKYIr">
-        IPANEMA MEIO
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-e205726199/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvesnNzpWguFPLvbsy5cjg-SQQFwH">
-        DIABO
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-ed65266654/index.m3u8?dvr=true&token=3.wAHAmSNQAAAAAAAAAAIABhsajqrrAykQYBFSXZdPgg9wefx9ZoiDbGKX">
-        COPA P5
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-f626b0bf31/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRdxFi7N6fznVXmZ_JOTiMYq34IiE">
-        ITAÚNA
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-fb59a008b0/index.m3u8?dvr=true&token=3.zWDLqHe0AAAAAAAAAAIABhveywOxjTCYZsNIVZKBc5FLTT8KckFXpAkY">
-        GERIBÁ
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-8277034532/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRUYcer8Oj9QGu9m5rLuxZK0_Jw-y">
-        PRAINHA
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-843c89db89/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvUy8L4VfedB4lT7j07tT15MDhQkU">
-        MACUMBA CURVÃO
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-8e2b0bb753/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvg0RzAyfSYH3fQP_mUycNMUPz7Xn">
-        MACUMBA 5W
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-c0bcac1458/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRf22EkZpdDDx1spSa0EPpvfSdUdS">
-        MACUMBA 1W
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-9d7372a626/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvgKUblTVDQBpiv2C7xShqZjOObbm">
-        RESERVA
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-a1e7fb3d14/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRbeXkHIGB5slLRvBK8g7XJC0kaZa">
-        BARRA P6
-    </a>
-
-    <a href="https://dvr-br1.hostlink.com/cam-afc645de3c/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRRUYk-p48WgGoK0Fz99-Wv-lLmXk">
-        POSTINHO
-    </a>
-    <a href="http://143.137.72.218:8401/Interface/Cameras/GetJPEGStream?Camera=COND%20ILHA%20DO%20FRANCES%2001%20-%20CAM%2011&AuthUser=ilhadofrances&AuthPass=123456&&profile=mobile&width=1280&height=720&quality=80" >
-    CasaFontal
-</a>
-
-<a href="http://143.137.72.218:8401/Interface/Cameras/GetJPEGStream?Camera=COND%20ILHA%20DO%20FRANCES%2003%20-%20CAM%2008&AuthUser=ilhadofrances&AuthPass=123456&&profile=mobile&width=1280&height=720&quality=80" >
-    CasaEntrada
-</a>
-
-<a href="http://143.137.72.218:8401/Interface/Cameras/GetJPEGStream?Camera=COND%20ILHA%20DO%20FRANCES%2002%20-%20CAM%2013&AuthUser=ilhadofrances&AuthPass=123456&&profile=mobile&width=1280&height=720&quality=80" >
-    CasaPortaria
-</a>
-
-<a href="http://143.137.72.218:8401/Interface/Cameras/GetJPEGStream?Camera=COND%20ILHA%20DO%20FRANCES%2001%20-%20CAM%2004&AuthUser=ilhadofrances&AuthPass=123456&&profile=mobile&width=1280&height=720&quality=80" >
-    CasaCasa
-</a>
-
-<a href="http://webscseg.dynns.com:8401/Interface/Cameras/GetJPEGStream?Camera=COND%20ILHA%20DO%20FRANCES%2001%20-%20CAM%2004&AuthUser=ilhadofrances&AuthPass=123456&&profile=mobile&width=1280&height=720&quality=80" >
-    CasaCasaW
-</a>
-
-<a href="http://143.137.72.218:8401/Interface/Cameras/GetJPEGStream?Camera=COND%20ILHA%20DO%20FRANCES%2001%20-%20CAM%2008&AuthUser=ilhadofrances&AuthPass=123456&&profile=mobile&width=1280&height=720&quality=80" >
-    CasaRotula
-</a>
+function closeCam(){
+  if(viewer.style.display!=="block") return;
+  clearInterval(timer); timer=null;
+  if(hls){hls.destroy(); hls=null;}
+  vid.pause(); vid.removeAttribute("src"); vid.load();
+  img.onerror=null; img.removeAttribute("src");
+  viewer.style.display="none"; msg.textContent="";
+  if(lastBtn) lastBtn.focus();
+}
+viewer.addEventListener("click",closeCam);
+document.addEventListener("keydown",e=>{
+  if([27,8,4,461,10009].indexOf(e.keyCode)>-1 || e.key==="Escape" || e.key==="GoBack"){
+    if(viewer.style.display==="block"){ e.preventDefault(); closeCam(); }
+  }
+});
+</script>
 </body>
 </html>

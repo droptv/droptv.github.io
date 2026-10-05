@@ -1,0 +1,124 @@
+{
+ "cams": [
+  {
+   "name": "LEBLON P12",
+   "url": "https://dvr-br1.hostlink.com/cam-be35bd7a7f/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvpT7FOxsoeZc16xfAjJK1jAarij_"
+  },
+  {
+   "name": "ARPEX",
+   "url": "https://dvr-br1.hostlink.com/cam-d6e2a5d417/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRYUYeQQ4hMVFh-5rSSQYvLtKN5zJ"
+  },
+  {
+   "name": "SANCA",
+   "url": "https://dvr-br1.hostlink.com/cam-bde211ea8d/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvempIzrD3GI4tDGEAYWYq2KOZ5iN"
+  },
+  {
+   "name": "BARRA MEIO",
+   "url": "https://dvr-br1.hostlink.com/cam-af1decf92c/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvdoYXWaCNF2paAkXnUo9kOKGisJ5"
+  },
+  {
+   "name": "LEBLON P11",
+   "url": "https://dvr-br1.hostlink.com/cam-c7e13d9046/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvSkdFzB9EYGmC7AROu6DDdxoWYy_"
+  },
+  {
+   "name": "LEME",
+   "url": "https://dvr-br1.hostlink.com/cam-ee5a8ad7d4/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvoU0CiHGIjfMwTgZXQsR4ZeKTmIE"
+  },
+  {
+   "name": "MACUMBA",
+   "url": "https://dvr-br1.hostlink.com/cam-8e2b0bb753/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvg0RzAyfSYH3fQP_mUycNMUPz7Xn"
+  },
+  {
+   "name": "RECREIO",
+   "url": "https://dvr-br1.hostlink.com/recreio-43ae36b368/index.m3u8?dvr=true&token=3.FvacFA2sAAAAAAAAAAIABiXFxdvlbIve6gOOgutTbMrAKe4Q0L8Menn2"
+  },
+  {
+   "name": "IPANEMA P10",
+   "url": "https://dvr-br1.hostlink.com/cam-c9f0be710a/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRZiZAurJ1zeVNT8EuVMiooDkQuT_"
+  },
+  {
+   "name": "IPANEMA MEIO",
+   "url": "https://dvr-br1.hostlink.com/cam-cb8432f2f4/index.m3u8?dvr=true&token=3.o86edfNWAAAAAAAAAAIABhu5t7S1ENhuefVigEaj8cWIWDQFap2eKYIr"
+  },
+  {
+   "name": "DIABO",
+   "url": "https://dvr-br1.hostlink.com/cam-e205726199/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvesnNzpWguFPLvbsy5cjg-SQQFwH"
+  },
+  {
+   "name": "COPA P5",
+   "url": "https://dvr-br1.hostlink.com/cam-ed65266654/index.m3u8?dvr=true&token=3.wAHAmSNQAAAAAAAAAAIABhsajqrrAykQYBFSXZdPgg9wefx9ZoiDbGKX"
+  },
+  {
+   "name": "ITAÚNA",
+   "url": "https://dvr-br1.hostlink.com/cam-f626b0bf31/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRdxFi7N6fznVXmZ_JOTiMYq34IiE"
+  },
+  {
+   "name": "GERIBÁ",
+   "url": "https://dvr-br1.hostlink.com/cam-fb59a008b0/index.m3u8?dvr=true&token=3.zWDLqHe0AAAAAAAAAAIABhveywOxjTCYZsNIVZKBc5FLTT8KckFXpAkY"
+  },
+  {
+   "name": "PRAINHA",
+   "url": "https://dvr-br1.hostlink.com/cam-8277034532/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRUYcer8Oj9QGu9m5rLuxZK0_Jw-y"
+  },
+  {
+   "name": "MACUMBA CURVÃO",
+   "url": "https://dvr-br1.hostlink.com/cam-843c89db89/index.m3u8?dvr=true&token=3.YYQAIJILAAAAAAAAAAIABhtWkfWhvUy8L4VfedB4lT7j07tT15MDhQkU"
+  },
+  {
+   "name": "MACUMBA 5W",
+   "url": "https://dvr-br1.hostlink.com/cam-8e2b0bb753/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvg0RzAyfSYH3fQP_mUycNMUPz7Xn"
+  },
+  {
+   "name": "MACUMBA 1W",
+   "url": "https://dvr-br1.hostlink.com/cam-c0bcac1458/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRf22EkZpdDDx1spSa0EPpvfSdUdS"
+  },
+  {
+   "name": "RESERVA",
+   "url": "https://dvr-br1.hostlink.com/cam-9d7372a626/index.m3u8?dvr=true&token=3.3aiQNhhZAAAAAAAAAAIABhtBI8oMvgKUblTVDQBpiv2C7xShqZjOObbm"
+  },
+  {
+   "name": "BARRA P6",
+   "url": "https://dvr-br1.hostlink.com/cam-a1e7fb3d14/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRbeXkHIGB5slLRvBK8g7XJC0kaZa"
+  },
+  {
+   "name": "POSTINHO",
+   "url": "https://dvr-br1.hostlink.com/cam-afc645de3c/index.m3u8?dvr=true&token=3.J2RNAwSBAAAAAAAAAAIABhv1zHFuRRUYk-p48WgGoK0Fz99-Wv-lLmXk"
+  },
+  {
+   "name": "CasaFontal",
+   "type": "jpg",
+   "url": "https://cam-proxy.fred1807.workers.dev/snap/casafontal?k=Samuel2626262626",
+   "refresh": 1000
+  },
+  {
+   "name": "CasaEntrada",
+   "type": "jpg",
+   "url": "https://cam-proxy.fred1807.workers.dev/snap/casaentrada?k=Samuel2626262626",
+   "refresh": 1000
+  },
+  {
+   "name": "CasaPortaria",
+   "type": "jpg",
+   "url": "https://cam-proxy.fred1807.workers.dev/snap/casaportaria?k=Samuel2626262626",
+   "refresh": 1000
+  },
+  {
+   "name": "CasaCasa",
+   "type": "jpg",
+   "url": "https://cam-proxy.fred1807.workers.dev/snap/casacasa?k=Samuel2626262626",
+   "refresh": 1000
+  },
+  {
+   "name": "CasaCasaW",
+   "type": "jpg",
+   "url": "https://cam-proxy.fred1807.workers.dev/snap/casacasaw?k=Samuel2626262626",
+   "refresh": 1000
+  },
+  {
+   "name": "CasaRotula",
+   "type": "jpg",
+   "url": "https://cam-proxy.fred1807.workers.dev/snap/casarotula?k=Samuel2626262626",
+   "refresh": 1000
+  }
+ ]
+}
